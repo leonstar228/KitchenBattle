@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using KitchenBattle.Models;
 using KitchenBattle.ViewModels;
+using KitchenBattle.Data;
 
 namespace KitchenBattle.Services
 {

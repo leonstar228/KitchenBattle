@@ -5,4 +5,7 @@ using KitchenBattle.ViewModels;
 
 namespace KitchenBattle.Services
 {
+    public interface IRecipeService
+    {
+    }
 }
