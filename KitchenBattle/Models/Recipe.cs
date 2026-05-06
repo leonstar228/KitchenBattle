@@ -14,5 +14,6 @@
         public StatusRecipeEnum Status { get; set; } = StatusRecipeEnum.Draft;
         public double AverageScore { get; set; }
         public ICollection<Score> Scores { get; set; } = new List<Score>();
+        public CategoryEnum Category { get; internal set; }
     }
 }
