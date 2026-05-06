@@ -2,8 +2,8 @@
 {
     public enum DifficultyEnum
     {
-        Easy,
-        Medium,
-        Hard
+        Easy, // Легкий рівень складності
+        Medium, // Середній рівень складності
+        Hard // Високий рівень складності
     }
 }
