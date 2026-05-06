@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using KitchenBattle.Models;
-using KitchenBattle.Data; // ваш DbContext
+using KitchenBattle.Data; 
 
 namespace KitchenBattle.Controllers
 {
