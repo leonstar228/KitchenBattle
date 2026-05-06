@@ -3,7 +3,7 @@
     public class Battle
     {
         public int Id { get; set; }
-        public int WinnerId { get; set; }
+        public string WinnerId { get; set; }
         public string BattleName { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public StatusBattleEnum Status { get; set; } = StatusBattleEnum.Pending;
