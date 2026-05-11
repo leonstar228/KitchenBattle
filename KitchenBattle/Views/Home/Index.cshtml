@@ -1,8 +1,70 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model IEnumerable<KitchenBattle.Models.Battle>
+@{
+    ViewData["Title"] = "Головна";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container mt-5">
+    <!-- Головний блок -->
+    <div class="text-center mb-5">
+        <h1 class="fw-bold display-4">Kitchen Battle</h1>
+        <p class="lead text-muted">Ароматні, яскраві та захопливі кулінарні батли — переглянь останні події та рецепти!</p>
+    </div>
+
+    <!-- Останні батли -->
+    <div class="row justify-content-center">
+        @foreach (var battle in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm border-0">
+                    <img src="~/images/battle.jpg" class="card-img-top" alt="Battle image">
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold">@battle.BattleName</h5>
+                        <p class="card-text text-muted">@battle.Description</p>
+                        <p>
+                            <span class="badge bg-warning text-dark">@battle.Status</span>
+                            <small class="text-muted d-block mt-1">
+                                Початок: @battle.StartedAt.ToShortDateString()
+                            </small>
+                        </p>
+                        <a href="@Url.Action("Index", "Battles")" class="btn btn-outline-primary w-100">Переглянути батли</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Перехідні блоки -->
+    <div class="row text-center mt-5">
+        <div class="col-md-3 mb-3">
+            <div class="p-4 bg-light rounded shadow-sm">
+                <h5 class="fw-bold">Рецепти</h5>
+                <p class="text-muted">Переглянь найкращі страви учасників.</p>
+                <a href="@Url.Action("Index", "Recipes")" class="btn btn-success">Переглянути рецепти</a>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="p-4 bg-light rounded shadow-sm">
+                <h5 class="fw-bold">Лідерборд</h5>
+                <p class="text-muted">Дізнайся, хто зараз на вершині!</p>
+                <a href="@Url.Action("CurrentBattle", "Leaderboard")" class="btn btn-warning">Лідерборд</a>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="p-4 bg-light rounded shadow-sm">
+                <h5 class="fw-bold">Політика конфіденційності</h5>
+                <p class="text-muted">Дізнайся, як ми захищаємо твої дані.</p>
+                <a href="@Url.Action("Privacy", "Home")" class="btn btn-secondary">Політика конфіденційності</a>
+            </div>
+        </div>
+    </div>
 </div>
+
+<!-- Нижній колонтитул -->
+<footer class="text-center mt-5 py-4 border-top">
+    <p class="mb-1">&copy; 2026 KitchenBattle. Всі права захищені.</p>
+    <div>
+        <a href="#" class="text-muted me-3"><i class="bi bi-facebook"></i></a>
+        <a href="#" class="text-muted me-3"><i class="bi bi-instagram"></i></a>
+        <a href="#" class="text-muted"><i class="bi bi-twitter"></i></a>
+    </div>
+</footer>
