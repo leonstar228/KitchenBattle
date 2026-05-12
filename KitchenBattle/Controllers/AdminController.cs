@@ -1,11 +1,13 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using KitchenBattle.Models;
+using KitchenBattle.ViewModels;
 using KitchenBattle.Services;
 using Microsoft.Extensions.Caching.Distributed;
 
 namespace KitchenBattle.Controllers
 {
-    [Authorize(Roles = "admin")]
+    [Authorize(Roles = "Admin")] 
     public class AdminController : Controller
     {
         private readonly IAdminService _adminService;
@@ -33,21 +35,26 @@ namespace KitchenBattle.Controllers
 
         public async Task<IActionResult> RecipesForReview()
         {
-            var recipes = await _recipeService.GetRecipesByStatusAsync(RecipeStatus.PendingReview);
+            var recipes = await _recipeService.GetRecipesByStatusAsync(StatusRecipeEnum.Checked);
             return View(recipes);
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ApproveRecipe(int id)
         {
-            await _recipeService.ApproveRecipeAsync(id);
+            var success = await _recipeService.ApproveRecipeAsync(id);
 
-            await RedisService.ClearCacheAsync(_cache);
+            if (success)
+            {
+                await RedisService.ClearCacheAsync(_cache);
+            }
 
             return RedirectToAction(nameof(RecipesForReview));
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> RejectRecipe(int id)
         {
             await _recipeService.RejectRecipeAsync(id);
@@ -61,6 +68,7 @@ namespace KitchenBattle.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteUser(string id)
         {
             await _adminService.DeleteUserAsync(id);
