@@ -71,12 +71,10 @@ namespace KitchenBattle.Controllers
                 scores.Add(new ScoreDisplayViewModel
                 {
                     Id = score.Id,
-                    JudgeId = score.JudgeId,
                     JudgeName = judge?.UserName ?? "Unknown",
                     Taste = score.Taste,
                     Presentation = score.Presentation,
                     Creativity = score.Creativity,
-                    TotalScore = score.TotalScore,
                     Comments = score.Comments
                 });
             }
