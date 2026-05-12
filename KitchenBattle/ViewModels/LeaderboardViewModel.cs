@@ -4,8 +4,12 @@ namespace KitchenBattle.ViewModels
 {
     public class LeaderboardViewModel
     {
-        public List<Recipe> TopRecipes { get; set; } = new List<Recipe>();
-        public List<ApplicationUser> TopChefs { get; set; } = new List<ApplicationUser>();
-        public string? CurrentBattleName { get; set; }
+        public int RecipeId { get; set; }
+        public string RecipeTitle { get; set; } = string.Empty;
+        public string ChefName { get; set; } = string.Empty;
+        public string Category { get; set; } = string.Empty;
+        public double AverageScore { get; set; }
+        public int TotalScoresCount { get; set; }
+        public int Place { get; set; }
     }
 }
