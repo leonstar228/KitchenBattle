@@ -24,22 +24,16 @@ namespace KitchenBattle.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Index(string? search, DifficultyEnum? difficulty, CategoryEnum? category)
         {
-            var query = _context.Recipes
-                .Include(r => r.Scores)
-                .Where(r => r.Status == StatusRecipeEnum.Published);
+            var recipes = await _recipeService.GetPublishedRecipesAsync();
 
             if (!string.IsNullOrEmpty(search))
-                query = query.Where(r => r.Title.Contains(search) || r.Description.Contains(search));
+                recipes = recipes.Where(r => r.Title.Contains(search) || r.Description.Contains(search)).ToList();
 
             if (difficulty.HasValue)
-                query = query.Where(r => r.Difficulty == difficulty.Value);
+                recipes = recipes.Where(r => r.Difficulty == difficulty.Value).ToList();
 
             if (category.HasValue)
-                query = query.Where(r => r.Category == category.Value);
-
-            var recipes = await query
-                .OrderByDescending(r => r.AverageScore)
-                .ToListAsync();
+                recipes = recipes.Where(r => r.Category == category.Value).ToList();
 
             ViewBag.CurrentSearch = search;
             ViewBag.CurrentDifficulty = difficulty;

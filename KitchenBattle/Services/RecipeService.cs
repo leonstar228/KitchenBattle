@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 using KitchenBattle.Data;
 using KitchenBattle.Models;
 using KitchenBattle.ViewModels;
+using System.Text.Json;
 
 namespace KitchenBattle.Services
 {
@@ -18,17 +20,104 @@ namespace KitchenBattle.Services
         Task<Recipe?> GetRecipeByIdAsync(int recipeId);
         Task<List<Recipe>> GetRecipesByStatusAsync(StatusRecipeEnum status);
         Task<List<Recipe>> GetUserRecipesAsync(string chefId);
+        Task<List<Recipe>> GetPublishedRecipesAsync();
     }
 
     public class RecipeService : IRecipeService
     {
         private readonly ApplicationDbContext _context;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly IDistributedCache _cache;
 
-        public RecipeService(ApplicationDbContext context, IWebHostEnvironment webHostEnvironment)
+        private const string PublishedRecipesCacheKey = "published_recipes";
+        private const string RecipeDetailsCacheKeyPrefix = "recipe_details_";
+        private const string UserRecipesCacheKeyPrefix = "user_recipes_";
+
+        public RecipeService(
+            ApplicationDbContext context,
+            IWebHostEnvironment webHostEnvironment,
+            IDistributedCache cache)
         {
             _context = context;
             _webHostEnvironment = webHostEnvironment;
+            _cache = cache;
+        }
+
+        public async Task<List<Recipe>> GetPublishedRecipesAsync()
+        {
+            var cached = await _cache.GetStringAsync(PublishedRecipesCacheKey);
+            if (cached != null)
+            {
+                return JsonSerializer.Deserialize<List<Recipe>>(cached) ?? new List<Recipe>();
+            }
+
+            var recipes = await _context.Recipes
+                .Include(r => r.Scores)
+                .Where(r => r.Status == StatusRecipeEnum.Published)
+                .OrderByDescending(r => r.AverageScore)
+                .ToListAsync();
+
+            await _cache.SetStringAsync(PublishedRecipesCacheKey,
+                JsonSerializer.Serialize(recipes),
+                new DistributedCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5)
+                });
+
+            return recipes;
+        }
+
+        public async Task<Recipe?> GetRecipeByIdAsync(int recipeId)
+        {
+            var cacheKey = $"{RecipeDetailsCacheKeyPrefix}{recipeId}";
+            var cached = await _cache.GetStringAsync(cacheKey);
+
+            if (cached != null)
+            {
+                return JsonSerializer.Deserialize<Recipe>(cached);
+            }
+
+            var recipe = await _context.Recipes
+                .Include(r => r.Scores)
+                .FirstOrDefaultAsync(r => r.Id == recipeId);
+
+            if (recipe != null)
+            {
+                await _cache.SetStringAsync(cacheKey,
+                    JsonSerializer.Serialize(recipe),
+                    new DistributedCacheEntryOptions
+                    {
+                        AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5)
+                    });
+            }
+
+            return recipe;
+        }
+
+        public async Task<List<Recipe>> GetUserRecipesAsync(string chefId)
+        {
+            var cacheKey = $"{UserRecipesCacheKeyPrefix}{chefId}";
+            var cached = await _cache.GetStringAsync(cacheKey);
+
+            if (cached != null)
+            {
+                return JsonSerializer.Deserialize<List<Recipe>>(cached) ?? new List<Recipe>();
+            }
+
+            var recipes = await _context.Recipes
+                .Include(r => r.Scores)
+                .Where(r => r.ChefId == chefId)
+                .OrderByDescending(r => r.CreatedAt)
+                .ToListAsync();
+
+            await _cache.SetStringAsync(cacheKey,
+                JsonSerializer.Serialize(recipes),
+                new DistributedCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5)
+                });
+
+            return recipes;
         }
 
         public async Task<Recipe> CreateRecipeAsync(RecipeCreateViewModel model, string chefId, string chefName)
@@ -58,6 +147,9 @@ namespace KitchenBattle.Services
 
             _context.Recipes.Add(recipe);
             await _context.SaveChangesAsync();
+
+            await ClearRecipeCacheAsync(chefId);
+
             return recipe;
         }
 
@@ -88,6 +180,9 @@ namespace KitchenBattle.Services
             }
 
             await _context.SaveChangesAsync();
+
+            await ClearRecipeCacheAsync(chefId, recipe.Id);
+
             return true;
         }
 
@@ -112,6 +207,9 @@ namespace KitchenBattle.Services
 
             _context.Recipes.Remove(recipe);
             await _context.SaveChangesAsync();
+
+            await ClearRecipeCacheAsync(chefId, recipeId);
+
             return true;
         }
 
@@ -125,6 +223,9 @@ namespace KitchenBattle.Services
 
             recipe.Status = StatusRecipeEnum.Checked;
             await _context.SaveChangesAsync();
+
+            await ClearRecipeCacheAsync(chefId, recipeId);
+
             return true;
         }
 
@@ -138,6 +239,9 @@ namespace KitchenBattle.Services
 
             recipe.Status = StatusRecipeEnum.Published;
             await _context.SaveChangesAsync();
+
+            await ClearRecipeCacheAsync(chefId, recipeId);
+
             return true;
         }
 
@@ -150,6 +254,9 @@ namespace KitchenBattle.Services
 
             recipe.Status = StatusRecipeEnum.Published;
             await _context.SaveChangesAsync();
+
+            await ClearRecipeCacheAsync(recipe.ChefId, recipeId);
+
             return true;
         }
 
@@ -162,6 +269,9 @@ namespace KitchenBattle.Services
 
             recipe.Status = StatusRecipeEnum.Rejected;
             await _context.SaveChangesAsync();
+
+            await ClearRecipeCacheAsync(recipe.ChefId, recipeId);
+
             return true;
         }
 
@@ -181,16 +291,11 @@ namespace KitchenBattle.Services
             {
                 recipe.AverageScore = roundedAverage;
                 await _context.SaveChangesAsync();
+
+                await ClearRecipeCacheAsync(recipe.ChefId, recipeId);
             }
 
             return roundedAverage;
-        }
-
-        public async Task<Recipe?> GetRecipeByIdAsync(int recipeId)
-        {
-            return await _context.Recipes
-                .Include(r => r.Scores)
-                .FirstOrDefaultAsync(r => r.Id == recipeId);
         }
 
         public async Task<List<Recipe>> GetRecipesByStatusAsync(StatusRecipeEnum status)
@@ -202,13 +307,16 @@ namespace KitchenBattle.Services
                 .ToListAsync();
         }
 
-        public async Task<List<Recipe>> GetUserRecipesAsync(string chefId)
+        private async Task ClearRecipeCacheAsync(string chefId, int? recipeId = null)
         {
-            return await _context.Recipes
-                .Include(r => r.Scores)
-                .Where(r => r.ChefId == chefId)
-                .OrderByDescending(r => r.CreatedAt)
-                .ToListAsync();
+            await _cache.RemoveAsync(PublishedRecipesCacheKey);
+
+            if (recipeId.HasValue)
+            {
+                await _cache.RemoveAsync($"{RecipeDetailsCacheKeyPrefix}{recipeId.Value}");
+            }
+
+            await _cache.RemoveAsync($"{UserRecipesCacheKeyPrefix}{chefId}");
         }
 
         private async Task<string> SaveImageAsync(IFormFile image)
