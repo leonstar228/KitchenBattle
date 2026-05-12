@@ -13,7 +13,7 @@ namespace KitchenBattle.ViewModels
         public DateTime RegistrationStart { get; set; }
         public DateTime RegistrationEnd { get; set; }
         public CategoryEnum Category { get; set; }
-        public int? WinnerId { get; set; }
+        public string? WinnerId { get; set; }  // ← змінив на string
         public string? WinnerName { get; set; }
         
         public List<RecipeInBattleViewModel> Recipes { get; set; } = new();
@@ -37,7 +37,7 @@ namespace KitchenBattle.ViewModels
     
     public class UserInBattleViewModel
     {
-        public string Id { get; set; } = string.Empty;
+        public string Id { get; set; } = string.Empty;  // ← string, бо IdentityUser.Id
         public string FullName { get; set; } = string.Empty;
     }
 }
