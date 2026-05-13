@@ -40,7 +40,7 @@ namespace KitchenBattle.Services
             return result;
         }
         
-        public async Task CreateAsync(ScoreCreateViewModel vm, string judgeId)
+        public async Task AddScore(ScoreCreateViewModel vm, string judgeId)
         {
             var score = new Score
             {
@@ -61,7 +61,7 @@ namespace KitchenBattle.Services
             return await _db.Scores.FindAsync(id);
         }
         
-        public async Task EditAsync(int id, ScoreCreateViewModel vm)
+        public async Task UpdateScore(int id, ScoreCreateViewModel vm)
         {
             var score = await _db.Scores.FindAsync(id);
             if (score == null) return;
@@ -74,13 +74,30 @@ namespace KitchenBattle.Services
             await _db.SaveChangesAsync();
         }
         
-        public async Task DeleteAsync(int id)
+        public async Task DeleteScore(int id)
         {
             var score = await _db.Scores.FindAsync(id);
             if (score == null) return;
 
             _db.Scores.Remove(score);
             await _db.SaveChangesAsync();
+        }
+        
+        public async Task<bool> CheckJudgeAlreadyScored(int recipeId, string judgeId)
+        {
+            return await _db.Scores
+                .AnyAsync(s => s.RecipeId == recipeId && s.JudgeId == judgeId);
+        }
+        
+        public async Task<double> CalculateTotalScore(int recipeId)
+        {
+            var scores = await _db.Scores
+                .Where(s => s.RecipeId == recipeId)
+                .ToListAsync();
+
+            if (!scores.Any()) return 0;
+
+            return scores.Average(s => s.TotalScore);
         }
     }
 }
