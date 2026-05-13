@@ -29,3 +29,16 @@ body {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
 }
+
+.btn-kitchen {
+    background-color: #090963; /* темно-синій */
+    color: #fff; /* білий текст */
+    border-radius: 15px; /* заокруглені краї */
+    border: none; /* без рамки */
+    transition: background-color 0.3s ease;
+}
+
+    .btn-kitchen:hover {
+        background-color: #0b0b8a; /* трохи світліший відтінок при наведенні */
+        color: #fff;
+    }

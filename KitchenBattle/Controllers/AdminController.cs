@@ -3,64 +3,82 @@ using Microsoft.AspNetCore.Mvc;
 using KitchenBattle.Models;
 using KitchenBattle.ViewModels;
 using KitchenBattle.Services;
+using Microsoft.Extensions.Caching.Distributed;
 
-[Authorize(Roles = "admin")]
-public class AdminController : Controller
+namespace KitchenBattle.Controllers
 {
-    private readonly IAdminService _adminService;
-    private readonly IRecipeService _recipeService;
-    private readonly ICacheService _cacheService;
-
-    public AdminController(IAdminService adminService, IRecipeService recipeService, ICacheService cacheService)
+    [Authorize(Roles = "Admin")] 
+    public class AdminController : Controller
     {
-        _adminService = adminService;
-        _recipeService = recipeService;
-        _cacheService = cacheService;
-    }
+        private readonly IAdminService _adminService;
+        private readonly IRecipeService _recipeService;
+        private readonly RedisService _redisService;
+        private readonly IDistributedCache _cache;
 
-    public async Task<IActionResult> Dashboard()
-    {
-        var stats = await _adminService.GetDashboardStatsAsync();
-        return View(stats);
-    }
+        public AdminController(
+            IAdminService adminService,
+            IRecipeService recipeService,
+            RedisService redisService,
+            IDistributedCache cache)
+        {
+            _adminService = adminService;
+            _recipeService = recipeService;
+            _redisService = redisService;
+            _cache = cache;
+        }
 
-    public async Task<IActionResult> RecipesForReview()
-    {
-        var recipes = await _recipeService.GetRecipesByStatusAsync(RecipeStatus.PendingReview);
-        return View(recipes);
-    }
+        public async Task<IActionResult> Dashboard()
+        {
+            var stats = await _adminService.GetDashboardStatsAsync();
+            return View(stats);
+        }
 
-    [HttpPost]
-    public async Task<IActionResult> ApproveRecipe(int id)
-    {
-        await _recipeService.ApproveRecipeAsync(id);
-        await _cacheService.RemoveAsync("leaderboard_main");
-        return RedirectToAction(nameof(RecipesForReview));
-    }
+        public async Task<IActionResult> RecipesForReview()
+        {
+            var recipes = await _recipeService.GetRecipesByStatusAsync(StatusRecipeEnum.Checked);
+            return View(recipes);
+        }
 
-    [HttpPost]
-    public async Task<IActionResult> RejectRecipe(int id)
-    {
-        await _recipeService.RejectRecipeAsync(id);
-        return RedirectToAction(nameof(RecipesForReview));
-    }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ApproveRecipe(int id)
+        {
+            var success = await _recipeService.ApproveRecipeAsync(id);
 
-    public async Task<IActionResult> Users()
-    {
-        var users = await _adminService.GetAllUsersAsync();
-        return View(users);
-    }
+            if (success)
+            {
+                await RedisService.ClearCacheAsync(_cache);
+            }
 
-    [HttpPost]
-    public async Task<IActionResult> DeleteUser(string id)
-    {
-        await _adminService.DeleteUserAsync(id);
-        return RedirectToAction(nameof(Users));
-    }
+            return RedirectToAction(nameof(RecipesForReview));
+        }
 
-    public async Task<IActionResult> Statistics()
-    {
-        var stats = await _adminService.GetCategoryStatisticsAsync();
-        return View(stats);
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RejectRecipe(int id)
+        {
+            await _recipeService.RejectRecipeAsync(id);
+            return RedirectToAction(nameof(RecipesForReview));
+        }
+
+        public async Task<IActionResult> Users()
+        {
+            var users = await _adminService.GetAllUsersAsync();
+            return View(users);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteUser(string id)
+        {
+            await _adminService.DeleteUserAsync(id);
+            return RedirectToAction(nameof(Users));
+        }
+
+        public async Task<IActionResult> Statistics()
+        {
+            var stats = await _adminService.GetCategoryStatisticsAsync();
+            return View(stats);
+        }
     }
 }
