@@ -85,6 +85,335 @@ AverageScore = ( Taste + Presentation + Creativity ) / 3
 
 ---
 
+## 🗺️ Карта проекту
+
+### 1) Home
+
+```
+Home/Index.cshtml
+│
+├── → Battles/Index.cshtml
+│       Перехід: "Переглянути батли"
+│
+├── → Recipes/Index.cshtml
+│       Перехід: "Переглянути рецепти"
+│
+├── → Leaderboard/CurrentBattle.cshtml
+│       Перехід: "Лідерборд"
+│
+└── → Home/Privacy.cshtml
+        Перехід: "Політика конфіденційності"
+```
+
+### 2) Battles
+
+```
+Battles/Index.cshtml
+│
+├── → Battles/Details.cshtml
+│       Перехід: "Деталі батлу"
+│
+├── → Battles/Create.cshtml
+│       Перехід: "Створити battle"
+│       Доступ: Admin
+│
+└── → Home/Index.cshtml
+        Перехід: "На головну"
+
+
+Battles/Details.cshtml
+│
+├── → Battles/Edit.cshtml
+│       Перехід: "Редагувати battle"
+│       Доступ: Admin
+│
+├── → Battles/Delete.cshtml
+│       Перехід: "Видалити battle"
+│       Доступ: Admin
+│
+├── → Recipes/Details.cshtml
+│       Перехід: "Переглянути рецепт"
+│
+├── → Recipes/Create.cshtml
+│       Перехід: "Додати рецепт до battle"
+│       Доступ: Chef
+│
+├── → Scores/Create.cshtml
+│       Перехід: "Оцінити рецепт"
+│       Доступ: Judge
+│
+└── → Battles/Index.cshtml
+        Перехід: "Назад до списку батлів"
+
+
+Battles/Create.cshtml
+│
+└── → Battles/Index.cshtml
+        Після створення battle
+
+
+Battles/Edit.cshtml
+│
+└── → Battles/Details.cshtml
+        Після редагування battle
+
+
+Battles/Delete.cshtml
+│
+└── → Battles/Index.cshtml
+        Після видалення battle
+```
+
+### 3) Recipes
+
+```
+Recipes/Index.cshtml
+│
+├── → Recipes/Details.cshtml
+│       Перехід: "Деталі рецепта"
+│
+├── → Recipes/Create.cshtml
+│       Перехід: "Створити рецепт"
+│       Доступ: Chef
+│
+├── → Recipes/MyRecipes.cshtml
+│       Перехід: "Мої рецепти"
+│       Доступ: Chef
+│
+└── → Home/Index.cshtml
+        Перехід: "На головну"
+
+
+Recipes/MyRecipes.cshtml
+│
+├── → Recipes/Create.cshtml
+│       Перехід: "Додати рецепт"
+│
+├── → Recipes/Edit.cshtml
+│       Перехід: "Редагувати"
+│
+├── → Recipes/Delete.cshtml
+│       Перехід: "Видалити"
+│
+├── → Recipes/Details.cshtml
+│       Перехід: "Деталі"
+│
+└── → Recipes/Index.cshtml
+        Перехід: "Всі рецепти"
+
+
+Recipes/Details.cshtml
+│
+├── → Scores/Create.cshtml
+│       Перехід: "Поставити оцінку"
+│       Доступ: Judge
+│
+├── → Recipes/Edit.cshtml
+│       Перехід: "Редагувати рецепт"
+│       Доступ: Chef/Admin
+│
+├── → Recipes/Delete.cshtml
+│       Перехід: "Видалити рецепт"
+│       Доступ: Chef/Admin
+│
+├── → Recipes/RecipeScores.cshtml
+│       Перехід: "Переглянути оцінки"
+│
+└── → Recipes/Index.cshtml
+        Перехід: "Назад до рецептів"
+
+
+Recipes/Create.cshtml
+│
+└── → Recipes/MyRecipes.cshtml
+        Після створення рецепта
+
+
+Recipes/Edit.cshtml
+│
+└── → Recipes/Details.cshtml
+        Після редагування рецепта
+
+
+Recipes/Delete.cshtml
+│
+└── → Recipes/Index.cshtml
+        Після видалення рецепта
+
+
+Recipes/RecipeScores.cshtml
+│
+├── → Scores/Edit.cshtml
+│       Перехід: "Редагувати оцінку"
+│       Доступ: Judge
+│
+└── → Recipes/Details.cshtml
+        Перехід: "Назад до рецепта"
+```
+
+### 4) Scores
+
+```
+Scores/Create.cshtml
+│
+└── → Recipes/Details.cshtml
+        Після додавання оцінки
+
+
+Scores/Edit.cshtml
+│
+└── → Recipes/RecipeScores.cshtml
+        Після редагування оцінки
+
+
+Scores/Delete.cshtml
+│
+└── → Recipes/RecipeScores.cshtml
+        Після видалення оцінки
+```
+
+### 5) Admin
+
+```
+Admin/Dashboard.cshtml
+│
+├── → Admin/RecipesForReview.cshtml
+│       Перехід: "Рецепти на перевірку"
+│
+├── → Admin/Users.cshtml
+│       Перехід: "Користувачі"
+│
+├── → Admin/Statistics.cshtml
+│       Перехід: "Статистика"
+│
+├── → Battles/Create.cshtml
+│       Перехід: "Створити battle"
+│
+└── → Home/Index.cshtml
+        Перехід: "На головну"
+
+
+Admin/RecipesForReview.cshtml
+│
+├── → Recipes/Details.cshtml
+│       Перехід: "Переглянути рецепт"
+│
+├── → Recipes/Approve
+│       Дія: "Схвалити рецепт"
+│
+├── → Recipes/Reject
+│       Дія: "Відхилити рецепт"
+│
+└── → Admin/Dashboard.cshtml
+        Перехід: "Назад до панелі адміністратора"
+
+
+Admin/Users.cshtml
+│
+├── → Admin/CreateChef
+│       Перехід: "Створити Chef"
+│
+├── → Admin/CreateJudge
+│       Перехід: "Створити Judge"
+│
+├── → Admin/DeleteUser
+│       Дія: "Видалити користувача"
+│
+└── → Admin/Dashboard.cshtml
+        Перехід: "Назад до Dashboard"
+
+
+Admin/Statistics.cshtml
+│
+├── → Leaderboard/BestRecipes.cshtml
+│       Перехід: "Топ рецептів"
+│
+├── → Leaderboard/BestChefs.cshtml
+│       Перехід: "Топ Chef"
+│
+└── → Admin/Dashboard.cshtml
+        Перехід: "Назад до Dashboard"
+```
+
+### 6) Leaderboard
+
+```
+Leaderboard/CurrentBattle.cshtml
+│
+├── → Recipes/Details.cshtml
+│       Перехід: "Переглянути рецепт"
+│
+├── → Battles/Details.cshtml
+│       Перехід: "Переглянути battle"
+│
+└── → Home/Index.cshtml
+        Перехід: "На головну"
+
+
+Leaderboard/BestRecipes.cshtml
+│
+├── → Recipes/Details.cshtml
+│       Перехід: "Переглянути рецепт"
+│
+└── → Leaderboard/AllTimeTop.cshtml
+        Перехід: "Загальний рейтинг"
+
+
+Leaderboard/BestChefs.cshtml
+│
+├── → Recipes/Index.cshtml
+│       Перехід: "Рецепти Chef"
+│
+└── → Leaderboard/AllTimeTop.cshtml
+        Перехід: "Загальний рейтинг"
+
+
+Leaderboard/AllTimeTop.cshtml
+│
+├── → Leaderboard/BestRecipes.cshtml
+│       Перехід: "Кращі рецепти"
+│
+├── → Leaderboard/BestChefs.cshtml
+│       Перехід: "Кращі Chef"
+│
+└── → Home/Index.cshtml
+        Перехід: "На головну"
+```
+
+### 7) Shared Layout
+
+```
+Shared/_Layout.cshtml
+│
+├── → Home/Index.cshtml
+│       Меню: "Головна"
+│
+├── → Battles/Index.cshtml
+│       Меню: "Battles"
+│
+├── → Recipes/Index.cshtml
+│       Меню: "Recipes"
+│
+├── → Leaderboard/CurrentBattle.cshtml
+│       Меню: "Leaderboard"
+│
+├── → Recipes/MyRecipes.cshtml
+│       Меню: "Мої рецепти"
+│       Доступ: Chef
+│
+├── → Admin/Dashboard.cshtml
+│       Меню: "Admin Panel"
+│       Доступ: Admin
+│
+├── → Keycloak Login
+│       Меню: "Увійти"
+│
+└── → Keycloak Logout
+        Меню: "Вийти"
+```
+
+---
+
 ## 🛠️ Технології
 
 - **Backend:** ASP.NET Core
