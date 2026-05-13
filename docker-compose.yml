@@ -1,0 +1,31 @@
+# services:
+#   keycloak:
+#     image: quay.io/keycloak/keycloak:26.1
+#     container_name: keycloak
+#     environment:
+#       - KC_BOOTSTRAP_ADMIN_USERNAME=admin
+#       - KC_BOOTSTRAP_ADMIN_PASSWORD=admin
+#     ports:
+#       - "8080:8080"
+#     volumes:
+#       - keycloak_data:/opt/keycloak/data
+#     command: start-dev
+
+# volumes:
+#   keycloak_data:
+# Invoke-RestMethod http://localhost:8080/realms/master
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: redis_kitchen_battle
+    ports:
+      - "6379:6379"
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.1
+    container_name: keycloak_kitchen_battle
+    environment:
+      - KC_BOOTSTRAP_ADMIN_USERNAME=admin
+      - KC_BOOTSTRAP_ADMIN_PASSWORD=admin
+    ports:
+      - "8080:8080"
+    command: start-dev
