@@ -1,4 +1,4 @@
-﻿using KitchenBattle.Models;
+using KitchenBattle.Models;
 
 namespace KitchenBattle.ViewModels
 {
