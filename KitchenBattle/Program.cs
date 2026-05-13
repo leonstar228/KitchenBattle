@@ -1,29 +1,53 @@
+using KitchenBattle.Data;
+using KitchenBattle.Services;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = builder.Configuration.GetConnectionString("Redis") ?? "localhost:6379";
+    options.InstanceName = "KitchenBattle_";
+});
+
+builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<RedisService>();
+builder.Services.AddScoped<ScoreService>();
+builder.Services.AddScoped<AdminService>();
+builder.Services.AddScoped<BattleService>();
+builder.Services.AddScoped<LeaderBoardService>();
+
+builder.Services.AddScoped<IRecipeService, RecipeService>();
+builder.Services.AddScoped<IKeycloakAuthService, KeycloakAuthService>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
+
+app.UseStaticFiles();
+
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapStaticAssets();
-
 app.MapControllerRoute(
-        name: "default",
-        pattern: "{controller=Home}/{action=Index}/{id?}")
-    .WithStaticAssets();
-
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
