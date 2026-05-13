@@ -1,0 +1,73 @@
+﻿@model KitchenBattle.ViewModels.ScoreCreateViewModel
+
+@{
+    ViewData["Title"] = "Додати оцінку";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-7 col-lg-6">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white border-bottom py-3">
+                <h4 class="mb-0">
+                    <i class="bi bi-star text-warning me-2"></i>Оцінити рецепт
+                </h4>
+            </div>
+            <div class="card-body p-4">
+                <form asp-action="Create" method="post">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2" role="alert"></div>
+
+                    <input asp-for="RecipeId" type="hidden" />
+
+                    <div class="mb-4">
+                        <label asp-for="Taste" class="form-label fw-semibold">
+                            <i class="bi bi-fire text-danger me-1"></i>Смак
+                            <span class="text-muted fw-normal small">(1–10)</span>
+                        </label>
+                        <input asp-for="Taste" type="number" min="1" max="10" class="form-control form-control-lg" placeholder="Оцінка за смак" />
+                        <span asp-validation-for="Taste" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="Presentation" class="form-label fw-semibold">
+                            <i class="bi bi-palette text-info me-1"></i>Презентація
+                            <span class="text-muted fw-normal small">(1–10)</span>
+                        </label>
+                        <input asp-for="Presentation" type="number" min="1" max="10" class="form-control form-control-lg" placeholder="Оцінка за подачу" />
+                        <span asp-validation-for="Presentation" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="Creativity" class="form-label fw-semibold">
+                            <i class="bi bi-lightbulb text-success me-1"></i>Креативність
+                            <span class="text-muted fw-normal small">(1–10)</span>
+                        </label>
+                        <input asp-for="Creativity" type="number" min="1" max="10" class="form-control form-control-lg" placeholder="Оцінка за оригінальність" />
+                        <span asp-validation-for="Creativity" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="Comments" class="form-label fw-semibold">
+                            <i class="bi bi-chat-left-text text-muted me-1"></i>Коментар
+                            <span class="text-muted fw-normal small">(необов'язково)</span>
+                        </label>
+                        <textarea asp-for="Comments" class="form-control" rows="3" placeholder="Ваші враження від страви..."></textarea>
+                        <span asp-validation-for="Comments" class="text-danger small"></span>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary flex-fill">
+                            <i class="bi bi-check-lg me-1"></i>Зберегти оцінку
+                        </button>
+                        <a asp-controller="Recipes" asp-action="Details" asp-route-id="@Model.RecipeId" class="btn btn-outline-secondary">
+                            Скасувати
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}
