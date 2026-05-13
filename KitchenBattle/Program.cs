@@ -27,7 +27,7 @@ builder.Services.AddAuthentication(options =>
 {
     options.Authority = "http://localhost:8080/realms/KitchenBattle";
     options.ClientId = "kitchenbattle";
-    options.ClientSecret = "your-client-secret";
+    options.ClientSecret = "CklRBVEqrl5XCYN4Ctwowl9dxAv3qArQ";
 
     options.ResponseType = "code";
 
