@@ -1,0 +1,43 @@
+﻿@model IEnumerable<KitchenBattle.Models.Recipe>
+
+@{
+    ViewData["Title"] = "Перевірка рецептів";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">Рецепти на модерації</h2>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-success">Всі рецепти перевірено!</div>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var recipe in Model)
+            {
+                <div class="col-md-6 mb-3">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">@recipe.Title</h5>
+                            <p class="text-muted small">Автор: @recipe.ChefName | Категорія: @recipe.Category</p>
+                            <div class="d-flex gap-2">
+                                <a asp-controller="Recipes" asp-action="Details" asp-route-id="@recipe.Id" class="btn btn-sm btn-outline-info">Деталі</a>
+                                
+                                <form asp-action="ApproveRecipe" asp-route-id="@recipe.Id" method="post" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-sm btn-success">Схвалити</button>
+                                </form>
+
+                                <form asp-action="RejectRecipe" asp-route-id="@recipe.Id" method="post" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-sm btn-danger">Відхилити</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

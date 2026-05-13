@@ -1,0 +1,58 @@
+﻿@model KitchenBattle.ViewModels.AdminDashboardViewModel
+
+@{
+    ViewData["Title"] = "Адмін-панель";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">Огляд системи</h2>
+
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white mb-4">
+                <div class="card-body text-center">
+                    <h6>Всього користувачів</h6>
+                    <h3>@Model.TotalUsers</h3>
+                    <div class="small">Шефів: @Model.TotalChefs | Суддів: @Model.TotalJudges</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card bg-success text-white mb-4">
+                <div class="card-body text-center">
+                    <h6>Опубліковано рецептів</h6>
+                    <h3>@Model.PublishedRecipes</h3>
+                    <div class="small">Очікують: @Model.PendingRecipes</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card bg-info text-white mb-4">
+                <div class="card-body text-center">
+                    <h6>Всього батлів</h6>
+                    <h3>@Model.TotalBattles</h3>
+                    <div class="small">Завершено: @Model.FinishedBattles</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card bg-dark text-white mb-4 shadow">
+                <div class="card-body text-center d-flex flex-column justify-content-center">
+                    <a asp-action="Statistics" class="btn btn-outline-light btn-sm">Переглянути статистику балів</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="list-group shadow-sm mt-3">
+        <a asp-action="RecipesForReview" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+            Модерація рецептів
+            <span class="badge bg-danger rounded-pill">@Model.PendingRecipes</span>
+        </a>
+        <a asp-action="Users" class="list-group-item list-group-item-action">Керування користувачами</a>
+        <a asp-controller="Battles" asp-action="Index" class="list-group-item list-group-item-action">Керування батлами</a>
+    </div>
+</div>
