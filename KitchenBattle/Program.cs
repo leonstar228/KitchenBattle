@@ -1,5 +1,7 @@
 using KitchenBattle.Data;
 using KitchenBattle.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,7 +17,28 @@ builder.Services.AddStackExchangeRedisCache(options =>
     options.InstanceName = "KitchenBattle_";
 });
 
-builder.Services.AddHttpContextAccessor();
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+})
+.AddCookie()
+.AddOpenIdConnect(options =>
+{
+    options.Authority = "http://localhost:8080/realms/KitchenBattle";
+    options.ClientId = "kitchenbattle";
+    options.ClientSecret = "your-client-secret";
+
+    options.ResponseType = "code";
+
+    options.RequireHttpsMetadata = false;
+
+    options.SaveTokens = true;
+
+    options.GetClaimsFromUserInfoEndpoint = true;
+});
+
+builder.Services.AddAuthorization();
 
 builder.Services.AddHttpContextAccessor();
 
@@ -26,8 +49,8 @@ builder.Services.AddScoped<AdminService>();
 builder.Services.AddScoped<BattleService>();
 builder.Services.AddScoped<LeaderBoardService>();
 
-builder.Services.AddScoped<IRecipeService, RecipeService>();
-builder.Services.AddScoped<IKeycloakAuthService, KeycloakAuthService>();
+builder.Services.AddScoped<RecipeService>();
+builder.Services.AddScoped<KeycloakAuthService>();
 
 var app = builder.Build();
 
