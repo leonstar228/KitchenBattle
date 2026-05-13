@@ -21,7 +21,7 @@ namespace KitchenBattle.Services
             var userName = user?.Identity?.Name;
 
             if (string.IsNullOrEmpty(userName)) return null!;
-            var existingUser = await _db.ApplicationUser
+            var existingUser = await _db.ApplicationUsers
                 .Include(u => u.Recipes)
                 .FirstOrDefaultAsync(u => u.UserName == userName);
 
@@ -32,7 +32,7 @@ namespace KitchenBattle.Services
                 CreatedAt = DateTime.UtcNow
             };
 
-            _db.ApplicationUser.Add(newUser);
+            _db.ApplicationUsers.Add(newUser);
             await _db.SaveChangesAsync();
 
             return newUser;
