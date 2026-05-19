@@ -8,9 +8,148 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/KitchenBattle.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,600&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- Загальні налаштування сайту та колір фону під хвилею --- */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f7f5f2; /* Точний світлий кремовый фон як на фото */
+            color: #4a4a4a;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* --- Навігаційна панель (Навбар) --- */
+        .navbar {
+            padding: 20px 0 !important;
+            background-color: #ffffff !important;
+            box-shadow: 0 4px 30px rgba(0,0,0,0.015) !important;
+            border-bottom: none !important;
+        }
+
+        .navbar-brand {
+            font-size: 24px !important;
+            font-weight: 700 !important;
+            color: #461e13 !important; /* Глибокий шоколадно-коричневий з логотипу Kanigiri */
+            letter-spacing: 0.5px;
+        }
+
+        .nav-link {
+            color: #555555 !important;
+            font-weight: 500 !important;
+            font-size: 15px !important;
+            padding: 8px 18px !important;
+            transition: color 0.2s ease;
+        }
+
+        .nav-link:hover, .nav-link:focus {
+            color: #e59c3c !important;
+        }
+
+        #userDropdown {
+            color: #461e13 !important;
+        }
+
+        /* Помаранчева кнопка "Увійти" з макета */
+        .navbar-nav .btn-outline-primary {
+            background-color: #e59c3c !important;
+            color: #ffffff !important;
+            border: none !important;
+            padding: 9px 28px !important;
+            border-radius: 25px !important;
+            font-weight: 600 !important;
+            font-size: 13px !important;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 14px rgba(229, 156, 60, 0.25);
+            transition: all 0.3s ease !important;
+            display: inline-block;
+        }
+
+        .navbar-nav .btn-outline-primary:hover {
+            background-color: #cb842b !important;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px rgba(229, 156, 60, 0.35);
+        }
+
+        /* --- Контейнер верхньої білої зони з хвилею --- */
+        .white-hero-wrapper {
+            position: relative;
+            background-color: #ffffff; /* Верхня частина залишається чисто білою */
+            padding-bottom: 120px; /* Простір під контентом для формування хвилі */
+        }
+
+        /* --- Конструктор SVG Хвилі як на оригінальному фото --- */
+        .wave-divider {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            overflow: hidden;
+            line-height: 0;
+            transform: rotate(180deg);
+        }
+
+        .wave-divider svg {
+            position: relative;
+            display: block;
+            width: calc(100% + 1.3px);
+            height: 80px;
+        }
+
+        .wave-divider .shape-fill {
+            fill: #f7f5f2; /* Колір фігури збігається з кремовим фоном нижньої частини сторінки */
+        }
+
+        /* --- Dropdown меню --- */
+        .dropdown-menu {
+            border-radius: 14px !important;
+            padding: 10px 0 !important;
+            box-shadow: 0 10px 30px rgba(70, 30, 19, 0.08) !important;
+        }
+
+        .dropdown-item {
+            font-size: 14px;
+            font-weight: 500;
+            padding: 9px 22px !important;
+        }
+
+        .dropdown-item:hover {
+            background-color: #fcfbfa !important;
+            color: #e59c3c !important;
+        }
+
+        /* --- Футер --- */
+        footer {
+            background-color: #f7f5f2 !important; 
+            border-top: none !important;
+            padding: 50px 0 !important;
+        }
+
+        footer p {
+            color: #a09e9b;
+            font-size: 13px;
+        }
+
+        footer a.text-muted {
+            color: #461e13 !important;
+            font-size: 20px;
+            margin: 0 14px;
+            transition: all 0.2s ease;
+            display: inline-block;
+        }
+
+        footer a.text-muted:hover {
+            color: #e59c3c !important;
+            transform: translateY(-2px);
+        }
+    </style>
 </head>
 <body>
-    <!-- Навбар -->
     <header>
         <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm">
             <div class="container">
@@ -19,7 +158,7 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
+                    <ul class="navbar-nav me-auto">
                         <li class="nav-item">
                             <a class="nav-link" asp-controller="Home" asp-action="Index">Головна</a>
                         </li>
@@ -30,29 +169,71 @@
                             <a class="nav-link" asp-controller="Recipes" asp-action="Index">Рецепти</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-controller="Leaderboard" asp-action="CurrentBattle">Лідерборд</a>
+                            <a class="nav-link" asp-controller="Leaderboard" asp-action="Index">Лідерборд</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Home" asp-action="Privacy">Конфіденційність</a>
-                        </li>
+
+                        @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                        {
+                                    <li class="nav-item">
+                                        <a class="nav-link fw-bold text-danger" asp-controller="Admin" asp-action="Dashboard">
+                                            <i class="bi bi-shield-lock"></i> Адмінка
+                                        </a>
+                                    </li>
+                        }
+                    </ul>
+
+                    <ul class="navbar-nav ms-auto">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle fw-bold" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="bi bi-person-circle"></i> @User.Identity.Name
+                                        </a>
+                                        <ul class="dropdown-menu dropdown-menu-end shadow border-0" aria-labelledby="userDropdown">
+                                            <li><a class="dropdown-item" asp-controller="Recipes" asp-action="MyRecipes">Мої рецепти</a></li>
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li>
+                                                <form class="form-inline" asp-controller="Account" asp-action="Logout" method="post">
+                                                    <button type="submit" class="dropdown-item text-danger">
+                                                        <i class="bi bi-box-arrow-right"></i> Вийти
+                                                    </button>
+                                                </form>
+                                            </li>
+                                        </ul>
+                                    </li>
+                        }
+                        else
+                        {
+                                    <li class="nav-item">
+                                        <a class="btn btn-outline-primary ms-lg-2" asp-controller="Account" asp-action="Login">
+                                            Увійти
+                                        </a>
+                                    </li>
+                        }
                     </ul>
                 </div>
             </div>
         </nav>
     </header>
 
-    <!-- Основний контент -->
-    <main role="main" class="container mt-4">
-        @RenderBody()
-    </main>
+    <div class="white-hero-wrapper">
+        <main role="main" class="container mt-4">
+            @RenderBody()
+        </main>
 
-    <!-- Футер -->
-    <footer class="text-center mt-5 py-4 border-top">
+        <div class="wave-divider">
+            <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,42.4V0Z" class="shape-fill"></path>
+            </svg>
+        </div>
+    </div>
+
+    <footer class="text-center py-4">
         <p class="mb-1">&copy; 2026 KitchenBattle. Всі права захищені.</p>
         <div>
             <a href="#" class="text-muted me-3"><i class="bi bi-facebook"></i></a>
             <a href="#" class="text-muted me-3"><i class="bi bi-instagram"></i></a>
-            <a href="#" class="text-muted"><i class="bi bi-twitter"></i></a>
+            <a href="#" class="text-muted"><i class="bi bi-twitter-x"></i></a>
         </div>
     </footer>
 
