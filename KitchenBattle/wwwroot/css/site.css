@@ -10,19 +10,20 @@ html {
 
 :root {
     /* Основні кольори*/
-    --primary-green: #4A6741;      /* Основний зелений – картки, акценти, CTA */
-    --secondary-orange: #C47B2B;    /* Другорядний помаранчевий – кнопки, ціни, зірки */
-    --background-page: #F5F1E8;   /* Фон сторінки */
-    --dark: #2C2C2A;         /* Темний – текст, навбар, футер */
-
+    --primary: #4A6741; /* Основний зелений – картки, акценти, CTA */
+    --secondary: #C47B2B; /* Другорядний помаранчевий – кнопки, ціни, зірки */
+    --background: #F5F1E8; /* Фон сторінки */
+    --dark: #2C2C2A; /* Темний – текст, навбар, футер */
     /* Розширена палітра */
-    --hover-green: #6B8F5E;    /* Hover для карток */
-    --light-elements: #E8D5A3;     /* Бежевий – бордери, світлі елементи */
-    --white: #FFFFFF;        /* Білий – картки, секції */
-    --light-brown: #8B7355;  /* Другорядний текст, іконки */
-
+    --green-400: #6B8F5E; /* Hover для карток */
+    --gold-200: #E8D5A3; /* Бежевий – бордери, світлі елементи */
+    --white: #FFFFFF; /* Білий – картки, секції */
+    --neutral-600: #8B7355; /* Другорядний текст, іконки */
     /* Додаткові кольори */
-    --accent-red: #D4483B;   /* Акцентний червоний – знижки, закреслені ціни */
+    --accent-red: #D4483B; /* Акцентний червоний – знижки, закреслені ціни */
+    /* Кнопки */
+    --btn-primary-bg: #492815;
+    --btn-secondary-bg: #a15428;
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
@@ -47,28 +48,57 @@ body {
   text-align: start;
 }
 
+.text {
+    color: var(--white); /* білий текст */
+}
+
 .card-green {
-    background-color: var(--bg-color-green); /* зелений */
-    color: var(--color-white);
+    background-color: var(--primary); /* зелений */
+    color: var(--white);
     border-radius: 10px;
 }
 
+    .card-green:hover {
+        background-color: var(--green-400); /* трохи світліший відтінок при наведенні */
+        color: var(--white);
+    }
+
 .card-yellow {
-    background-color: var(--bg-color-yellow); /* жовтий */
-    color: var(--color-white);
+    background-color: var(--secondary); /* жовтий */
+    color: var(--white);
     border-radius: 10px;
 }
+
+    .card-yellow:hover {
+        background-color: var(--gold-200); /* трохи світліший відтінок при наведенні */
+        color: var(--white);
+    }
 
 
 .btn-kitchen {
-    background-color: var(--bg-color-blue); /* Темно-синій */
-    color: var(--color-white); /* білий текст */
+    background-color: var(--btn-primary-bg); /* Темно-коричневий */
+    color: var(--white); /* білий текст */
+    text-transform: uppercase;
+    padding: 10px 40px;
     border-radius: 15px; /* заокруглені краї */
     border: none; /* без рамки */
     transition: background-color 0.3s ease;
 }
 
     .btn-kitchen:hover {
-        background-color: var(--bg-color-blue-white); /* трохи світліший відтінок при наведенні */
-        color: var(--color-white);
+        background-color: var(--btn-secondary-bg); /* трохи світліший відтінок при наведенні */
+        color: var(--white);
     }
+
+.card-green h5,
+.card-green p,
+.card-green span,
+.card-green small,
+.card-green a,
+.card-yellow h5,
+.card-yellow p,
+.card-yellow span,
+.card-yellow small,
+.card-yellow a {
+    color: var(--white) !important;
+}
