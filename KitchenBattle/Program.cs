@@ -25,13 +25,16 @@ builder.Services.AddAuthentication(options =>
 .AddCookie()
 .AddOpenIdConnect(options =>
 {
-    options.Authority = builder.Configuration["Keycloak:Authority"] ?? "http://localhost:8080/realms/KitchenBattle";
-    options.ClientId = builder.Configuration["Keycloak:ClientId"] ?? "kitchenbattle";
-    options.ClientSecret = builder.Configuration["Keycloak:ClientSecret"] ?? "CklRBVEqrl5XCYN4Ctwowl9dxAv3qArQ";
+    options.Authority = builder.Configuration["Keycloak:Authority"];
+    options.ClientId = builder.Configuration["Keycloak:ClientId"];
+    options.ClientSecret = builder.Configuration["Keycloak:ClientSecret"];
+
     options.ResponseType = "code";
     options.RequireHttpsMetadata = false;
     options.SaveTokens = true;
     options.GetClaimsFromUserInfoEndpoint = true;
+
+    options.CallbackPath = "/signin-oidc";
 });
 
 builder.Services.AddAuthorization();
