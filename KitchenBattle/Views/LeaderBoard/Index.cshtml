@@ -4,34 +4,125 @@
     ViewData["Title"] = "Лідерборд";
 }
 
-<div class="container mt-5">
-    <h2 class="text-center mb-4">Лідерборд</h2>
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="display-5 fw-bold" style="color: #2C2C2A;">Лідерборд</h1>
+        <p class="lead" style="color: #8B7355;">Найкращі рецепти нашого кухарського батлу</p>
+    </div>
 
-    <div class="table-responsive">
-        <table class="table table-striped table-hover shadow-sm">
-            <thead class="table-dark">
-            <tr>
-                <th scope="col">Місце</th>
-                <th scope="col">Назва рецепта</th>
-                <th scope="col">Шеф</th>
-                <th scope="col">Категорія</th>
-                <th scope="col">Середній бал</th>
-                <th scope="col">Кількість оцінок</th>
-            </tr>
-            </thead>
-            <tbody>
-            @foreach (var item in Model)
+
+    <div class="row g-4 mb-5">
+        @for (int i = 0; i < Math.Min(3, Model.Count); i++)
+        {
+            var item = Model[i];
+            var colorClass = i switch
             {
-                <tr>
-                    <td><strong>@item.Place</strong></td>
-                    <td>@item.RecipeTitle</td>
-                    <td>@item.ChefName</td>
-                    <td>@item.Category</td>
-                    <td>@item.AverageScore.ToString("0.00")</td>
-                    <td>@item.TotalScoresCount</td>
-                </tr>
-            }
-            </tbody>
-        </table>
+                0 => "top-1",
+                1 => "top-2",
+                2 => "top-3",
+                _ => "top-1"
+            };
+
+            <div class="col-lg-4 col-md-6">
+                <div class="leader-card h-100 @colorClass position-relative" style="border-radius: 16px; overflow: hidden;">
+
+                    <div class="place-badge">
+                        <span class="badge rounded-pill fs-3 fw-bold">@item.Place</span>
+                    </div>
+
+                    <img src="https://img.freepik.com/free-photo/top-view-yummy-dovga-yogurt-soup-with-seasonings-white-milk-soup-dairy_140725-124527.jpg?semt=ais_hybrid&w=740&q=80" 
+                         class="card-img-top" 
+                         style="height: 240px; object-fit: cover; width: 100%;"
+                         alt="@item.RecipeTitle" />
+
+                    <div class="p-4 text-white d-flex flex-column" style="height: calc(100% - 240px);">
+                        <h5 class="fw-bold mb-2">@item.RecipeTitle</h5>
+                        <p class="mb-3 opacity-90">👨‍🍳 @item.ChefName</p>
+                        
+                        <div class="mt-auto">
+                            <span class="badge mb-3" style="background: rgba(255,255,255,0.95); color: #2C2C2A; font-weight: 500;">
+                                @item.Category
+                            </span>
+                            
+                            <div class="d-flex justify-content-between align-items-end">
+                                <div class="stars fs-4">★★★★☆</div>
+                                <div class="text-end">
+                                    <strong class="fs-2">@item.AverageScore.ToString("0.0")</strong>
+                                    <small class="d-block opacity-75">(@item.TotalScoresCount)</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    
+    <h4 class="mb-4" style="color: #2C2C2A;">Повний рейтинг</h4>
+    
+    <div class="row g-3">
+        @for (int i = 3; i < Model.Count; i++)
+        {
+            var item = Model[i];
+            
+            <div class="col-12">
+                <div class="leader-row d-flex align-items-center p-4 bg-white rounded-4 shadow-sm">
+                    <div class="place-number me-4">
+                        <strong class="fs-3" style="color: #4A6741;">#@item.Place</strong>
+                    </div>
+                    
+                    <div class="flex-grow-1">
+                        <h6 class="mb-1 fw-semibold">@item.RecipeTitle</h6>
+                        <small style="color: #8B7355;">👨‍🍳 @item.ChefName • @item.Category</small>
+                    </div>
+                    
+                    <div class="text-end">
+                        <div class="d-flex align-items-center gap-2">
+                            <span style="color: #C47B2B; font-size: 1.5rem;">★</span>
+                            <strong class="fs-3">@item.AverageScore.ToString("0.00")</strong>
+                        </div>
+                        <small style="color: #8B7355;">@item.TotalScoresCount оцінок</small>
+                    </div>
+                </div>
+            </div>
+        }
     </div>
 </div>
+
+<style>
+    .leader-card {
+        transition: 0.3s ease;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    .leader-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+    }
+
+    .top-1 { background: linear-gradient(135deg, #4A6741, #3d5534); }
+    .top-2 { background: linear-gradient(135deg, #6B8F5E, #4A6741); }
+    .top-3 { background: linear-gradient(135deg, #C47B2B, #a86a24); }
+
+    .place-badge {
+        position: absolute;
+        top: -18px;
+        left: 24px;
+        z-index: 10;
+        width: 62px;
+        height: 62px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: #FFFFFF;
+        color: #2C2C2A;
+        box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+        font-size: 1.6rem;
+        font-weight: bold;
+    }
+
+    .leader-row:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+</style>
