@@ -61,7 +61,7 @@ namespace KitchenBattle.Controllers
             var scores = new List<ScoreDisplayViewModel>();
             foreach (var score in recipe.Scores)
             {
-                var judge = await _context.ApplicationUser.FindAsync(score.JudgeId);
+                var judge = await _context.ApplicationUsers.FindAsync(score.JudgeId);
                 scores.Add(new ScoreDisplayViewModel
                 {
                     Id = score.Id,
@@ -107,7 +107,7 @@ namespace KitchenBattle.Controllers
             if (!ModelState.IsValid) return View(model);
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var user = await _context.ApplicationUser.FindAsync(userId);
+            var user = await _context.ApplicationUsers.FindAsync(userId);
 
             if (user == null) return Unauthorized();
 

@@ -1,6 +1,7 @@
 ﻿@model IEnumerable<KitchenBattle.Models.Battle>
 @{
     ViewData["Title"] = "Головна";
+    int index = 0;
 }
 
 <div class="container mt-5">
@@ -14,8 +15,9 @@
     <div class="row justify-content-center">
         @foreach (var battle in Model)
         {
+            var cardClass = (index % 2 == 0) ? "card-green" : "card-yellow";
             <div class="col-md-4 mb-4">
-                <div class="card shadow-sm border-0">
+                <div class="card shadow-sm border-0 @cardClass">
                     <img src="~/images/battle.jpg" class="card-img-top" alt="Battle image">
                     <div class="card-body">
                         <h5 class="card-title fw-bold">@battle.BattleName</h5>
@@ -26,10 +28,11 @@
                                 Початок: @battle.StartedAt.ToShortDateString()
                             </small>
                         </p>
-                        <a href="@Url.Action("Index", "Battles")" class="btn btn-kitchen w-100">Переглянути батли</a>
+                        <a href="@Url.Action("Index", "Battles")" class="btn btn-kitchen w-90">Переглянути батли</a>
                     </div>
                 </div>
             </div>
+            index++;
         }
     </div>
 
@@ -39,21 +42,21 @@
             <div class="p-4 bg-light rounded shadow-sm">
                 <h5 class="fw-bold">Рецепти</h5>
                 <p class="text-muted">Переглянь найкращі страви учасників.</p>
-                <a href="@Url.Action("Index", "Recipes")" class="btn btn-success">Переглянути рецепти</a>
+                <a href="@Url.Action("Index", "Recipes")" class="btn w-100 btn-success">Переглянути рецепти</a>
             </div>
         </div>
         <div class="col-md-4 mb-3">
             <div class="p-4 bg-light rounded shadow-sm">
                 <h5 class="fw-bold">Лідерборд</h5>
                 <p class="text-muted">Дізнайся, хто зараз на вершині!</p>
-                <a href="@Url.Action("CurrentBattle", "Leaderboard")" class="btn btn-warning">Лідерборд</a>
+                <a href="@Url.Action("Index", "Leaderboard")" class="btn w-100 btn-warning">Лідерборд</a>
             </div>
         </div>
         <div class="col-md-4 mb-3">
             <div class="p-4 bg-light rounded shadow-sm">
                 <h5 class="fw-bold">Політика конфіденційності</h5>
                 <p class="text-muted">Дізнайся, як ми захищаємо твої дані.</p>
-                <a href="@Url.Action("Privacy", "Home")" class="btn btn-secondary">Політика конфіденційності</a>
+                <a href="@Url.Action("Privacy", "Home")" class="btn w-100 btn-secondary">Політика конфіденційності</a>
             </div>
         </div>
     </div>

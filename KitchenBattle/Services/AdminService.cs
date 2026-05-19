@@ -26,7 +26,7 @@ namespace KitchenBattle.Services
         {
             return new AdminDashboardViewModel
             {
-                TotalUsers = await _context.ApplicationUser.CountAsync(),
+                TotalUsers = await _context.ApplicationUsers.CountAsync(),
                 TotalChefs = await _context.BattleChefs.Select(bc => bc.ChefId).Distinct().CountAsync(),
                 TotalJudges = await _context.BattleJudges.Select(bj => bj.JudgeId).Distinct().CountAsync(),
                 TotalRecipes = await _context.Recipes.CountAsync(),
@@ -40,17 +40,17 @@ namespace KitchenBattle.Services
 
         public async Task<List<ApplicationUser>> GetAllUsersAsync()
         {
-            return await _context.ApplicationUser
+            return await _context.ApplicationUsers
                 .OrderByDescending(u => u.UserName)
                 .ToListAsync();
         }
 
         public async Task DeleteUserAsync(string userId)
         {
-            var user = await _context.ApplicationUser.FindAsync(userId);
+            var user = await _context.ApplicationUsers.FindAsync(userId);
             if (user != null)
             {
-                _context.ApplicationUser.Remove(user);
+                _context.ApplicationUsers.Remove(user);
                 await _context.SaveChangesAsync();
             }
         }

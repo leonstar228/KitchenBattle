@@ -19,42 +19,50 @@ public class RedisService
 
     public async Task<List<Recipe>> GetRecipesAsync()
     {
+        Console.WriteLine("Виклик GetRecipesAsync");
         var cached = await _cache.GetStringAsync(RecipesCacheKey);
         if (cached != null)
+        {
+            Console.WriteLine("Дані знайдено в кеші");
             return JsonSerializer.Deserialize<List<Recipe>>(cached) ?? new List<Recipe>();
-
+        }
+        Console.WriteLine("Кешь порожній!");
         var recipes = await _db.Recipes
             .OrderByDescending(r => r.Id)
             .ToListAsync();
-
+        Console.WriteLine("Отримуємо данні з бази.");
         await _cache.SetStringAsync(RecipesCacheKey,
             JsonSerializer.Serialize(recipes),
             new DistributedCacheEntryOptions
             {
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5)
             });
-
+        Console.WriteLine("Данні збережено в кеш.");
         return recipes;
     }
     
     private const string BattlesCacheKey = "battles_list";
     public async Task<List<Battle>> GetBattlesAsync()
     {
+        Console.WriteLine("Виклик GetBattlesAsync");
         var cached = await _cache.GetStringAsync(BattlesCacheKey);
         if (cached != null)
+        {
+            Console.WriteLine("Данні знайдено в кеші!");
             return JsonSerializer.Deserialize<List<Battle>>(cached) ?? new List<Battle>();
-
+        }
+        Console.WriteLine("Кеш порожній!");
         var battles = await _db.Battles
             .OrderByDescending(b => b.StartedAt)
             .ToListAsync();
-
+        Console.WriteLine("Отримуємо данні з бази.");
         await _cache.SetStringAsync(BattlesCacheKey,
             JsonSerializer.Serialize(battles),
             new DistributedCacheEntryOptions
             {
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5)
             });
-
+        Console.WriteLine("Данні збережено в кеш.");
         return battles;
     }
     
@@ -62,29 +70,36 @@ public class RedisService
 
     public async Task<List<Score>> GetScoresAsync()
     {
+        Console.WriteLine("Виклик GetScoresAsync");
         var cached = await _cache.GetStringAsync(ScoresCacheKey);
         if (cached != null)
+        {
+            Console.WriteLine("Данні знайдено в кеші!");
             return JsonSerializer.Deserialize<List<Score>>(cached) ?? new List<Score>();
-
+        }
+        Console.WriteLine("Кеш порожній!");
         var scores = await _db.Scores
             .OrderByDescending(s => s.TotalScore)
             .ToListAsync();
-
+        Console.WriteLine("Отримуємо данні з бази.");
         await _cache.SetStringAsync(ScoresCacheKey,
             JsonSerializer.Serialize(scores),
             new DistributedCacheEntryOptions
             {
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5)
             });
-
+        Console.WriteLine("Данні збережено в кеш.");
         return scores;
     }
     
     public static async Task ClearCacheAsync(IDistributedCache cache)
     {
         await cache.RemoveAsync(RecipesCacheKey);
+        Console.WriteLine("Кеш рецептів очищено.");
         await cache.RemoveAsync(BattlesCacheKey);
+        Console.WriteLine("Кеш батлів очищено.");
         await cache.RemoveAsync(ScoresCacheKey);
+        Console.WriteLine("Кеш список рахунків очищено.");
     }
 
 }

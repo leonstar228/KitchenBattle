@@ -1,0 +1,132 @@
+﻿@model IEnumerable<KitchenBattle.Models.Recipe>
+@{
+    ViewData["Title"] = "Мої рецепти";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="display-5 fw-bold">👨‍🍳 Мої рецепти</h1>
+            <p class="text-muted">Керуйте своїми кулінарними шедеврами</p>
+        </div>
+        <a asp-action="Create" class="btn btn-kitchen">
+            <i class="bi bi-plus-circle"></i> Новий рецепт
+        </a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="text-center py-5">
+            <i class="bi bi-emoji-smile fs-1 text-muted"></i>
+            <h3 class="text-muted mt-3">У вас ще немає рецептів</h3>
+            <p>Створіть свій перший рецепт прямо зараз!</p>
+            <a asp-action="Create" class="btn btn-kitchen">Створити рецепт</a>
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-dark table-hover">
+                <thead>
+                    <tr>
+                        <th>Фото</th>
+                        <th>Назва</th>
+                        <th>Категорія</th>
+                        <th>Рейтинг</th>
+                        <th>Статус</th>
+                        <th>Дії</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var recipe in Model)
+                    {
+                        <tr>
+                            <td>
+                                <img src="@(string.IsNullOrEmpty(recipe.ImageUrl) ? "/images/default-recipe.jpg" : recipe.ImageUrl)"
+                                     style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;">
+                            </td>
+                            <td>
+                                <a asp-action="Details" asp-route-id="@recipe.Id" class="text-decoration-none text-white fw-bold">
+                                    @recipe.Title
+                                </a>
+                            </td>
+                            <td><span class="badge bg-info">@recipe.Category</span></td>
+                            <td>⭐ @recipe.AverageScore.ToString("0.0")</td>
+                            <td>
+                                @{
+                                    string statusClass = recipe.Status switch
+                                    {
+                                        StatusRecipeEnum.Draft => "bg-secondary",
+                                        StatusRecipeEnum.Checked => "bg-warning text-dark",
+                                        StatusRecipeEnum.Published => "bg-success",
+                                        StatusRecipeEnum.Rejected => "bg-danger",
+                                        _ => "bg-secondary"
+                                    };
+                                }
+                                <span class="badge @statusClass">@recipe.Status</span>
+                            </td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <a asp-action="Details" asp-route-id="@recipe.Id" class="btn btn-info btn-sm">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    @if (recipe.Status == StatusRecipeEnum.Draft || recipe.Status == StatusRecipeEnum.Rejected)
+                                    {
+                                        <a asp-action="Edit" asp-route-id="@recipe.Id" class="btn btn-warning btn-sm">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                    }
+                                    @if (recipe.Status == StatusRecipeEnum.Draft)
+                                    {
+                                        <form asp-action="SendToReview" asp-route-id="@recipe.Id" method="post" class="d-inline">
+                                            <button type="submit" class="btn btn-primary btn-sm" onclick="return confirm('Відправити на перевірку?')">
+                                                <i class="bi bi-send"></i>
+                                            </button>
+                                        </form>
+                                    }
+                                    @if (recipe.Status == StatusRecipeEnum.Checked)
+                                    {
+                                        <form asp-action="Publish" asp-route-id="@recipe.Id" method="post" class="d-inline">
+                                            <button type="submit" class="btn btn-success btn-sm" onclick="return confirm('Опублікувати рецепт?')">
+                                                <i class="bi bi-globe"></i>
+                                            </button>
+                                        </form>
+                                    }
+                                    @if (recipe.Status != StatusRecipeEnum.Published)
+                                    {
+                                        <a asp-action="Delete" asp-route-id="@recipe.Id" class="btn btn-danger btn-sm">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    }
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+<style>
+    .btn-kitchen {
+        background: linear-gradient(135deg, #e65c00, #f9a826);
+        color: white;
+        border: none;
+    }
+
+        .btn-kitchen:hover {
+            background: linear-gradient(135deg, #cc5200, #e69500);
+            color: white;
+        }
+
+    .table-dark {
+        background: #1a1a2e;
+        border-radius: 16px;
+        overflow: hidden;
+    }
+
+        .table-dark th {
+            border-bottom-color: #e65c00;
+        }
+</style>

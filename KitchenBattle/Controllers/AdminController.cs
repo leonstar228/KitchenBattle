@@ -7,7 +7,8 @@ using Microsoft.Extensions.Caching.Distributed;
 
 namespace KitchenBattle.Controllers
 {
-    [Authorize(Roles = "Admin")] 
+    [Authorize(Roles = "admin")]
+    [Route("Admin")] 
     public class AdminController : Controller
     {
         private readonly IAdminService _adminService;
@@ -27,18 +28,22 @@ namespace KitchenBattle.Controllers
             _cache = cache;
         }
 
+        [Route("")]
+        [Route("Dashboard")]
         public async Task<IActionResult> Dashboard()
         {
             var stats = await _adminService.GetDashboardStatsAsync();
             return View(stats);
         }
 
+        [Route("Recipes")]
         public async Task<IActionResult> RecipesForReview()
         {
             var recipes = await _recipeService.GetRecipesByStatusAsync(StatusRecipeEnum.Checked);
             return View(recipes);
         }
 
+        [Route("Recipes/Approve")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ApproveRecipe(int id)
@@ -53,6 +58,7 @@ namespace KitchenBattle.Controllers
             return RedirectToAction(nameof(RecipesForReview));
         }
 
+        [Route("Recipes/Reject")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RejectRecipe(int id)
@@ -61,12 +67,14 @@ namespace KitchenBattle.Controllers
             return RedirectToAction(nameof(RecipesForReview));
         }
 
+        [Route("Users")]
         public async Task<IActionResult> Users()
         {
             var users = await _adminService.GetAllUsersAsync();
             return View(users);
         }
 
+        [Route("Users/Delete")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteUser(string id)
@@ -75,6 +83,7 @@ namespace KitchenBattle.Controllers
             return RedirectToAction(nameof(Users));
         }
 
+        [Route("Statistics")]
         public async Task<IActionResult> Statistics()
         {
             var stats = await _adminService.GetCategoryStatisticsAsync();
