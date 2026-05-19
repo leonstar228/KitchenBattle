@@ -110,7 +110,7 @@ builder.Services.AddScoped<ScoreService>();
 builder.Services.AddScoped<AdminService>();
 builder.Services.AddScoped<BattleService>();
 builder.Services.AddScoped<LeaderBoardService>();
-builder.Services.AddScoped<RecipeService>();
+builder.Services.AddScoped<IRecipeService, RecipeService>();
 builder.Services.AddScoped<KeycloakAuthService>();
 
 var app = builder.Build();
