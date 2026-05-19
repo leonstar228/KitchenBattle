@@ -1,0 +1,35 @@
+﻿@model KitchenBattle.Models.Battle
+@{
+    ViewData["Title"] = "Видалити батл";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0"><i class="bi bi-exclamation-triangle"></i> Підтвердження видалення</h4>
+                </div>
+                <div class="card-body">
+                    <p class="fw-semibold">Ви впевнені, що хочете видалити батл?</p>
+                    <div class="alert alert-warning">
+                        <strong>@Model.BattleName</strong>
+                        <br />
+                        <small class="text-muted">@Model.Description</small>
+                    </div>
+                    <p class="text-danger small">
+                        <i class="bi bi-info-circle"></i> Ця дія незворотна!
+                    </p>
+
+                    <form asp-action="DeleteConfirmed" asp-route-id="@Model.Id" method="post">
+                        @Html.AntiForgeryToken()
+                        <div class="d-flex justify-content-between">
+                            <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-secondary">Скасувати</a>
+                            <button type="submit" class="btn btn-danger">Видалити</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

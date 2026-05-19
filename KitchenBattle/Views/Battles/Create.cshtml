@@ -1,0 +1,72 @@
+﻿@model KitchenBattle.ViewModels.BattleCreateViewModel
+@{
+    ViewData["Title"] = "Створити батл";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="bi bi-plus-circle"></i> Створення нового батлу</h4>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Create" method="post">
+                        @Html.AntiForgeryToken()
+
+                        <div class="mb-3">
+                            <label asp-for="BattleName" class="form-label fw-semibold">Назва батлу</label>
+                            <input asp-for="BattleName" class="form-control" placeholder="Введіть назву..." />
+                            <span asp-validation-for="BattleName" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label fw-semibold">Опис</label>
+                            <textarea asp-for="Description" class="form-control" rows="3" placeholder="Опишіть правила батлу..."></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Category" class="form-label fw-semibold">Категорія страв</label>
+                            <select asp-for="Category" class="form-select" asp-items="Html.GetEnumSelectList<CategoryEnum>()"></select>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="RegistrationStart" class="form-label fw-semibold">Початок реєстрації</label>
+                                <input asp-for="RegistrationStart" class="form-control" type="datetime-local" />
+                                <span asp-validation-for="RegistrationStart" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="RegistrationEnd" class="form-label fw-semibold">Кінець реєстрації</label>
+                                <input asp-for="RegistrationEnd" class="form-control" type="datetime-local" />
+                                <span asp-validation-for="RegistrationEnd" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="StartedAt" class="form-label fw-semibold">Початок батлу</label>
+                                <input asp-for="StartedAt" class="form-control" type="datetime-local" />
+                                <span asp-validation-for="StartedAt" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="EndedAt" class="form-label fw-semibold">Завершення батлу (опціонально)</label>
+                                <input asp-for="EndedAt" class="form-control" type="datetime-local" />
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info small">
+                            <i class="bi bi-info-circle"></i> Реєстрація має закінчитись до початку батлу.
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a asp-action="Index" class="btn btn-secondary">Скасувати</a>
+                            <button type="submit" class="btn btn-primary">Створити батл</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
