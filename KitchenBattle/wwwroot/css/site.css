@@ -75,13 +75,24 @@ body {
         color: var(--white);
     }
 
+.text {
+    color: var(--secondary);
+    text-transform: uppercase;
+}
+
+.span {
+    background-color: var(--white);
+    border-radius: 20px;
+    border: 2px solid var(--secondary);
+    padding: 10px 15px;
+}
 
 .btn-kitchen {
     background-color: var(--btn-primary-bg); /* Темно-коричневий */
     color: var(--white); /* білий текст */
     text-transform: uppercase;
     padding: 10px 40px;
-    border-radius: 15px; /* заокруглені краї */
+    border-radius: 20px; /* заокруглені краї */
     border: none; /* без рамки */
     transition: background-color 0.3s ease;
 }
@@ -93,10 +104,10 @@ body {
 
 .btn-kitchen-secondary {
     background-color: var(--white); /* Білий фон */
-    color: var(--dark); /* Темний текст */
+    color: var(--secondary); /* Темний текст */
     text-transform: uppercase;
     padding: 10px 40px;
-    border-radius: 15px; /* заокруглені краї */
+    border-radius: 20px; /* заокруглені краї */
     border: 4px solid var(--secondary);
     transition: background-color 0.3s ease;
 }
@@ -104,6 +115,7 @@ body {
     .btn-kitchen-secondary:hover {
         background-color: var(--secondary); /* жовтий при наведенні */
         color: var(--white);
+        border: 4px solid var(--secondary);
     }}
 
 .card-green h5,
