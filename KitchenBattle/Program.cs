@@ -25,17 +25,16 @@ builder.Services.AddAuthentication(options =>
 .AddCookie()
 .AddOpenIdConnect(options =>
 {
-    options.Authority = "http://localhost:8080/realms/KitchenBattle";
-    options.ClientId = "kitchenbattle";
-    options.ClientSecret = "CklRBVEqrl5XCYN4Ctwowl9dxAv3qArQ";
+    options.Authority = builder.Configuration["Keycloak:Authority"];
+    options.ClientId = builder.Configuration["Keycloak:ClientId"];
+    options.ClientSecret = builder.Configuration["Keycloak:ClientSecret"];
 
     options.ResponseType = "code";
-
     options.RequireHttpsMetadata = false;
-
     options.SaveTokens = true;
-
     options.GetClaimsFromUserInfoEndpoint = true;
+
+    options.CallbackPath = "/signin-oidc";
 });
 
 builder.Services.AddAuthorization();
@@ -48,11 +47,18 @@ builder.Services.AddScoped<ScoreService>();
 builder.Services.AddScoped<AdminService>();
 builder.Services.AddScoped<BattleService>();
 builder.Services.AddScoped<LeaderBoardService>();
-
 builder.Services.AddScoped<RecipeService>();
 builder.Services.AddScoped<KeycloakAuthService>();
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+    await context.Database.MigrateAsync();
+    await DbSeeder.SeedAsync(context);
+}
 
 if (!app.Environment.IsDevelopment())
 {
