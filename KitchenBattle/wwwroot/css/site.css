@@ -9,11 +9,20 @@ html {
 }
 
 :root {
-    --bg-color-green: #7d8d2a;
-    --bg-color-yellow: #e7a545;
-    --bg-color-blue: #301145;
-    --bg-color-blue-white: #6e3296;
-    --color-white: #ffffff;
+    /* Основні кольори*/
+    --primary: #4A6741;      /* Основний зелений – картки, акценти, CTA */
+    --secondary: #C47B2B;    /* Другорядний помаранчевий – кнопки, ціни, зірки */
+    --background: #F5F1E8;   /* Фон сторінки */
+    --dark: #2C2C2A;         /* Темний – текст, навбар, футер */
+
+    /* Розширена палітра */
+    --green-400: #6B8F5E;    /* Hover для карток */
+    --gold-200: #E8D5A3;     /* Бежевий – бордери, світлі елементи */
+    --white: #FFFFFF;        /* Білий – картки, секції */
+    --neutral-600: #8B7355;  /* Другорядний текст, іконки */
+
+    /* Додаткові кольори */
+    --accent-red: #D4483B;   /* Акцентний червоний – знижки, закреслені ціни */
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
