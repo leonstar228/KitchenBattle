@@ -8,6 +8,14 @@ html {
   }
 }
 
+:root {
+    --bg-color-green: #7d8d2a;
+    --bg-color-yellow: #e7a545;
+    --bg-color-blue: #301145;
+    --bg-color-blue-white: #6e3296;
+    --color-white: #ffffff;
+}
+
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
   box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
@@ -30,15 +38,28 @@ body {
   text-align: start;
 }
 
+.card-green {
+    background-color: var(--bg-color-green); /* зелений */
+    color: var(--color-white);
+    border-radius: 10px;
+}
+
+.card-yellow {
+    background-color: var(--bg-color-yellow); /* жовтий */
+    color: var(--color-white);
+    border-radius: 10px;
+}
+
+
 .btn-kitchen {
-    background-color: #090963; /* темно-синій */
-    color: #fff; /* білий текст */
+    background-color: var(--bg-color-blue); /* Темно-синій */
+    color: var(--color-white); /* білий текст */
     border-radius: 15px; /* заокруглені краї */
     border: none; /* без рамки */
     transition: background-color 0.3s ease;
 }
 
     .btn-kitchen:hover {
-        background-color: #0b0b8a; /* трохи світліший відтінок при наведенні */
-        color: #fff;
+        background-color: var(--bg-color-blue-white); /* трохи світліший відтінок при наведенні */
+        color: var(--color-white);
     }
