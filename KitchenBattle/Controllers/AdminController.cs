@@ -7,7 +7,7 @@ using Microsoft.Extensions.Caching.Distributed;
 
 namespace KitchenBattle.Controllers
 {
-    [Authorize(Roles = "Admin")] 
+    [Authorize(Roles = "admin")] 
     public class AdminController : Controller
     {
         private readonly IAdminService _adminService;

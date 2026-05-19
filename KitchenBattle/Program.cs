@@ -3,8 +3,13 @@ using KitchenBattle.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.EntityFrameworkCore;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
+
+JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
 
 builder.Services.AddControllersWithViews();
 
@@ -34,13 +39,71 @@ builder.Services.AddAuthentication(options =>
     options.SaveTokens = true;
     options.GetClaimsFromUserInfoEndpoint = true;
 
+    options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+    {
+        NameClaimType = "preferred_username",
+        RoleClaimType = ClaimTypes.Role
+    };
+
+    options.Events = new OpenIdConnectEvents
+    {
+        OnTokenValidated = context =>
+        {
+            var identity = context.Principal?.Identity as ClaimsIdentity;
+            if (identity == null) return Task.CompletedTask;
+
+            var realmAccess = context.Principal.FindFirst("realm_access");
+            if (realmAccess != null)
+            {
+                try
+                {
+                    using var doc = JsonDocument.Parse(realmAccess.Value);
+                    if (doc.RootElement.TryGetProperty("roles", out var roles))
+                    {
+                        foreach (var r in roles.EnumerateArray())
+                        {
+                            var role = r.GetString();
+                            if (!string.IsNullOrEmpty(role))
+                                identity.AddClaim(new Claim(identity.RoleClaimType ?? ClaimTypes.Role, role));
+                        }
+                    }
+                }
+                catch { }
+            }
+
+            var resourceAccess = context.Principal.FindFirst("resource_access");
+            if (resourceAccess != null)
+            {
+                try
+                {
+                    using var doc = JsonDocument.Parse(resourceAccess.Value);
+                    foreach (var client in doc.RootElement.EnumerateObject())
+                    {
+                        if (client.Value.TryGetProperty("roles", out var roles))
+                        {
+                            foreach (var r in roles.EnumerateArray())
+                            {
+                                var role = r.GetString();
+                                if (!string.IsNullOrEmpty(role))
+                                    identity.AddClaim(new Claim(identity.RoleClaimType ?? ClaimTypes.Role, role));
+                            }
+                        }
+                    }
+                }
+                catch { }
+            }
+
+            return Task.CompletedTask;
+        }
+    };
+
     options.CallbackPath = "/signin-oidc";
 });
 
 builder.Services.AddAuthorization();
 
 builder.Services.AddHttpContextAccessor();
-
+builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<RedisService>();
 builder.Services.AddScoped<ScoreService>();
