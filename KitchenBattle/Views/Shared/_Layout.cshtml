@@ -14,30 +14,18 @@
     <link href="//fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,600&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
-        /* --- Палітра кольорів бренду (CSS-змінні) --- */
-        :root {
-            --brand-chocolate: #461e13;    /* Глибокий шоколадний колір для тексту й логотипу */
-            --brand-orange: #e59c3c;       /* Насичений помаранчевий колір */
-            --brand-orange-hover: #cb842b; /* Темніший помаранчевий для ефекту наведення */
-            --brand-bg-cream: #f7f5f2;     /* Теплий кремовий фон нижньої частини сторінки */
-            --brand-bg-white: #ffffff;     /* Чистий білий фон для верхньої контентної зони */
-            --text-dark-gray: #4a4a4a;
-            --text-muted-gray: #a09e9b;
-        }
-
-        /* --- Загальні налаштування сайту --- */
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: var(--brand-bg-cream);
-            color: var(--text-dark-gray);
+            background-color: var(--background); 
+            color: var(--dark);
             margin: 0;
             padding: 0;
         }
 
-        /* --- Навігаційна панель (Навбар) --- */
+        
         .navbar {
             padding: 20px 0 !important;
-            background-color: var(--brand-bg-white) !important;
+            background-color: var(--white) !important; 
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.015) !important;
             border-bottom: none !important;
         }
@@ -45,56 +33,56 @@
         .navbar-brand {
             font-size: 24px !important;
             font-weight: 700 !important;
-            color: var(--brand-chocolate) !important;
+            color: var(--dark) !important; 
             letter-spacing: 0.5px;
         }
 
         .nav-link {
-            color: #555555 !important;
+            color: var(--dark) !important; 
             font-weight: 500 !important;
             font-size: 15px !important;
             padding: 8px 18px !important;
             transition: color 0.2s ease;
+            opacity: 0.85;
         }
 
         .nav-link:hover, .nav-link:focus {
-            color: var(--brand-orange) !important;
+            color: var(--primary) !important; 
+            opacity: 1;
         }
 
         #userDropdown {
-            color: var(--brand-chocolate) !important;
+            color: var(--dark) !important;
         }
 
-        /* Фірмова помаранчева кнопка "Увійти" */
-        .navbar-nav .btn-outline-primary {
-            background-color: var(--brand-orange) !important;
-            color: var(--brand-bg-white) !important;
+        
+        .navbar-nav .btn-kitchen-nav {
+            background-color: var(--btn-primary-bg) !important; 
+            color: var(--white) !important;
             border: none !important;
             padding: 9px 28px !important;
-            border-radius: 25px !important;
+            border-radius: 15px !important; 
             font-weight: 600 !important;
             font-size: 13px !important;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            box-shadow: 0 4px 14px rgba(229, 156, 60, 0.25);
-            transition: all 0.3s ease !important;
+            transition: background-color 0.3s ease !important;
             display: inline-block;
         }
 
-        .navbar-nav .btn-outline-primary:hover {
-            background-color: var(--brand-orange-hover) !important;
-            transform: translateY(-1px);
-            box-shadow: 0 6px 18px rgba(229, 156, 60, 0.35);
+        .navbar-nav .btn-kitchen-nav:hover {
+            background-color: var(--btn-secondary-bg) !important; 
+            color: var(--white) !important;
         }
 
-        /* --- Огортаючий блок для створення хвилястого фону --- */
+        
         .white-hero-wrapper {
             position: relative;
-            background-color: var(--brand-bg-white);
-            padding-bottom: 120px; /* Простір знизу під зріз хвилі */
+            background-color: var(--white);
+            padding-bottom: 120px; 
         }
 
-        /* --- Векторна SVG-хвиля --- */
+        
         .wave-divider {
             position: absolute;
             bottom: 0;
@@ -113,43 +101,44 @@
         }
 
         .wave-divider .shape-fill {
-            fill: var(--brand-bg-cream); /* Хвиля зафарбовується в кремовий колір нижнього фону */
+            fill: var(--background); 
         }
 
-        /* --- Випадаюче меню користувача (Dropdown) --- */
+        
         .dropdown-menu {
-            border-radius: 14px !important;
+            border-radius: 10px !important;
             padding: 10px 0 !important;
-            box-shadow: 0 10px 30px rgba(70, 30, 19, 0.08) !important;
-            background-color: var(--brand-bg-white);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05) !important;
+            background-color: var(--white);
+            border: 1px solid var(--gold-200) !important; 
         }
 
         .dropdown-item {
             font-size: 14px;
             font-weight: 500;
             padding: 9px 22px !important;
-            color: var(--text-dark-gray);
+            color: var(--dark);
         }
 
         .dropdown-item:hover {
-            background-color: #fcfbfa !important;
-            color: var(--brand-orange) !important;
+            background-color: var(--background) !important;
+            color: var(--primary) !important;
         }
 
-        /* --- Нижній блок сайту (Футер) --- */
+        
         footer {
-            background-color: var(--brand-bg-cream) !important;
+            background-color: var(--background) !important; 
             border-top: none !important;
             padding: 50px 0 !important;
         }
 
         footer p {
-            color: var(--text-muted-gray);
+            color: var(--neutral-600); 
             font-size: 13px;
         }
 
         footer a.text-muted {
-            color: var(--brand-chocolate) !important;
+            color: var(--dark) !important; 
             font-size: 20px;
             margin: 0 14px;
             transition: all 0.2s ease;
@@ -157,7 +146,7 @@
         }
 
         footer a.text-muted:hover {
-            color: var(--brand-orange) !important;
+            color: var(--primary) !important; 
             transform: translateY(-2px);
         }
     </style>
@@ -218,7 +207,7 @@
                         else
                         {
                                 <li class="nav-item">
-                                    <a class="btn btn-outline-primary ms-lg-2" asp-controller="Account" asp-action="Login">
+                                    <a class="btn-kitchen-nav ms-lg-2" asp-controller="Account" asp-action="Login">
                                         Увійти
                                     </a>
                                 </li>
