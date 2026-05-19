@@ -18,7 +18,7 @@
             var cardClass = (index % 2 == 0) ? "card-green" : "card-yellow";
             <div class="col-md-4 mb-4">
                 <div class="card shadow-sm border-0 @cardClass">
-                    <img src="~/images/battle.jpg" class="card-img-top" alt="Battle image">
+                    <img src="~/images/battle.jpg" class="card-img-top card-img" alt="Battle image">
                     <div class="card-body">
                         <h5 class="card-title fw-bold">@battle.BattleName</h5>
                         <p class="card-text text-muted">@battle.Description</p>
@@ -42,21 +42,21 @@
             <div class="p-4 bg-light rounded shadow-sm">
                 <h5 class="fw-bold">Рецепти</h5>
                 <p class="text-muted">Переглянь найкращі страви учасників.</p>
-                <a href="@Url.Action("Index", "Recipes")" class="btn w-100 btn-success">Переглянути рецепти</a>
+                <a href="@Url.Action("Index", "Recipes")" class="btn w-100 btn-success btn-kitchen-secondary">Переглянути рецепти</a>
             </div>
         </div>
         <div class="col-md-4 mb-3">
             <div class="p-4 bg-light rounded shadow-sm">
                 <h5 class="fw-bold">Лідерборд</h5>
                 <p class="text-muted">Дізнайся, хто зараз на вершині!</p>
-                <a href="@Url.Action("Index", "Leaderboard")" class="btn w-100 btn-warning">Лідерборд</a>
+                <a href="@Url.Action("Index", "Leaderboard")" class="btn w-100 btn-warning btn-kitchen-secondary">Лідерборд</a>
             </div>
         </div>
         <div class="col-md-4 mb-3">
             <div class="p-4 bg-light rounded shadow-sm">
                 <h5 class="fw-bold">Політика конфіденційності</h5>
                 <p class="text-muted">Дізнайся, як ми захищаємо твої дані.</p>
-                <a href="@Url.Action("Privacy", "Home")" class="btn w-100 btn-secondary">Політика конфіденційності</a>
+                <a href="@Url.Action("Privacy", "Home")" class="btn w-100 btn-secondary btn-kitchen-secondary">Політика конфіденційності</a>
             </div>
         </div>
     </div>

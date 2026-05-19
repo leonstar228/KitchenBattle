@@ -48,14 +48,15 @@ body {
   text-align: start;
 }
 
-.text {
-    color: var(--white); /* білий текст */
+.card-img {
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
 }
 
 .card-green {
     background-color: var(--primary); /* зелений */
     color: var(--white);
-    border-radius: 10px;
+    border-radius: 20px;
 }
 
     .card-green:hover {
@@ -66,7 +67,7 @@ body {
 .card-yellow {
     background-color: var(--secondary); /* жовтий */
     color: var(--white);
-    border-radius: 10px;
+    border-radius: 20px;
 }
 
     .card-yellow:hover {
@@ -89,6 +90,21 @@ body {
         background-color: var(--btn-secondary-bg); /* трохи світліший відтінок при наведенні */
         color: var(--white);
     }
+
+.btn-kitchen-secondary {
+    background-color: var(--white); /* Білий фон */
+    color: var(--dark); /* Темний текст */
+    text-transform: uppercase;
+    padding: 10px 40px;
+    border-radius: 15px; /* заокруглені краї */
+    border: 4px solid var(--secondary);
+    transition: background-color 0.3s ease;
+}
+
+    .btn-kitchen-secondary:hover {
+        background-color: var(--secondary); /* жовтий при наведенні */
+        color: var(--white);
+    }}
 
 .card-green h5,
 .card-green p,
