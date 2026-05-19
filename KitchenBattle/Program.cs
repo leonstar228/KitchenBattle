@@ -30,9 +30,10 @@ builder.Services.AddAuthentication(options =>
 .AddCookie()
 .AddOpenIdConnect(options =>
 {
-    options.Authority = "http://localhost:8080/realms/kitchenbattle";
-    options.ClientId = "kitchenbattle-web";
-    options.ClientSecret = "KIgXjxOt25Cmrb1ZsqH6NQ5t2neGnCVM";
+    options.Authority = builder.Configuration["Keycloak:Authority"];
+    options.ClientId = builder.Configuration["Keycloak:ClientId"];
+    options.ClientSecret = builder.Configuration["Keycloak:ClientSecret"];
+
     options.ResponseType = "code";
     options.RequireHttpsMetadata = false;
     options.SaveTokens = true;
@@ -41,11 +42,9 @@ builder.Services.AddAuthentication(options =>
     options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
     {
         NameClaimType = "preferred_username",
-        // Use the standard role claim type so ASP.NET Core can evaluate roles from the added claims
         RoleClaimType = ClaimTypes.Role
     };
 
-    // Extract roles that Keycloak may provide inside complex claims like "realm_access" or "resource_access"
     options.Events = new OpenIdConnectEvents
     {
         OnTokenValidated = context =>
@@ -53,7 +52,6 @@ builder.Services.AddAuthentication(options =>
             var identity = context.Principal?.Identity as ClaimsIdentity;
             if (identity == null) return Task.CompletedTask;
 
-            // realm_access: { "roles": [ ... ] }
             var realmAccess = context.Principal.FindFirst("realm_access");
             if (realmAccess != null)
             {
@@ -73,7 +71,6 @@ builder.Services.AddAuthentication(options =>
                 catch { }
             }
 
-            // resource_access: { "client-id": { "roles": [ ... ] }, ... }
             var resourceAccess = context.Principal.FindFirst("resource_access");
             if (resourceAccess != null)
             {
@@ -100,6 +97,7 @@ builder.Services.AddAuthentication(options =>
         }
     };
 
+    options.CallbackPath = "/signin-oidc";
 });
 
 builder.Services.AddAuthorization();
@@ -112,11 +110,18 @@ builder.Services.AddScoped<ScoreService>();
 builder.Services.AddScoped<AdminService>();
 builder.Services.AddScoped<BattleService>();
 builder.Services.AddScoped<LeaderBoardService>();
-
 builder.Services.AddScoped<RecipeService>();
 builder.Services.AddScoped<KeycloakAuthService>();
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+    await context.Database.MigrateAsync();
+    await DbSeeder.SeedAsync(context);
+}
 
 if (!app.Environment.IsDevelopment())
 {

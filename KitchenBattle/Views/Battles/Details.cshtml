@@ -1,0 +1,216 @@
+﻿@model KitchenBattle.Models.Battle
+@{
+    ViewData["Title"] = Model.BattleName;
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-trophy-fill text-warning"></i> @Model.BattleName</h2>
+        <div>
+            @if (User.IsInRole("admin"))
+            {
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-sm btn-outline-primary">
+                    <i class="bi bi-pencil"></i> Редагувати
+                </a>
+                <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-sm btn-outline-danger">
+                    <i class="bi bi-trash"></i> Видалити
+                </a>
+            }
+            <a asp-action="Index" class="btn btn-sm btn-secondary">
+                <i class="bi bi-arrow-left"></i> Назад
+            </a>
+        </div>
+    </div>
+
+    <div class="alert @(Model.Status == StatusBattleEnum.InProgress ? "alert-success" : Model.Status == StatusBattleEnum.Completed ? "alert-secondary" : "alert-warning") shadow-sm">
+        <div class="d-flex align-items-center">
+            <i class="bi bi-info-circle-fill me-2 fs-4"></i>
+            <div>
+                <strong>Статус:</strong> @Model.Status
+                @if (Model.Status == StatusBattleEnum.Pending)
+                {
+                    <span>- Очікує початку реєстрації</span>
+                }
+                else if (Model.Status == StatusBattleEnum.InProgress)
+                {
+                    <span>- Батл триває!</span>
+                }
+                else if (Model.Status == StatusBattleEnum.Completed)
+                {
+                    <span>- Батл завершено!</span>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-primary text-white">
+                    <i class="bi bi-calendar-range"></i> Інформація
+                </div>
+                <div class="card-body">
+                    <p><strong><i class="bi bi-tag"></i> Категорія:</strong> @Model.Category</p>
+                    <p><strong><i class="bi bi-calendar-event"></i> Реєстрація:</strong> @Model.RegistrationStart.ToString("dd.MM.yyyy HH:mm") - @Model.RegistrationEnd.ToString("dd.MM.yyyy HH:mm")</p>
+                    <p><strong><i class="bi bi-play-circle"></i> Старт:</strong> @Model.StartedAt.ToString("dd.MM.yyyy HH:mm")</p>
+                    @if (Model.EndedAt.HasValue)
+                    {
+                        <p><strong><i class="bi bi-stop-circle"></i> Завершення:</strong> @Model.EndedAt.Value.ToString("dd.MM.yyyy HH:mm")</p>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.WinnerId))
+                    {
+                        <p class="mt-3"><strong><i class="bi bi-crown-fill text-warning"></i> Переможець:</strong> Шеф ID: @Model.WinnerId</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                    <span><i class="bi bi-book"></i> Рецепти (@Model.Recipes.Count)</span>
+                    @if (User.IsInRole("chef") && Model.Status == StatusBattleEnum.InProgress)
+                    {
+                        <a asp-controller="Recipes" asp-action="Create" asp-route-battleId="@Model.Id" class="btn btn-sm btn-light">
+                            <i class="bi bi-plus-lg"></i> Додати рецепт
+                        </a>
+                    }
+                </div>
+                <div class="card-body">
+                    @if (!Model.Recipes.Any())
+                    {
+                        <p class="text-muted text-center mb-0">Поки немає рецептів. Будь першим!</p>
+                    }
+                    else
+                    {
+                        <div class="list-group">
+                            @foreach (var recipe in Model.Recipes)
+                            {
+                                <div class="list-group-item">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">@recipe.Title</h6>
+                                            <small class="text-muted">Шеф: @recipe.ChefName</small>
+                                        </div>
+                                        <div class="text-end">
+                                            <span class="badge bg-warning text-dark">⭐ @recipe.AverageScore.ToString("F1")</span>
+                                            <a asp-controller="Recipes" asp-action="Details" asp-route-id="@recipe.Id" class="btn btn-sm btn-outline-info ms-2">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            @if (User.IsInRole("judge") && Model.Status == StatusBattleEnum.InProgress)
+                                            {
+                                                <a asp-controller="Scores" asp-action="Create" asp-route-recipeId="@recipe.Id" class="btn btn-sm btn-outline-success ms-1">
+                                                    <i class="bi bi-star"></i> Оцінити
+                                                </a>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <i class="bi bi-people"></i> Шефи-учасники (@Model.BattleChefs.Count)
+                    @if (User.IsInRole("chef") && Model.Status == StatusBattleEnum.Pending && DateTime.UtcNow <= Model.RegistrationEnd)
+                    {
+                        <form asp-action="RegisterChef" asp-route-id="@Model.Id" method="post" class="d-inline ms-2">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-sm btn-light">Зареєструватись</button>
+                        </form>
+                    }
+                </div>
+                <div class="card-body">
+                    @if (!Model.BattleChefs.Any())
+                    {
+                        <p class="text-muted text-center mb-0">Немає зареєстрованих шефів</p>
+                    }
+                    else
+                    {
+                        <ul class="list-group list-group-flush">
+                            @foreach (var bc in Model.BattleChefs)
+                            {
+                                <li class="list-group-item">@(bc.Chef?.FullName ?? bc.ChefId)</li>
+                            }
+                        </ul>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <i class="bi bi-gavel"></i> Судді (@Model.BattleJudges.Count)
+                    @if (User.IsInRole("judge") && Model.Status == StatusBattleEnum.Pending && DateTime.UtcNow <= Model.RegistrationEnd)
+                    {
+                        <form asp-action="RegisterJudge" asp-route-id="@Model.Id" method="post" class="d-inline ms-2">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-sm btn-light">Зареєструватись</button>
+                        </form>
+                    }
+                </div>
+                <div class="card-body">
+                    @if (!Model.BattleJudges.Any())
+                    {
+                        <p class="text-muted text-center mb-0">Немає зареєстрованих суддів</p>
+                    }
+                    else
+                    {
+                        <ul class="list-group list-group-flush">
+                            @foreach (var bj in Model.BattleJudges)
+                            {
+                                <li class="list-group-item">@(bj.Judge?.FullName ?? bj.JudgeId)</li>
+                            }
+                        </ul>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (User.IsInRole("admin"))
+    {
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-dark text-white">
+                <i class="bi bi-gear"></i> Керування батлом
+            </div>
+            <div class="card-body">
+                <div class="btn-group" role="group">
+                    @if (Model.Status == StatusBattleEnum.Pending)
+                    {
+                        <form asp-action="StartBattle" asp-route-id="@Model.Id" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-success">Почати батл</button>
+                        </form>
+                        <form asp-action="CloseRegistration" asp-route-id="@Model.Id" method="post" class="d-inline ms-2">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-warning">Закрити реєстрацію</button>
+                        </form>
+                    }
+                    @if (Model.Status == StatusBattleEnum.InProgress)
+                    {
+                        <form asp-action="FinishBattle" asp-route-id="@Model.Id" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-danger">Завершити батл</button>
+                        </form>
+                    }
+                    @if (Model.Status == StatusBattleEnum.Completed && string.IsNullOrEmpty(Model.WinnerId))
+                    {
+                        <form asp-action="SetWinner" asp-route-id="@Model.Id" asp-route-winnerChefId="@(Model.Recipes.OrderByDescending(r => r.AverageScore).FirstOrDefault()?.ChefId)" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-primary">Встановити переможця</button>
+                        </form>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>

@@ -10,7 +10,7 @@ namespace KitchenBattle.Data
         {
             _options = options;
         }
-
+        
         public DbSet<Admin> Admins => Set<Admin>();
         public DbSet<Chef> Chefs => Set<Chef>();
         public DbSet<Judge> Judges => Set<Judge>();        

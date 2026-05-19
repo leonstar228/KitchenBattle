@@ -38,10 +38,10 @@ namespace KitchenBattle.Services
             return newUser;
         }
 
-        public async Task<int> GetCurrentUserIdAsync()
+        public async Task<string> GetCurrentUserIdAsync()
         {
             var user = await GetOrCreateUserAsync();
-            return user?.Id ?? 0;
+            return user?.Id.ToString() ?? "0";
         }
 
         public bool IsInRole(string role)
