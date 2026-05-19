@@ -9,16 +9,27 @@
     <link rel="stylesheet" href="~/KitchenBattle.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,600&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="//fonts.googleapis.com">
+    <link rel="preconnect" href="//fonts.gstatic.com" crossorigin>
+    <link href="//fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,600&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
-        /* --- Загальні налаштування сайту та колір фону під хвилею --- */
+        /* --- Палітра кольорів бренду (CSS-змінні) --- */
+        :root {
+            --brand-chocolate: #461e13;    /* Глибокий шоколадний колір для тексту й логотипу */
+            --brand-orange: #e59c3c;       /* Насичений помаранчевий колір */
+            --brand-orange-hover: #cb842b; /* Темніший помаранчевий для ефекту наведення */
+            --brand-bg-cream: #f7f5f2;     /* Теплий кремовий фон нижньої частини сторінки */
+            --brand-bg-white: #ffffff;     /* Чистий білий фон для верхньої контентної зони */
+            --text-dark-gray: #4a4a4a;
+            --text-muted-gray: #a09e9b;
+        }
+
+        /* --- Загальні налаштування сайту --- */
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: #f7f5f2; /* Точний світлий кремовый фон як на фото */
-            color: #4a4a4a;
+            background-color: var(--brand-bg-cream);
+            color: var(--text-dark-gray);
             margin: 0;
             padding: 0;
         }
@@ -26,15 +37,15 @@
         /* --- Навігаційна панель (Навбар) --- */
         .navbar {
             padding: 20px 0 !important;
-            background-color: #ffffff !important;
-            box-shadow: 0 4px 30px rgba(0,0,0,0.015) !important;
+            background-color: var(--brand-bg-white) !important;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.015) !important;
             border-bottom: none !important;
         }
 
         .navbar-brand {
             font-size: 24px !important;
             font-weight: 700 !important;
-            color: #461e13 !important; /* Глибокий шоколадно-коричневий з логотипу Kanigiri */
+            color: var(--brand-chocolate) !important;
             letter-spacing: 0.5px;
         }
 
@@ -47,17 +58,17 @@
         }
 
         .nav-link:hover, .nav-link:focus {
-            color: #e59c3c !important;
+            color: var(--brand-orange) !important;
         }
 
         #userDropdown {
-            color: #461e13 !important;
+            color: var(--brand-chocolate) !important;
         }
 
-        /* Помаранчева кнопка "Увійти" з макета */
+        /* Фірмова помаранчева кнопка "Увійти" */
         .navbar-nav .btn-outline-primary {
-            background-color: #e59c3c !important;
-            color: #ffffff !important;
+            background-color: var(--brand-orange) !important;
+            color: var(--brand-bg-white) !important;
             border: none !important;
             padding: 9px 28px !important;
             border-radius: 25px !important;
@@ -71,19 +82,19 @@
         }
 
         .navbar-nav .btn-outline-primary:hover {
-            background-color: #cb842b !important;
+            background-color: var(--brand-orange-hover) !important;
             transform: translateY(-1px);
             box-shadow: 0 6px 18px rgba(229, 156, 60, 0.35);
         }
 
-        /* --- Контейнер верхньої білої зони з хвилею --- */
+        /* --- Огортаючий блок для створення хвилястого фону --- */
         .white-hero-wrapper {
             position: relative;
-            background-color: #ffffff; /* Верхня частина залишається чисто білою */
-            padding-bottom: 120px; /* Простір під контентом для формування хвилі */
+            background-color: var(--brand-bg-white);
+            padding-bottom: 120px; /* Простір знизу під зріз хвилі */
         }
 
-        /* --- Конструктор SVG Хвилі як на оригінальному фото --- */
+        /* --- Векторна SVG-хвиля --- */
         .wave-divider {
             position: absolute;
             bottom: 0;
@@ -102,41 +113,43 @@
         }
 
         .wave-divider .shape-fill {
-            fill: #f7f5f2; /* Колір фігури збігається з кремовим фоном нижньої частини сторінки */
+            fill: var(--brand-bg-cream); /* Хвиля зафарбовується в кремовий колір нижнього фону */
         }
 
-        /* --- Dropdown меню --- */
+        /* --- Випадаюче меню користувача (Dropdown) --- */
         .dropdown-menu {
             border-radius: 14px !important;
             padding: 10px 0 !important;
             box-shadow: 0 10px 30px rgba(70, 30, 19, 0.08) !important;
+            background-color: var(--brand-bg-white);
         }
 
         .dropdown-item {
             font-size: 14px;
             font-weight: 500;
             padding: 9px 22px !important;
+            color: var(--text-dark-gray);
         }
 
         .dropdown-item:hover {
             background-color: #fcfbfa !important;
-            color: #e59c3c !important;
+            color: var(--brand-orange) !important;
         }
 
-        /* --- Футер --- */
+        /* --- Нижній блок сайту (Футер) --- */
         footer {
-            background-color: #f7f5f2 !important; 
+            background-color: var(--brand-bg-cream) !important;
             border-top: none !important;
             padding: 50px 0 !important;
         }
 
         footer p {
-            color: #a09e9b;
+            color: var(--text-muted-gray);
             font-size: 13px;
         }
 
         footer a.text-muted {
-            color: #461e13 !important;
+            color: var(--brand-chocolate) !important;
             font-size: 20px;
             margin: 0 14px;
             transition: all 0.2s ease;
@@ -144,7 +157,7 @@
         }
 
         footer a.text-muted:hover {
-            color: #e59c3c !important;
+            color: var(--brand-orange) !important;
             transform: translateY(-2px);
         }
     </style>
@@ -174,41 +187,41 @@
 
                         @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
                         {
-                                    <li class="nav-item">
-                                        <a class="nav-link fw-bold text-danger" asp-controller="Admin" asp-action="Dashboard">
-                                            <i class="bi bi-shield-lock"></i> Адмінка
-                                        </a>
-                                    </li>
+                                <li class="nav-item">
+                                    <a class="nav-link fw-bold text-danger" asp-controller="Admin" asp-action="Dashboard">
+                                        <i class="bi bi-shield-lock"></i> Адмінка
+                                    </a>
+                                </li>
                         }
                     </ul>
 
                     <ul class="navbar-nav ms-auto">
                         @if (User.Identity.IsAuthenticated)
                         {
-                                    <li class="nav-item dropdown">
-                                        <a class="nav-link dropdown-toggle fw-bold" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i class="bi bi-person-circle"></i> @User.Identity.Name
-                                        </a>
-                                        <ul class="dropdown-menu dropdown-menu-end shadow border-0" aria-labelledby="userDropdown">
-                                            <li><a class="dropdown-item" asp-controller="Recipes" asp-action="MyRecipes">Мої рецепти</a></li>
-                                            <li><hr class="dropdown-divider"></li>
-                                            <li>
-                                                <form class="form-inline" asp-controller="Account" asp-action="Logout" method="post">
-                                                    <button type="submit" class="dropdown-item text-danger">
-                                                        <i class="bi bi-box-arrow-right"></i> Вийти
-                                                    </button>
-                                                </form>
-                                            </li>
-                                        </ul>
-                                    </li>
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle fw-bold" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="bi bi-person-circle"></i> @User.Identity.Name
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-menu-end shadow border-0" aria-labelledby="userDropdown">
+                                        <li><a class="dropdown-item" asp-controller="Recipes" asp-action="MyRecipes">Мої рецепти</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li>
+                                            <form class="form-inline" asp-controller="Account" asp-action="Logout" method="post">
+                                                <button type="submit" class="dropdown-item text-danger">
+                                                    <i class="bi bi-box-arrow-right"></i> Вийти
+                                                </button>
+                                            </form>
+                                        </li>
+                                    </ul>
+                                </li>
                         }
                         else
                         {
-                                    <li class="nav-item">
-                                        <a class="btn btn-outline-primary ms-lg-2" asp-controller="Account" asp-action="Login">
-                                            Увійти
-                                        </a>
-                                    </li>
+                                <li class="nav-item">
+                                    <a class="btn btn-outline-primary ms-lg-2" asp-controller="Account" asp-action="Login">
+                                        Увійти
+                                    </a>
+                                </li>
                         }
                     </ul>
                 </div>
