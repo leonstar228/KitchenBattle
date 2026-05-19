@@ -79,9 +79,8 @@ namespace KitchenBattle.Migrations
 
             modelBuilder.Entity("KitchenBattle.Models.ApplicationUser", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("Id")
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
@@ -149,8 +148,8 @@ namespace KitchenBattle.Migrations
                     b.Property<string>("ChefId")
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("ApplicationUserId")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("Id")
                         .HasColumnType("INTEGER");
@@ -172,8 +171,8 @@ namespace KitchenBattle.Migrations
                     b.Property<string>("JudgeId")
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("ApplicationUserId")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("Id")
                         .HasColumnType("INTEGER");
@@ -316,8 +315,8 @@ namespace KitchenBattle.Migrations
                     b.Property<string>("AdminId")
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("ApplicationUserId")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("TEXT");
 
                     b.Property<double>("AverageScore")
                         .HasColumnType("REAL");
@@ -383,8 +382,8 @@ namespace KitchenBattle.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("ApplicationUserId")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Comments")
                         .IsRequired()

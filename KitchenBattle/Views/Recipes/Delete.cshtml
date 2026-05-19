@@ -1,0 +1,31 @@
+﻿@model KitchenBattle.Models.Recipe
+@{
+    ViewData["Title"] = "Видалення рецепта";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card bg-dark border-0 shadow-lg text-center">
+                <div class="card-body p-5">
+                    <i class="bi bi-trash3-fill text-danger" style="font-size: 64px;"></i>
+                    <h1 class="display-6 fw-bold mt-3">Видалити рецепт?</h1>
+                    <p class="text-muted">Ви впевнені, що хочете видалити рецепт <strong>@Model.Title</strong>?</p>
+                    <p class="text-danger small">Цю дію не можна буде скасувати!</p>
+
+                    <div class="mt-4">
+                        <form asp-action="Delete" method="post">
+                            <input type="hidden" asp-for="Id" />
+                            <button type="submit" class="btn btn-danger btn-lg px-4 me-2">
+                                <i class="bi bi-check-lg"></i> Так, видалити
+                            </button>
+                            <a asp-action="MyRecipes" class="btn btn-secondary btn-lg px-4">
+                                <i class="bi bi-x-lg"></i> Скасувати
+                            </a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
