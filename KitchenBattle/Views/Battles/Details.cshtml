@@ -4,209 +4,257 @@
 }
 
 <div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2><i class="bi bi-trophy-fill text-warning"></i> @Model.BattleName</h2>
-        <div>
+    <!-- Header - використовуємо Bootstrap row/col -->
+    <div class="row align-items-center mb-4">
+        <div class="col-3">
+            <!-- Пусто для балансу -->
+        </div>
+        <div class="col-6 text-center">
+            <h1 style="color: var(--primary); font-weight: 700; margin: 0; font-size: 24px;">
+                Деталі кулінарного батлу
+            </h1>
+            <p style="color: var(--neutral-600); margin: 5px 0 0 0;">@Model.BattleName</p>
+        </div>
+        <div class="col-3 text-end">
             @if (User.IsInRole("admin"))
             {
-                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-sm btn-outline-primary">
-                    <i class="bi bi-pencil"></i> Редагувати
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn" style="border: 1px solid var(--gold-200); color: var(--secondary); border-radius: 8px; padding: 6px 16px; margin-right: 8px;">
+                    <i class="bi bi-pencil"></i>
                 </a>
-                <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-sm btn-outline-danger">
-                    <i class="bi bi-trash"></i> Видалити
+                <a asp-action="Delete" asp-route-id="@Model.Id" class="btn" style="border: 1px solid var(--gold-200); color: var(--accent-red); border-radius: 8px; padding: 6px 16px; margin-right: 8px;">
+                    <i class="bi bi-trash"></i>
                 </a>
             }
-            <a asp-action="Index" class="btn btn-sm btn-secondary">
+            <a asp-action="Index" class="btn" style="border: 1px solid var(--gold-200); color: var(--neutral-600); border-radius: 8px; padding: 6px 16px;">
                 <i class="bi bi-arrow-left"></i> Назад
             </a>
         </div>
     </div>
 
-    <div class="alert @(Model.Status == StatusBattleEnum.InProgress ? "alert-success" : Model.Status == StatusBattleEnum.Completed ? "alert-secondary" : "alert-warning") shadow-sm">
-        <div class="d-flex align-items-center">
-            <i class="bi bi-info-circle-fill me-2 fs-4"></i>
-            <div>
-                <strong>Статус:</strong> @Model.Status
-                @if (Model.Status == StatusBattleEnum.Pending)
-                {
-                    <span>- Очікує початку реєстрації</span>
-                }
-                else if (Model.Status == StatusBattleEnum.InProgress)
-                {
-                    <span>- Батл триває!</span>
-                }
-                else if (Model.Status == StatusBattleEnum.Completed)
-                {
-                    <span>- Батл завершено!</span>
-                }
-            </div>
+    <!-- Status Banner -->
+    <div style="background-color: var(--gold-200); border-radius: 8px; padding: 12px 20px; margin-bottom: 24px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            @if (Model.Status == StatusBattleEnum.InProgress)
+            {
+                <span style="color: var(--green-400); font-weight: 600;">
+                    <i class="bi bi-play-circle-fill"></i> БАТЛ ТРИВАЄ
+                </span>
+            }
+            else if (Model.Status == StatusBattleEnum.Completed)
+            {
+                <span style="color: var(--neutral-600); font-weight: 600;">
+                    <i class="bi bi-check-circle-fill"></i> БАТЛ ЗАВЕРШЕНО
+                </span>
+            }
+            else
+            {
+                <span style="color: var(--secondary); font-weight: 600;">
+                    <i class="bi bi-clock-fill"></i> ОЧІКУЄТЬСЯ
+                </span>
+            }
+            @if (!string.IsNullOrEmpty(Model.WinnerId))
+            {
+                <span style="color: var(--secondary); font-size: 14px;">
+                    <i class="bi bi-crown-fill"></i> Переможець: @(Model.WinnerId.Length > 12 ? Model.WinnerId.Substring(0, 12) + "..." : Model.WinnerId)
+                </span>
+            }
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-md-4 mb-4">
-            <div class="card shadow-sm h-100">
-                <div class="card-header bg-primary text-white">
-                    <i class="bi bi-calendar-range"></i> Інформація
+    <!-- Дві колонки - Інформація (35%) та Рецепти (65%) -->
+    <div style="display: flex; gap: 24px; margin-bottom: 24px;">
+        <!-- Ліва колонка - Інформація -->
+        <div style="flex: 0 0 35%; background-color: var(--white); border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+            <div style="padding: 16px; border-bottom: 1px solid var(--gold-200); background-color: var(--background);">
+                <h5 style="color: var(--primary); margin: 0; font-weight: 600;">
+                    <i class="bi bi-info-circle"></i> Інформація
+                </h5>
+            </div>
+            <div style="padding: 16px;">
+                <div style="margin-bottom: 14px;">
+                    <div style="color: var(--neutral-600); font-size: 12px; margin-bottom: 4px;">Категорія</div>
+                    <div style="color: var(--dark); font-weight: 500;">@Model.Category</div>
                 </div>
-                <div class="card-body">
-                    <p><strong><i class="bi bi-tag"></i> Категорія:</strong> @Model.Category</p>
-                    <p><strong><i class="bi bi-calendar-event"></i> Реєстрація:</strong> @Model.RegistrationStart.ToString("dd.MM.yyyy HH:mm") - @Model.RegistrationEnd.ToString("dd.MM.yyyy HH:mm")</p>
-                    <p><strong><i class="bi bi-play-circle"></i> Старт:</strong> @Model.StartedAt.ToString("dd.MM.yyyy HH:mm")</p>
-                    @if (Model.EndedAt.HasValue)
-                    {
-                        <p><strong><i class="bi bi-stop-circle"></i> Завершення:</strong> @Model.EndedAt.Value.ToString("dd.MM.yyyy HH:mm")</p>
-                    }
-                    @if (!string.IsNullOrEmpty(Model.WinnerId))
-                    {
-                        <p class="mt-3"><strong><i class="bi bi-crown-fill text-warning"></i> Переможець:</strong> Шеф ID: @Model.WinnerId</p>
-                    }
+                <div style="margin-bottom: 14px;">
+                    <div style="color: var(--neutral-600); font-size: 12px; margin-bottom: 4px;">Початок реєстрації</div>
+                    <div style="color: var(--dark); font-weight: 500;">@Model.RegistrationStart.ToString("dd.MM.yyyy HH:mm")</div>
                 </div>
+                <div style="margin-bottom: 14px;">
+                    <div style="color: var(--neutral-600); font-size: 12px; margin-bottom: 4px;">Кінець реєстрації</div>
+                    <div style="color: var(--dark); font-weight: 500;">@Model.RegistrationEnd.ToString("dd.MM.yyyy HH:mm")</div>
+                </div>
+                <div style="margin-bottom: 14px;">
+                    <div style="color: var(--neutral-600); font-size: 12px; margin-bottom: 4px;">Старт батлу</div>
+                    <div style="color: var(--dark); font-weight: 500;">@Model.StartedAt.ToString("dd.MM.yyyy HH:mm")</div>
+                </div>
+                @if (Model.EndedAt.HasValue)
+                {
+                    <div style="margin-bottom: 14px;">
+                        <div style="color: var(--neutral-600); font-size: 12px; margin-bottom: 4px;">Завершення</div>
+                        <div style="color: var(--dark); font-weight: 500;">@Model.EndedAt.Value.ToString("dd.MM.yyyy HH:mm")</div>
+                    </div>
+                }
             </div>
         </div>
 
-        <div class="col-md-8 mb-4">
-            <div class="card shadow-sm">
-                <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
-                    <span><i class="bi bi-book"></i> Рецепти (@Model.Recipes.Count)</span>
-                    @if (User.IsInRole("chef") && Model.Status == StatusBattleEnum.InProgress)
-                    {
-                        <a asp-controller="Recipes" asp-action="Create" asp-route-battleId="@Model.Id" class="btn btn-sm btn-light">
-                            <i class="bi bi-plus-lg"></i> Додати рецепт
-                        </a>
-                    }
-                </div>
-                <div class="card-body">
-                    @if (!Model.Recipes.Any())
-                    {
-                        <p class="text-muted text-center mb-0">Поки немає рецептів. Будь першим!</p>
-                    }
-                    else
-                    {
-                        <div class="list-group">
-                            @foreach (var recipe in Model.Recipes)
-                            {
-                                <div class="list-group-item">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <h6 class="mb-1">@recipe.Title</h6>
-                                            <small class="text-muted">Шеф: @recipe.ChefName</small>
-                                        </div>
-                                        <div class="text-end">
-                                            <span class="badge bg-warning text-dark">⭐ @recipe.AverageScore.ToString("F1")</span>
-                                            <a asp-controller="Recipes" asp-action="Details" asp-route-id="@recipe.Id" class="btn btn-sm btn-outline-info ms-2">
-                                                <i class="bi bi-eye"></i>
-                                            </a>
-                                            @if (User.IsInRole("judge") && Model.Status == StatusBattleEnum.InProgress)
-                                            {
-                                                <a asp-controller="Scores" asp-action="Create" asp-route-recipeId="@recipe.Id" class="btn btn-sm btn-outline-success ms-1">
-                                                    <i class="bi bi-star"></i> Оцінити
-                                                </a>
-                                            }
-                                        </div>
+        <!-- Права колонка - Рецепти -->
+        <div style="flex: 1; background-color: var(--white); border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+            <div style="padding: 16px; border-bottom: 1px solid var(--gold-200); background-color: var(--background); display: flex; justify-content: space-between; align-items: center;">
+                <h5 style="color: var(--primary); margin: 0; font-weight: 600;">
+                    <i class="bi bi-book"></i> Рецепти (@Model.Recipes.Count)
+                </h5>
+                @if (User.IsInRole("chef") && Model.Status == StatusBattleEnum.InProgress)
+                {
+                    <a asp-controller="Recipes" asp-action="Create" class="btn" style="background-color: var(--secondary); color: var(--white); border-radius: 8px; padding: 4px 12px; font-size: 13px;">
+                        <i class="bi bi-plus"></i> Додати
+                    </a>
+                }
+            </div>
+            <div style="padding: 16px;">
+                @if (!Model.Recipes.Any())
+                {
+                    <div style="text-align: center; padding: 40px 20px;">
+                        <i class="bi bi-emoji-frown" style="font-size: 40px; color: var(--gold-200);"></i>
+                        <p style="color: var(--neutral-600); margin-top: 10px;">Поки немає рецептів</p>
+                    </div>
+                }
+                else
+                {
+                    <div class="row g-2">
+                        @foreach (var recipe in Model.Recipes)
+                        {
+                            <div class="col-12">
+                                <div style="background-color: var(--background); border-radius: 8px; padding: 12px; display: flex; justify-content: space-between; align-items: center;">
+                                    <div>
+                                        <div style="font-weight: 600; color: var(--dark);">@recipe.Title</div>
+                                        <div style="font-size: 12px; color: var(--neutral-600);">@recipe.ChefName</div>
+                                    </div>
+                                    <div class="d-flex gap-2 align-items-center">
+                                        <span style="color: var(--secondary); font-size: 14px;">
+                                            <i class="bi bi-star-fill"></i> @recipe.AverageScore.ToString("F1")
+                                        </span>
+                                        <a asp-controller="Recipes" asp-action="Details" asp-route-id="@recipe.Id" class="btn" style="border: 1px solid var(--gold-200); border-radius: 8px; padding: 4px 10px; font-size: 12px;">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
                                     </div>
                                 </div>
-                            }
-                        </div>
-                    }
-                </div>
+                            </div>
+                        }
+                    </div>
+                }
             </div>
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-md-6 mb-4">
-            <div class="card shadow-sm">
-                <div class="card-header bg-info text-white">
-                    <i class="bi bi-people"></i> Шефи-учасники (@Model.BattleChefs.Count)
-                    @if (User.IsInRole("chef") && Model.Status == StatusBattleEnum.Pending && DateTime.UtcNow <= Model.RegistrationEnd)
+    <!-- Дві колонки для Шефів і Суддів (50/50) -->
+    <div style="display: flex; gap: 24px;">
+        <!-- Шефи -->
+        <div style="flex: 1; background-color: var(--white); border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+            <div style="padding: 16px; border-bottom: 1px solid var(--gold-200); background-color: var(--background); display: flex; justify-content: space-between; align-items: center;">
+                <h5 style="color: var(--primary); margin: 0; font-weight: 600;">
+                    <i class="bi bi-people"></i> Шефи (@Model.BattleChefs.Count)
+                </h5>
+                @if (User.IsInRole("chef") && Model.Status == StatusBattleEnum.Pending && DateTime.UtcNow <= Model.RegistrationEnd)
+                {
+                    if (Model.BattleChefs.Count < 2)
                     {
-                        <form asp-action="RegisterChef" asp-route-id="@Model.Id" method="post" class="d-inline ms-2">
+                        <form asp-action="RegisterChef" asp-route-id="@Model.Id" method="post">
                             @Html.AntiForgeryToken()
-                            <button type="submit" class="btn btn-sm btn-light">Зареєструватись</button>
+                            <button type="submit" class="btn" style="background-color: var(--secondary); color: var(--white); border-radius: 8px; padding: 4px 12px; font-size: 13px;">Зареєструватись</button>
                         </form>
-                    }
-                </div>
-                <div class="card-body">
-                    @if (!Model.BattleChefs.Any())
-                    {
-                        <p class="text-muted text-center mb-0">Немає зареєстрованих шефів</p>
                     }
                     else
                     {
-                        <ul class="list-group list-group-flush">
-                            @foreach (var bc in Model.BattleChefs)
-                            {
-                                <li class="list-group-item">@(bc.Chef?.FullName ?? bc.ChefId)</li>
-                            }
-                        </ul>
+                        <span style="background-color: var(--accent-red); color: white; border-radius: 8px; padding: 4px 12px; font-size: 12px;">Місць немає</span>
                     }
-                </div>
+                }
+            </div>
+            <div style="padding: 16px;">
+                @if (!Model.BattleChefs.Any())
+                {
+                    <p style="text-align: center; padding: 20px; color: var(--neutral-600); margin: 0;">Немає учасників</p>
+                }
+                else
+                {
+                    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                        @foreach (var bc in Model.BattleChefs)
+                        {
+                            <span style="background-color: var(--primary); color: var(--white); padding: 5px 12px; border-radius: 20px; font-size: 13px;">
+                                <i class="bi bi-person"></i> @(bc.Chef?.FullName?.Length > 20 ? bc.Chef.FullName.Substring(0, 20) + "..." : bc.Chef?.FullName ?? (bc.ChefId.Length > 12 ? bc.ChefId.Substring(0, 12) + "..." : bc.ChefId))
+                            </span>
+                        }
+                    </div>
+                }
             </div>
         </div>
 
-        <div class="col-md-6 mb-4">
-            <div class="card shadow-sm">
-                <div class="card-header bg-info text-white">
+        <!-- Судді -->
+        <div style="flex: 1; background-color: var(--white); border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+            <div style="padding: 16px; border-bottom: 1px solid var(--gold-200); background-color: var(--background); display: flex; justify-content: space-between; align-items: center;">
+                <h5 style="color: var(--primary); margin: 0; font-weight: 600;">
                     <i class="bi bi-gavel"></i> Судді (@Model.BattleJudges.Count)
-                    @if (User.IsInRole("judge") && Model.Status == StatusBattleEnum.Pending && DateTime.UtcNow <= Model.RegistrationEnd)
-                    {
-                        <form asp-action="RegisterJudge" asp-route-id="@Model.Id" method="post" class="d-inline ms-2">
-                            @Html.AntiForgeryToken()
-                            <button type="submit" class="btn btn-sm btn-light">Зареєструватись</button>
-                        </form>
-                    }
-                </div>
-                <div class="card-body">
-                    @if (!Model.BattleJudges.Any())
-                    {
-                        <p class="text-muted text-center mb-0">Немає зареєстрованих суддів</p>
-                    }
-                    else
-                    {
-                        <ul class="list-group list-group-flush">
-                            @foreach (var bj in Model.BattleJudges)
-                            {
-                                <li class="list-group-item">@(bj.Judge?.FullName ?? bj.JudgeId)</li>
-                            }
-                        </ul>
-                    }
-                </div>
+                </h5>
+                @if (User.IsInRole("judge") && Model.Status == StatusBattleEnum.Pending && DateTime.UtcNow <= Model.RegistrationEnd)
+                {
+                    <form asp-action="RegisterJudge" asp-route-id="@Model.Id" method="post">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn" style="background-color: var(--secondary); color: var(--white); border-radius: 8px; padding: 4px 12px; font-size: 13px;">Зареєструватись</button>
+                    </form>
+                }
+            </div>
+            <div style="padding: 16px;">
+                @if (!Model.BattleJudges.Any())
+                {
+                    <p style="text-align: center; padding: 20px; color: var(--neutral-600); margin: 0;">Немає суддів</p>
+                }
+                else
+                {
+                    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                        @foreach (var bj in Model.BattleJudges)
+                        {
+                            <span style="background-color: var(--gold-200); color: var(--dark); padding: 5px 12px; border-radius: 20px; font-size: 13px;">
+                                <i class="bi bi-person-badge"></i> @(bj.Judge?.FullName?.Length > 20 ? bj.Judge.FullName.Substring(0, 20) + "..." : bj.Judge?.FullName ?? (bj.JudgeId.Length > 12 ? bj.JudgeId.Substring(0, 12) + "..." : bj.JudgeId))
+                            </span>
+                        }
+                    </div>
+                }
             </div>
         </div>
     </div>
 
-    @if (User.IsInRole("admin"))
+    <!-- Admin Controls -->
+    @if (User.IsInRole("admin") && Model.Status != StatusBattleEnum.Completed)
     {
-        <div class="card shadow-sm mb-4">
-            <div class="card-header bg-dark text-white">
-                <i class="bi bi-gear"></i> Керування батлом
+        <div style="margin-top: 24px; background-color: var(--white); border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); overflow: hidden;">
+            <div style="padding: 16px; border-bottom: 1px solid var(--gold-200); background-color: var(--background);">
+                <h5 style="color: var(--primary); margin: 0; font-weight: 600;">
+                    <i class="bi bi-gear"></i> Керування
+                </h5>
             </div>
-            <div class="card-body">
-                <div class="btn-group" role="group">
+            <div style="padding: 16px;">
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                     @if (Model.Status == StatusBattleEnum.Pending)
                     {
-                        <form asp-action="StartBattle" asp-route-id="@Model.Id" method="post" class="d-inline">
+                        <form asp-action="StartBattle" asp-route-id="@Model.Id" method="post">
                             @Html.AntiForgeryToken()
-                            <button type="submit" class="btn btn-success">Почати батл</button>
+                            <button type="submit" class="btn" style="background-color: var(--primary); color: var(--white); border-radius: 8px; padding: 6px 16px;">
+                                <i class="bi bi-play-fill"></i> Почати батл
+                            </button>
                         </form>
-                        <form asp-action="CloseRegistration" asp-route-id="@Model.Id" method="post" class="d-inline ms-2">
+                        <form asp-action="CloseRegistration" asp-route-id="@Model.Id" method="post">
                             @Html.AntiForgeryToken()
-                            <button type="submit" class="btn btn-warning">Закрити реєстрацію</button>
+                            <button type="submit" class="btn" style="border: 1px solid var(--secondary); color: var(--secondary); border-radius: 8px; padding: 6px 16px;">
+                                <i class="bi bi-lock-fill"></i> Закрити реєстрацію
+                            </button>
                         </form>
                     }
                     @if (Model.Status == StatusBattleEnum.InProgress)
                     {
-                        <form asp-action="FinishBattle" asp-route-id="@Model.Id" method="post" class="d-inline">
+                        <form asp-action="FinishBattle" asp-route-id="@Model.Id" method="post">
                             @Html.AntiForgeryToken()
-                            <button type="submit" class="btn btn-danger">Завершити батл</button>
-                        </form>
-                    }
-                    @if (Model.Status == StatusBattleEnum.Completed && string.IsNullOrEmpty(Model.WinnerId))
-                    {
-                        <form asp-action="SetWinner" asp-route-id="@Model.Id" asp-route-winnerChefId="@(Model.Recipes.OrderByDescending(r => r.AverageScore).FirstOrDefault()?.ChefId)" method="post" class="d-inline">
-                            @Html.AntiForgeryToken()
-                            <button type="submit" class="btn btn-primary">Встановити переможця</button>
+                            <button type="submit" class="btn" style="background-color: var(--accent-red); color: var(--white); border-radius: 8px; padding: 6px 16px;">
+                                <i class="bi bi-flag-fill"></i> Завершити батл
+                            </button>
                         </form>
                     }
                 </div>

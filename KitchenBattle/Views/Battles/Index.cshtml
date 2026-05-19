@@ -1,6 +1,6 @@
 ﻿@model List<KitchenBattle.Models.Battle>
 @{
-    ViewData["Title"] = "Батли";
+    ViewData["Title"] = "Кулінарні батли";
     var currentPage = ViewBag.CurrentPage ?? 1;
     var totalPages = ViewBag.TotalPages ?? 1;
     var statusFilter = Context.Request.Query["status"].ToString();
@@ -10,109 +10,130 @@
 }
 
 <div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2><i class="bi bi-trophy-fill text-warning"></i> Кулінарні батли</h2>
+    <div class="text-center mb-5">
+        <h1 style="color: var(--primary); font-weight: 700; font-size: 32px; margin: 0;">
+            Кулінарні батли
+        </h1>
+        <p style="color: var(--neutral-600); margin-top: 8px; font-size: 16px;">
+            Оберіть батл та покажіть свою майстерність!
+        </p>
         @if (User.IsInRole("admin"))
         {
-            <a asp-action="Create" class="btn btn-primary">
+            <a asp-action="Create" class="btn" style="background-color: var(--secondary); color: var(--white); border-radius: 8px; padding: 8px 24px; margin-top: 10px; display: inline-block;">
                 <i class="bi bi-plus-lg"></i> Створити батл
             </a>
         }
     </div>
-
-    <!-- Фільтри та пошук -->
-    <div class="card shadow-sm mb-4">
-        <div class="card-body">
-            <form method="get" class="row g-3">
+    
+<div class="card shadow-sm mb-4" style="background-color: var(--white); border-radius: 16px;">
+    <div class="card-body p-4">
+        <form method="get">
+            <div class="row g-3 align-items-end">
                 <div class="col-md-3">
-                    <label class="form-label fw-semibold">Пошук</label>
-                    <input type="text" name="search" class="form-control" placeholder="Назва або опис..." value="@search" />
+                    <label class="form-label" style="color: var(--neutral-600); font-size: 13px; font-weight: 500;">Пошук</label>
+                    <input type="text" name="search" class="form-control rounded-pill" style="border-color: var(--gold-200); height: 42px;" placeholder="Пошук батлу..." value="@search" />
                 </div>
-                <div class="col-md-3">
-                    <label class="form-label fw-semibold">Статус</label>
-                    <select name="status" class="form-select">
-                        <option value="">Всі</option>
-                        <option value="Pending" selected="@(statusFilter == "Pending")">Очікується</option>
-                        <option value="InProgress" selected="@(statusFilter == "InProgress")">В процесі</option>
-                        <option value="Completed" selected="@(statusFilter == "Completed")">Завершені</option>
-                        <option value="Closed" selected="@(statusFilter == "Closed")">Закриті</option>
+                <div class="col-md-2">
+                    <label class="form-label" style="color: var(--neutral-600); font-size: 13px; font-weight: 500;">Статус</label>
+                    <select name="status" class="form-select rounded-pill" style="border-color: var(--gold-200); height: 42px;">
+                        <option value="">Всі статуси</option>
+                        <option value="Pending">Очікується</option>
+                        <option value="InProgress">В процесі</option>
+                        <option value="Completed">Завершені</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label" style="color: var(--neutral-600); font-size: 13px; font-weight: 500;">Категорія</label>
+                    <select name="category" class="form-select rounded-pill" style="border-color: var(--gold-200); height: 42px;">
+                        <option value="">Всі категорії</option>
+                        <option value="Appetizer">Закуски</option>
+                        <option value="MainCourse">Основні страви</option>
+                        <option value="Dessert">Десерти</option>
+                        <option value="Soup">Супи</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label" style="color: var(--neutral-600); font-size: 13px; font-weight: 500;">Сортувати</label>
+                    <select name="sortBy" class="form-select rounded-pill" style="border-color: var(--gold-200); height: 42px;">
+                        <option value="date">Нові спочатку</option>
+                        <option value="date_old">Старі спочатку</option>
+                        <option value="name">За назвою</option>
+                        <option value="status">За статусом</option>
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label fw-semibold">Категорія</label>
-                    <select name="category" class="form-select">
-                        <option value="">Всі</option>
-                        <option value="Appetizer" selected="@(categoryFilter == "Appetizer")">Закуски</option>
-                        <option value="MainCourse" selected="@(categoryFilter == "MainCourse")">Основні страви</option>
-                        <option value="Dessert" selected="@(categoryFilter == "Dessert")">Десерти</option>
-                        <option value="Soup" selected="@(categoryFilter == "Soup")">Супи</option>
-                        <option value="Salad" selected="@(categoryFilter == "Salad")">Салати</option>
-                    </select>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn w-100 rounded-pill" style="background-color: var(--secondary); color: white; height: 42px;">
+                            <i class="bi bi-search"></i> Застосувати
+                        </button>
+                        <a asp-action="Index" class="btn btn-outline-secondary w-100 rounded-pill" style="border-color: var(--gold-200); color: var(--neutral-600); height: 42px; display: flex; align-items: center; justify-content: center;">
+                            Скинути
+                        </a>
+                    </div>
                 </div>
-                <div class="col-md-3">
-                    <label class="form-label fw-semibold">Сортувати</label>
-                    <select name="sortBy" class="form-select">
-                        <option value="date" selected="@(sortBy == "date")">За датою (нові)</option>
-                        <option value="date_old" selected="@(sortBy == "date_old")">За датою (старі)</option>
-                        <option value="name" selected="@(sortBy == "name")">За назвою</option>
-                        <option value="status" selected="@(sortBy == "status")">За статусом</option>
-                    </select>
-                </div>
-                <div class="col-12">
-                    <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-search"></i> Застосувати
-                    </button>
-                    <a asp-action="Index" class="btn btn-secondary">Скинути</a>
-                </div>
-            </form>
-        </div>
+            </div>
+        </form>
     </div>
+</div>
 
     @if (!Model.Any())
     {
-        <div class="alert alert-info text-center shadow-sm">
-            <i class="bi bi-info-circle fs-4"></i>
-            <p class="mb-0">Поки що немає батлів. Заходь пізніше!</p>
+        <div class="text-center py-5">
+            <i class="bi bi-emoji-frown" style="font-size: 64px; color: var(--gold-200);"></i>
+            <h3 style="color: var(--primary); margin-top: 20px;">Поки що немає батлів</h3>
+            <p style="color: var(--neutral-600);">Заходьте пізніше!</p>
         </div>
     }
     else
     {
-        <div class="row">
+        <div class="row g-4">
             @foreach (var battle in Model)
             {
-                <div class="col-md-6 col-lg-4 mb-4">
-                    <div class="card shadow-sm h-100">
-                        <div class="card-header bg-transparent border-0 pt-3">
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100" style="background-color: var(--white); border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); transition: transform 0.2s; overflow: hidden;">
+                        <div style="background-color: var(--primary); height: 100px; display: flex; align-items: center; justify-content: center; position: relative;">
+                            <i class="bi bi-trophy" style="font-size: 48px; color: var(--gold-200);"></i>
                             @if (battle.Status == StatusBattleEnum.InProgress)
                             {
-                                <span class="badge bg-success">@battle.Status</span>
+                                <span style="position: absolute; top: 10px; right: 10px; background-color: var(--green-400); color: white; padding: 4px 10px; border-radius: 15px; font-size: 11px; font-weight: 600;">ТРИВАЄ</span>
                             }
                             else if (battle.Status == StatusBattleEnum.Completed)
                             {
-                                <span class="badge bg-secondary">@battle.Status</span>
+                                <span style="position: absolute; top: 10px; right: 10px; background-color: var(--neutral-600); color: white; padding: 4px 10px; border-radius: 15px; font-size: 11px; font-weight: 600;">ЗАВЕРШЕНО</span>
                             }
                             else
                             {
-                                <span class="badge bg-warning text-dark">@battle.Status</span>
+                                <span style="position: absolute; top: 10px; right: 10px; background-color: var(--gold-200); color: var(--dark); padding: 4px 10px; border-radius: 15px; font-size: 11px; font-weight: 600;">СКОРО</span>
                             }
                         </div>
-                        <div class="card-body">
-                            <h5 class="card-title fw-bold">@battle.BattleName</h5>
-                            <p class="card-text text-muted small">@battle.Description</p>
-                            <div class="mt-2">
-                                <span class="badge bg-light text-dark border">@battle.Category</span>
+                        <div class="card-body" style="padding: 16px;">
+                            <div style="margin-bottom: 8px;">
+                                <span style="color: var(--neutral-600); font-size: 12px;">
+                                    <i class="bi bi-tag"></i> @battle.Category
+                                </span>
                             </div>
-                            <div class="mt-3 text-muted small">
-                                <i class="bi bi-calendar-event"></i> Старт: @battle.StartedAt.ToString("dd.MM.yyyy")
-                                @if (battle.EndedAt.HasValue)
-                                {
-                                    <br /><i class="bi bi-calendar-check"></i> Фініш:
-                                    @battle.EndedAt.Value.ToString("dd.MM.yyyy");
-                                }
+                            <h5 style="color: var(--primary); font-weight: 700; margin-bottom: 8px; font-size: 18px;">@battle.BattleName</h5>
+                            <p style="color: var(--neutral-600); font-size: 13px; line-height: 1.4; margin-bottom: 12px;">
+                                @(battle.Description.Length > 80 ? battle.Description.Substring(0, 80) + "..." : battle.Description)
+                            </p>
+                            <div class="d-flex justify-content-between align-items-center mt-2">
+                                <div>
+                                    <span style="color: var(--secondary); font-size: 13px;">
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-half"></i>
+                                    </span>
+                                    <span style="color: var(--neutral-600); font-size: 13px; margin-left: 5px;">4.5</span>
+                                </div>
+                                <div style="background-color: var(--primary); color: white; border-radius: 20px; padding: 4px 12px; font-size: 12px;">
+                                    <i class="bi bi-people"></i> @battle.BattleChefs.Count
+                                </div>
                             </div>
                         </div>
-                        <div class="card-footer bg-transparent border-0 pb-3">
-                            <a asp-action="Details" asp-route-id="@battle.Id" class="btn btn-outline-primary w-100">
+                        <div class="card-footer" style="background-color: transparent; border-top: 1px solid var(--gold-200); padding: 12px 16px;">
+                            <a asp-action="Details" asp-route-id="@battle.Id" class="btn" style="background-color: var(--secondary); color: var(--white); border-radius: 8px; padding: 8px 12px; text-align: center; display: block; width: 100%;">
                                 <i class="bi bi-eye"></i> Деталі
                             </a>
                         </div>
@@ -120,26 +141,25 @@
                 </div>
             }
         </div>
-
+        
         @if (totalPages > 1)
         {
-            <nav aria-label="Page navigation" class="mt-4">
+            <nav class="mt-5">
                 <ul class="pagination justify-content-center">
                     <li class="page-item @(currentPage == 1 ? "disabled" : "")">
-                        <a class="page-link" asp-route-page="@(currentPage - 1)" asp-route-search="@search" asp-route-status="@statusFilter" asp-route-category="@categoryFilter" asp-route-sortBy="@sortBy">
-                            <i class="bi bi-chevron-left"></i>
-                        </a>
+                        <a class="page-link" style="border-radius: 8px; color: var(--secondary);" 
+                           asp-route-page="@(currentPage - 1)" asp-route-search="@search" asp-route-status="@statusFilter" asp-route-category="@categoryFilter" asp-route-sortBy="@sortBy">‹</a>
                     </li>
                     @for (int i = 1; i <= totalPages; i++)
                     {
                         <li class="page-item @(currentPage == i ? "active" : "")">
-                            <a class="page-link" asp-route-page="@i" asp-route-search="@search" asp-route-status="@statusFilter" asp-route-category="@categoryFilter" asp-route-sortBy="@sortBy">@i</a>
+                            <a class="page-link" style="border-radius: 8px; background: @(currentPage == i ? "var(--secondary)" : "transparent"); color: @(currentPage == i ? "white" : "var(--secondary)"); border-color: var(--gold-200);" 
+                               asp-route-page="@i" asp-route-search="@search" asp-route-status="@statusFilter" asp-route-category="@categoryFilter" asp-route-sortBy="@sortBy">@i</a>
                         </li>
                     }
                     <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
-                        <a class="page-link" asp-route-page="@(currentPage + 1)" asp-route-search="@search" asp-route-status="@statusFilter" asp-route-category="@categoryFilter" asp-route-sortBy="@sortBy">
-                            <i class="bi bi-chevron-right"></i>
-                        </a>
+                        <a class="page-link" style="border-radius: 8px; color: var(--secondary);" 
+                           asp-route-page="@(currentPage + 1)" asp-route-search="@search" asp-route-status="@statusFilter" asp-route-category="@categoryFilter" asp-route-sortBy="@sortBy">›</a>
                     </li>
                 </ul>
             </nav>
