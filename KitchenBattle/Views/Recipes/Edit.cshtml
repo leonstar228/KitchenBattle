@@ -1,0 +1,115 @@
+﻿@model KitchenBattle.ViewModels.RecipeEditViewModel
+@{
+    ViewData["Title"] = "Редагування рецепта";
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card bg-dark border-0 shadow-lg">
+                <div class="card-header bg-transparent border-0 pt-4">
+                    <h1 class="display-5 fw-bold text-center">✏️ Редагування</h1>
+                    <p class="text-center text-muted">@Model.Title</p>
+                    <div class="text-center">
+                        <span class="badge @(Model.Status == StatusRecipeEnum.Draft ? "bg-secondary" : "bg-danger")">
+                            Статус: @Model.Status
+                        </span>
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="Edit" method="post" enctype="multipart/form-data">
+                        <input type="hidden" asp-for="Id" />
+                        <input type="hidden" asp-for="ExistingImageUrl" />
+                        <input type="hidden" asp-for="Status" />
+
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                        @if (!string.IsNullOrEmpty(Model.ExistingImageUrl))
+                        {
+                            <div class="text-center mb-3">
+                                <img src="@Model.ExistingImageUrl" style="max-height: 150px; border-radius: 12px;" />
+                            </div>
+                        }
+
+                        <div class="mb-3">
+                            <label asp-for="Title" class="form-label fw-bold"></label>
+                            <input asp-for="Title" class="form-control bg-secondary text-white border-0">
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label fw-bold"></label>
+                            <textarea asp-for="Description" class="form-control bg-secondary text-white border-0" rows="4"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Ingredients" class="form-label fw-bold"></label>
+                            <textarea asp-for="Ingredients" class="form-control bg-secondary text-white border-0" rows="4"></textarea>
+                            <span asp-validation-for="Ingredients" class="text-danger"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="CookingTime" class="form-label fw-bold"></label>
+                                <input asp-for="CookingTime" class="form-control bg-secondary text-white border-0">
+                                <span asp-validation-for="CookingTime" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Difficulty" class="form-label fw-bold"></label>
+                                <select asp-for="Difficulty" class="form-select bg-secondary text-white border-0">
+                                    <option value="Easy">⭐ Легкий</option>
+                                    <option value="Medium">⭐⭐ Середній</option>
+                                    <option value="Hard">⭐⭐⭐ Складний</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Category" class="form-label fw-bold"></label>
+                                <select asp-for="Category" class="form-select bg-secondary text-white border-0">
+                                    @foreach (var cat in Enum.GetValues<CategoryEnum>())
+                                    {
+                                        <option value="@cat">@cat</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Picture" class="form-label fw-bold"></label>
+                                <input asp-for="Picture" type="file" class="form-control bg-secondary text-white border-0" accept="image/*">
+                                <small class="text-muted">Залиште порожнім, щоб не змінювати фото</small>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-kitchen btn-lg">
+                                <i class="bi bi-save"></i> Зберегти зміни
+                            </button>
+                            <a asp-action="MyRecipes" class="btn btn-secondary">Скасувати</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .btn-kitchen {
+        background: linear-gradient(135deg, #e65c00, #f9a826);
+        color: white;
+        border: none;
+    }
+
+        .btn-kitchen:hover {
+            background: linear-gradient(135deg, #cc5200, #e69500);
+            color: white;
+        }
+</style>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
