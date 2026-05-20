@@ -73,8 +73,6 @@ AverageScore = ( Taste + Presentation + Creativity ) / 3
 
 ## 🎨 Color Palette
 
-## 🎨 Color Palette
-
 <table>
 <tr>
 <th>Color</th>
