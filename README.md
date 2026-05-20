@@ -73,15 +73,59 @@ AverageScore = ( Taste + Presentation + Creativity ) / 3
 
 ## 🎨 Color Palette
 
-| Color | HEX | Preview | Usage |
-|---|---|---|---|
-| Primary | `#4A6741` | <div style="width:60px;height:20px;background:#4A6741;border-radius:4px;"></div> | Brand color, cards, CTA |
-| Secondary | `#C47B2B` | <div style="width:60px;height:20px;background:#C47B2B;border-radius:4px;"></div> | Buttons, accents |
-| Background | `#F5F1EB` | <div style="width:60px;height:20px;background:#F5F1EB;border:1px solid #ccc;border-radius:4px;"></div> | Page background |
-| Dark | `#2C2C2A` | <div style="width:60px;height:20px;background:#2C2C2A;border-radius:4px;"></div> | Text, navbar |
-| Gold 200 | `#E8D5A3` | <div style="width:60px;height:20px;background:#E8D5A3;border-radius:4px;"></div> | Badges, borders |
-| Neutral 600 | `#8B7355` | <div style="width:60px;height:20px;background:#8B7355;border-radius:4px;"></div> | Secondary text |
-| Accent Red | `#D4483B` | <div style="width:60px;height:20px;background:#D4483B;border-radius:4px;"></div> | Discounts, warnings |
+## 🎨 Color Palette
+
+<table>
+<tr>
+<th>Color</th>
+<th>HEX</th>
+<th>Preview</th>
+<th>Usage</th>
+</tr>
+
+<tr>
+<td>Primary</td>
+<td><code>#4A6741</code></td>
+<td><img src="https://singlecolorimage.com/get/4A6741/80x20" /></td>
+<td>Brand color, cards, CTA</td>
+</tr>
+
+<tr>
+<td>Secondary</td>
+<td><code>#C47B2B</code></td>
+<td><img src="https://singlecolorimage.com/get/C47B2B/80x20" /></td>
+<td>Buttons, accents</td>
+</tr>
+
+<tr>
+<td>Background</td>
+<td><code>#F5F1EB</code></td>
+<td><img src="https://singlecolorimage.com/get/F5F1EB/80x20" /></td>
+<td>Page background</td>
+</tr>
+
+<tr>
+<td>Dark</td>
+<td><code>#2C2C2A</code></td>
+<td><img src="https://singlecolorimage.com/get/2C2C2A/80x20" /></td>
+<td>Text, navbar</td>
+</tr>
+
+<tr>
+<td>Gold 200</td>
+<td><code>#E8D5A3</code></td>
+<td><img src="https://singlecolorimage.com/get/E8D5A3/80x20" /></td>
+<td>Badges, borders</td>
+</tr>
+
+<tr>
+<td>Accent Red</td>
+<td><code>#D4483B</code></td>
+<td><img src="https://singlecolorimage.com/get/D4483B/80x20" /></td>
+<td>Discounts, warnings</td>
+</tr>
+
+</table>
 
 ---
 
