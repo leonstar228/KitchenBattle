@@ -6,67 +6,63 @@
 <div class="container mt-4">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <div class="card" style="background-color: var(--white); border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); overflow: hidden;">
-                <div style="background-color: var(--primary); padding: 15px 25px;">
-                    <h3 style="color: var(--white); font-weight: 700; margin: 0;">
-                        <i class="bi bi-plus-circle"></i> Створення нового батлу
-                    </h3>
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="bi bi-plus-circle"></i> Створення нового батлу</h4>
                 </div>
-                <div style="padding: 30px;">
+                <div class="card-body">
                     <form asp-action="Create" method="post">
                         @Html.AntiForgeryToken()
 
                         <div class="mb-3">
-                            <label asp-for="BattleName" class="form-label fw-semibold" style="color: var(--primary);">Назва батлу</label>
-                            <input asp-for="BattleName" class="form-control" style="border-radius: 20px; border-color: var(--gold-200); padding: 10px 15px;" placeholder="Введіть назву..." />
+                            <label asp-for="BattleName" class="form-label fw-semibold">Назва батлу</label>
+                            <input asp-for="BattleName" class="form-control" placeholder="Введіть назву..." />
                             <span asp-validation-for="BattleName" class="text-danger"></span>
                         </div>
 
                         <div class="mb-3">
-                            <label asp-for="Description" class="form-label fw-semibold" style="color: var(--primary);">Опис</label>
-                            <textarea asp-for="Description" class="form-control" rows="3" style="border-radius: 16px; border-color: var(--gold-200); padding: 10px 15px;" placeholder="Опишіть правила батлу..."></textarea>
+                            <label asp-for="Description" class="form-label fw-semibold">Опис</label>
+                            <textarea asp-for="Description" class="form-control" rows="3" placeholder="Опишіть правила батлу..."></textarea>
                             <span asp-validation-for="Description" class="text-danger"></span>
                         </div>
 
                         <div class="mb-3">
-                            <label asp-for="Category" class="form-label fw-semibold" style="color: var(--primary);">Категорія страв</label>
-                            <select asp-for="Category" class="form-select" style="border-radius: 20px; border-color: var(--gold-200); padding: 10px 15px;" asp-items="Html.GetEnumSelectList<CategoryEnum>()"></select>
+                            <label asp-for="Category" class="form-label fw-semibold">Категорія страв</label>
+                            <select asp-for="Category" class="form-select" asp-items="Html.GetEnumSelectList<CategoryEnum>()"></select>
                         </div>
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label asp-for="RegistrationStart" class="form-label fw-semibold" style="color: var(--primary);">Початок реєстрації</label>
-                                <input asp-for="RegistrationStart" class="form-control" type="datetime-local" style="border-radius: 20px; border-color: var(--gold-200); padding: 10px 15px;" />
+                                <label asp-for="RegistrationStart" class="form-label fw-semibold">Початок реєстрації</label>
+                                <input asp-for="RegistrationStart" class="form-control" type="datetime-local" />
                                 <span asp-validation-for="RegistrationStart" class="text-danger"></span>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label asp-for="RegistrationEnd" class="form-label fw-semibold" style="color: var(--primary);">Кінець реєстрації</label>
-                                <input asp-for="RegistrationEnd" class="form-control" type="datetime-local" style="border-radius: 20px; border-color: var(--gold-200); padding: 10px 15px;" />
+                                <label asp-for="RegistrationEnd" class="form-label fw-semibold">Кінець реєстрації</label>
+                                <input asp-for="RegistrationEnd" class="form-control" type="datetime-local" />
                                 <span asp-validation-for="RegistrationEnd" class="text-danger"></span>
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label asp-for="StartedAt" class="form-label fw-semibold" style="color: var(--primary);">Початок батлу</label>
-                                <input asp-for="StartedAt" class="form-control" type="datetime-local" style="border-radius: 20px; border-color: var(--gold-200); padding: 10px 15px;" />
+                                <label asp-for="StartedAt" class="form-label fw-semibold">Початок батлу</label>
+                                <input asp-for="StartedAt" class="form-control" type="datetime-local" />
                                 <span asp-validation-for="StartedAt" class="text-danger"></span>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label asp-for="EndedAt" class="form-label fw-semibold" style="color: var(--primary);">Завершення батлу (опціонально)</label>
-                                <input asp-for="EndedAt" class="form-control" type="datetime-local" style="border-radius: 20px; border-color: var(--gold-200); padding: 10px 15px;" />
+                                <label asp-for="EndedAt" class="form-label fw-semibold">Завершення батлу (опціонально)</label>
+                                <input asp-for="EndedAt" class="form-control" type="datetime-local" />
                             </div>
                         </div>
 
-                        <div class="alert" style="background-color: var(--gold-200); border-radius: 16px; color: var(--dark); padding: 15px;">
-                            <i class="bi bi-info-circle"></i> <strong>Важливо:</strong> Реєстрація має закінчитись до початку батлу.
+                        <div class="alert alert-info small">
+                            <i class="bi bi-info-circle"></i> Реєстрація має закінчитись до початку батлу.
                         </div>
 
-                        <div class="d-flex justify-content-between mt-4">
-                            <a asp-action="Index" class="btn" style="border: 1.5px solid var(--neutral-600); color: var(--neutral-600); border-radius: 20px; padding: 10px 30px;">Скасувати</a>
-                            <button type="submit" class="btn" style="background-color: var(--secondary); color: var(--white); border-radius: 20px; padding: 10px 30px;">
-                                <i class="bi bi-check-lg"></i> Створити батл
-                            </button>
+                        <div class="d-flex justify-content-between">
+                            <a asp-action="Index" class="btn btn-secondary">Скасувати</a>
+                            <button type="submit" class="btn btn-primary">Створити батл</button>
                         </div>
                     </form>
                 </div>

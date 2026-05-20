@@ -4,75 +4,35 @@
     ViewData["Title"] = "Перевірка рецептів";
 }
 
-<style>
-    body { background-color: #F5F1E8 !important; color: #2C2C2A; }
-    .kb-recipe-card { border: none; border-radius: 12px; background: #ffffff; overflow: hidden; }
-    .kb-btn-approve { background-color: #4A6741 !important; color: #ffffff !important; border: none; border-radius: 4px; font-weight: 600; }
-    .kb-btn-approve:hover { background-color: #6B8F5E !important; }
-    .kb-btn-reject { background-color: #D4483B !important; color: #ffffff !important; border: none; border-radius: 4px; font-weight: 600; }
-    .kb-btn-reject:hover { background-color: #b8392e !important; }
-    .kb-btn-details { border: 1px solid #C47B2B !important; color: #C47B2B !important; background: transparent; border-radius: 4px; font-weight: 600; }
-    .kb-btn-details:hover { background: #C47B2B !important; color: #ffffff !important; }
-    .kb-btn-back { background-color: transparent; border: 1px solid #8B7355; color: #8B7355; font-weight: 600; border-radius: 4px; }
-    .kb-btn-back:hover { background-color: #8B7355; color: #ffffff; }
-</style>
-
-<div class="container mt-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h2 class="fw-bold m-0" style="color: #2C2C2A;">Рецепти на модерації</h2>
-            <p class="text-muted m-0 small">Перевірка та публікація нових страв від користувачів</p>
-        </div>
-        <a asp-controller="Admin" asp-action="Dashboard" class="btn btn-sm kb-btn-back px-4 py-2">Назад до панелі</a>
-    </div>
+<div class="container mt-4">
+    <h2 class="mb-4">Рецепти на модерації</h2>
 
     @if (!Model.Any())
     {
-        <div class="alert text-center p-5 shadow-sm" style="background: #ffffff; border-radius: 12px; border-left: 4px solid #4A6741;">
-            <h5 class="fw-bold m-0" style="color: #4A6741;">Усі рецепти успішно перевірено</h5>
-        </div>
+        <div class="alert alert-success">Всі рецепти перевірено!</div>
     }
     else
     {
         <div class="row">
             @foreach (var recipe in Model)
             {
-                <div class="col-md-6 col-lg-4 mb-4">
-                    <div class="card kb-recipe-card shadow-sm h-100">
-                        <div class="card-body p-4 d-flex flex-column justify-content-between">
-                            <div>
-                                <div class="d-flex justify-content-between align-items-start mb-3">
-                                    <span class="badge px-2 py-1" style="background: #E8D5A3; color: #2C2C2A; font-weight: 500;">
-                                        @recipe.Category
-                                    </span>
-                                    <small class="text-muted">ID: @recipe.Id</small>
-                                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">@recipe.Title</h5>
+                            <p class="text-muted small">Автор: @recipe.ChefName | Категорія: @recipe.Category</p>
+                            <div class="d-flex gap-2">
+                                <a asp-controller="Recipes" asp-action="Details" asp-route-id="@recipe.Id" class="btn btn-sm btn-outline-info">Деталі</a>
                                 
-                                <h4 class="card-title fw-bold mb-3" style="color: #2C2C2A;">@recipe.Title</h4>
-                                
-                                <div class="mb-4 pt-2 border-top" style="font-size: 0.9rem; color: #8B7355;">
-                                    <div class="mb-1"><strong>Автор:</strong> @recipe.ChefName</div>
-                                    <div><strong>Статус:</strong> <span style="color: #D4483B; font-weight: 600;">Очікує перевірки</span></div>
-                                </div>
-                            </div>
+                                <form asp-action="ApproveRecipe" asp-route-id="@recipe.Id" method="post" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-sm btn-success">Схвалити</button>
+                                </form>
 
-                            <div class="d-grid gap-2">
-                                <a asp-controller="Recipes" asp-action="Details" asp-route-id="@recipe.Id" class="btn kb-btn-details py-2">Переглянути деталі</a>
-                                
-                                <div class="row g-2">
-                                    <div class="col-6">
-                                        <form asp-controller="Admin" asp-action="ApproveRecipe" asp-route-id="@recipe.Id" method="post" class="w-100">
-                                            @Html.AntiForgeryToken()
-                                            <button type="submit" class="btn kb-btn-approve w-100 py-2">Схвалити</button>
-                                        </form>
-                                    </div>
-                                    <div class="col-6">
-                                        <form asp-controller="Admin" asp-action="RejectRecipe" asp-route-id="@recipe.Id" method="post" class="w-100">
-                                            @Html.AntiForgeryToken()
-                                            <button type="submit" class="btn kb-btn-reject w-100 py-2">Відхилити</button>
-                                        </form>
-                                    </div>
-                                </div>
+                                <form asp-action="RejectRecipe" asp-route-id="@recipe.Id" method="post" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-sm btn-danger">Відхилити</button>
+                                </form>
                             </div>
                         </div>
                     </div>
