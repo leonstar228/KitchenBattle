@@ -71,6 +71,24 @@ AverageScore = ( Taste + Presentation + Creativity ) / 3
 
 ---
 
+## 🎨 Frontend Style Guide
+
+### Кольорова палітра
+
+| Назва | HEX | Використання |
+|---|---|---|
+| Primary | `#4A6741` | Основний бренд, картки, CTA |
+| Secondary | `#C47B2B` | Кнопки, акценти, ціни |
+| Background | `#F5F1EB` | Фон сторінок |
+| Dark | `#2C2C2A` | Текст, navbar, footer |
+| Green 400 | `#6B8F5E` | Hover-стани, secondary cards |
+| Gold 200 | `#E8D5A3` | Бейджі, бордери |
+| Neutral 600 | `#8B7355` | Підтекст, іконки |
+| Accent Red | `#D4483B` | Знижки, warning, hot labels |
+| White | `#FFFFFF` | Картки, секції |
+
+---
+
 ## 🔁 Як це працює
 
 ```
