@@ -9,6 +9,9 @@
 *.user
 *.userosscache
 *.sln.docstates
+*.db-shm
+*.db-wal
+
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
@@ -368,4 +371,4 @@ FodyWeavers.xsd. i d e a /
 /KitchenBattle/appsettings.json
 /KitchenBattle/appsettings.json
 KitchenBattle/appsettings.json
-/KitchenBattle/appsettings.json
+/KitchenBattle/KitchenBattle.db-shm
