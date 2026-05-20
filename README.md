@@ -71,21 +71,17 @@ AverageScore = ( Taste + Presentation + Creativity ) / 3
 
 ---
 
-## 🎨 Frontend Style Guide
+## 🎨 Color Palette
 
-### Кольорова палітра
-
-| Назва | HEX | Використання |
-|---|---|---|
-| Primary | `#4A6741` | Основний бренд, картки, CTA |
-| Secondary | `#C47B2B` | Кнопки, акценти, ціни |
-| Background | `#F5F1EB` | Фон сторінок |
-| Dark | `#2C2C2A` | Текст, navbar, footer |
-| Green 400 | `#6B8F5E` | Hover-стани, secondary cards |
-| Gold 200 | `#E8D5A3` | Бейджі, бордери |
-| Neutral 600 | `#8B7355` | Підтекст, іконки |
-| Accent Red | `#D4483B` | Знижки, warning, hot labels |
-| White | `#FFFFFF` | Картки, секції |
+| Color | HEX | Preview | Usage |
+|---|---|---|---|
+| Primary | `#4A6741` | <div style="width:60px;height:20px;background:#4A6741;border-radius:4px;"></div> | Brand color, cards, CTA |
+| Secondary | `#C47B2B` | <div style="width:60px;height:20px;background:#C47B2B;border-radius:4px;"></div> | Buttons, accents |
+| Background | `#F5F1EB` | <div style="width:60px;height:20px;background:#F5F1EB;border:1px solid #ccc;border-radius:4px;"></div> | Page background |
+| Dark | `#2C2C2A` | <div style="width:60px;height:20px;background:#2C2C2A;border-radius:4px;"></div> | Text, navbar |
+| Gold 200 | `#E8D5A3` | <div style="width:60px;height:20px;background:#E8D5A3;border-radius:4px;"></div> | Badges, borders |
+| Neutral 600 | `#8B7355` | <div style="width:60px;height:20px;background:#8B7355;border-radius:4px;"></div> | Secondary text |
+| Accent Red | `#D4483B` | <div style="width:60px;height:20px;background:#D4483B;border-radius:4px;"></div> | Discounts, warnings |
 
 ---
 
