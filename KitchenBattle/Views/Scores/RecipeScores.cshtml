@@ -1,4 +1,4 @@
-﻿@model IEnumerable<KitchenBattle.Models.Score>
+﻿@model List<KitchenBattle.ViewModels.ScoreDisplayViewModel>
 
 @{
     ViewData["Title"] = "Оцінки рецепту";
@@ -41,7 +41,7 @@ else
                             <div>
                                 <h6 class="mb-0 fw-bold">
                                     <i class="bi bi-person-circle me-1 text-muted"></i>
-                                    Суддя #@score.JudgeId.Substring(0, 8)
+                                    Суддя: @score.JudgeName
                                 </h6>
                             </div>
                             <span class="badge bg-warning text-dark fs-6">
