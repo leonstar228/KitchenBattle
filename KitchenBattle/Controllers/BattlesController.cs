@@ -28,6 +28,10 @@ namespace KitchenBattle.Controllers
         {
             var battle = await _battleService.GetBattleByIdAsync(id);
             if (battle == null) return NotFound();
+            
+            ViewBag.PendingChefs = await _battleService.GetPendingChefsAsync(id);
+            ViewBag.ApprovedChefs = await _battleService.GetApprovedChefsAsync(id);
+            
             return View(battle);
         }
         
@@ -109,8 +113,8 @@ namespace KitchenBattle.Controllers
 
             return View(battle);
         }
-
-        [HttpPost, ActionName("Delete")]
+        
+        [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -124,7 +128,14 @@ namespace KitchenBattle.Controllers
         [Authorize(Roles = "chef")]
         public async Task<IActionResult> RegisterChef(int id)
         {
-            var chefId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "";
+            var chefId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? 
+                         User.FindFirstValue("sub") ??          
+                         User.FindFirstValue("id") ??            
+                         User.FindFirstValue("preferred_username") ?? 
+                         User.Identity?.Name ?? "";
+    
+            Console.WriteLine($"ChefId used: {chefId}");
+    
             var (success, message) = await _battleService.RegisterChefAsync(id, chefId);
 
             if (success) TempData["Success"] = message;
@@ -137,13 +148,30 @@ namespace KitchenBattle.Controllers
         [Authorize(Roles = "judge")]
         public async Task<IActionResult> RegisterJudge(int id)
         {
-            var judgeId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "";
+            var judgeId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? 
+                          User.FindFirstValue("sub") ??         
+                          User.FindFirstValue("id") ??          
+                          User.FindFirstValue("preferred_username") ?? 
+                          User.Identity?.Name ?? "";
+    
+            Console.WriteLine($"JudgeId used: {judgeId}");
+    
             var (success, message) = await _battleService.RegisterJudgeAsync(id, judgeId);
 
             if (success) TempData["Success"] = message;
             else TempData["Error"] = message;
 
             return RedirectToAction(nameof(Details), new { id });
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> ApproveChef(int battleId, string chefId)
+        {
+            var (success, message) = await _battleService.ApproveChefAsync(battleId, chefId);
+            if (success) TempData["Success"] = message;
+            else TempData["Error"] = message;
+            return RedirectToAction(nameof(Details), new { id = battleId });
         }
 
         [HttpPost]

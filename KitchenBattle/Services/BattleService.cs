@@ -9,12 +9,14 @@ namespace KitchenBattle.Services
     public class BattleService
     {
         private readonly ApplicationDbContext _db;
-        private readonly IDistributedCache _cache;  
+        private readonly IDistributedCache _cache; 
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public BattleService(ApplicationDbContext db, IDistributedCache cache)
+        public BattleService(ApplicationDbContext db, IDistributedCache cache, IHttpContextAccessor httpContextAccessor)
         {
             _db = db;
             _cache = cache;  
+            _httpContextAccessor = httpContextAccessor;
         }
         
         private async Task ClearCacheAsync()
@@ -108,65 +110,192 @@ namespace KitchenBattle.Services
         }
         
         public async Task<(bool success, string message)> RegisterChefAsync(int battleId, string chefId)
+{
+    var battle = await _db.Battles
+        .Include(b => b.BattleChefs)
+        .FirstOrDefaultAsync(b => b.Id == battleId);
+
+    if (battle == null)
+        return (false, "Батл не знайдено");
+    
+    var chef = await _db.Chefs.FindAsync(chefId);
+    if (chef == null)
+    {
+        var user = _httpContextAccessor?.HttpContext?.User;
+        
+        // Отримуємо ім'я з Keycloak
+        var fullName = chefId;
+        var userName = chefId;
+        
+        if (user != null)
         {
-            var battle = await _db.Battles
-                .Include(b => b.BattleChefs)
-                .FirstOrDefaultAsync(b => b.Id == battleId);
+            // Пріоритет: name -> given_name + family_name -> preferred_username
+            fullName = user.FindFirst("name")?.Value ??
+                       (user.FindFirst("given_name")?.Value + " " + user.FindFirst("family_name")?.Value)?.Trim() ??
+                       user.FindFirst("preferred_username")?.Value ??
+                       user.Identity?.Name ??
+                       chefId;
+            
+            userName = user.FindFirst("preferred_username")?.Value ?? 
+                       user.Identity?.Name ?? 
+                       chefId;
+        }
+        
+        if (string.IsNullOrWhiteSpace(fullName) || fullName == chefId)
+        {
+            fullName = userName;
+        }
+        
+        fullName = fullName.Trim();
+        
+        chef = new Chef
+        {
+            Id = chefId,
+            UserName = userName,
+            FullName = fullName,
+            CreatedAt = DateTime.UtcNow
+        };
+        
+        Console.WriteLine($"[DEBUG] Створено шефа: Id={chefId}, UserName={userName}, FullName={fullName}");
+        
+        _db.Chefs.Add(chef);
+        await _db.SaveChangesAsync();
+    }
 
-            if (battle == null)
-                return (false, "Батл не знайдено");
+    var now = DateTime.UtcNow;
 
-            var now = DateTime.UtcNow;
+    if (now < battle.RegistrationStart)
+        return (false, $"Реєстрація почнеться {battle.RegistrationStart:dd.MM.yyyy HH:mm}");
 
-            if (now < battle.RegistrationStart)
-                return (false, $"Реєстрація почнеться {battle.RegistrationStart:dd.MM.yyyy HH:mm}");
+    if (now > battle.RegistrationEnd)
+        return (false, "Реєстрацію закрито");
 
-            if (now > battle.RegistrationEnd)
-                return (false, "Реєстрацію закрито");
+    if (battle.Status != StatusBattleEnum.Pending)
+        return (false, "Батл вже почався або завершився");
 
-            if (battle.Status != StatusBattleEnum.Pending)
-                return (false, "Батл вже почався або завершився");
+    if (battle.BattleChefs.Any(bc => bc.ChefId == chefId))
+        return (false, "Ви вже зареєстровані");
 
-            if (battle.BattleChefs.Any(bc => bc.ChefId == chefId))
-                return (false, "Ви вже зареєстровані");
+    battle.BattleChefs.Add(new BattleChef { BattleId = battleId, ChefId = chefId, IsApproved = false });
+    await _db.SaveChangesAsync();
 
-            battle.BattleChefs.Add(new BattleChef { BattleId = battleId, ChefId = chefId });
+    await ClearCacheAsync();
+
+    return (true, "Ви успішно зареєстровані на батл! Очікуйте підтвердження адміністратора.");
+}
+
+public async Task<(bool success, string message)> RegisterJudgeAsync(int battleId, string judgeId)
+{
+    var battle = await _db.Battles
+        .Include(b => b.BattleJudges)
+        .FirstOrDefaultAsync(b => b.Id == battleId);
+
+    if (battle == null)
+        return (false, "Батл не знайдено");
+    
+    var judge = await _db.Judges.FindAsync(judgeId);
+    if (judge == null)
+    {
+        var user = _httpContextAccessor?.HttpContext?.User;
+        
+        // Отримуємо ім'я з Keycloak
+        var fullName = judgeId;
+        var userName = judgeId;
+        
+        if (user != null)
+        {
+            // Пріоритет: name -> given_name + family_name -> preferred_username
+            fullName = user.FindFirst("name")?.Value ??
+                       (user.FindFirst("given_name")?.Value + " " + user.FindFirst("family_name")?.Value)?.Trim() ??
+                       user.FindFirst("preferred_username")?.Value ??
+                       user.Identity?.Name ??
+                       judgeId;
+            
+            userName = user.FindFirst("preferred_username")?.Value ?? 
+                       user.Identity?.Name ?? 
+                       judgeId;
+        }
+        
+        if (string.IsNullOrWhiteSpace(fullName) || fullName == judgeId)
+        {
+            fullName = userName;
+        }
+        
+        fullName = fullName.Trim();
+        
+        judge = new Judge
+        {
+            Id = judgeId,
+            UserName = userName,
+            FullName = fullName,
+            CreatedAt = DateTime.UtcNow
+        };
+        
+        Console.WriteLine($"[DEBUG] Створено суддю: Id={judgeId}, UserName={userName}, FullName={fullName}");
+        
+        _db.Judges.Add(judge);
+        await _db.SaveChangesAsync();
+    }
+
+    var now = DateTime.UtcNow;
+
+    if (now < battle.RegistrationStart)
+        return (false, $"Реєстрація почнеться {battle.RegistrationStart:dd.MM.yyyy HH:mm}");
+
+    if (now > battle.RegistrationEnd)
+        return (false, "Реєстрацію закрито");
+
+    if (battle.Status != StatusBattleEnum.Pending)
+        return (false, "Батл вже почався або завершився");
+
+    if (battle.BattleJudges.Any(bj => bj.JudgeId == judgeId))
+        return (false, "Суддя вже зареєстрований");
+
+    battle.BattleJudges.Add(new BattleJudge { BattleId = battleId, JudgeId = judgeId });
+    await _db.SaveChangesAsync();
+
+    await ClearCacheAsync();
+
+    return (true, "Суддю успішно зареєстровано!");
+}
+
+        public async Task<(bool success, string message)> ApproveChefAsync(int battleId, string chefId)
+        {
+            var battleChef = await _db.BattleChefs
+                .FirstOrDefaultAsync(bc => bc.BattleId == battleId && bc.ChefId == chefId);
+
+            if (battleChef == null)
+                return (false, "Реєстрацію не знайдено");
+
+            if (battleChef.IsApproved)
+                return (false, "Шеф вже підтверджений");
+
+            battleChef.IsApproved = true;
             await _db.SaveChangesAsync();
 
-            await ClearCacheAsync(); 
+            await ClearCacheAsync();
 
-            return (true, "Ви успішно зареєстровані на батл!");
+            return (true, "Шефа підтверджено до участі в батлі!");
         }
 
-        public async Task<(bool success, string message)> RegisterJudgeAsync(int battleId, string judgeId)
+        public async Task<List<Chef>> GetPendingChefsAsync(int battleId)
         {
-            var battle = await _db.Battles
-                .Include(b => b.BattleJudges)
-                .FirstOrDefaultAsync(b => b.Id == battleId);
+            var battleChefs = await _db.BattleChefs
+                .Include(bc => bc.Chef)
+                .Where(bc => bc.BattleId == battleId && !bc.IsApproved)
+                .ToListAsync();
 
-            if (battle == null)
-                return (false, "Батл не знайдено");
+            return battleChefs.Select(bc => bc.Chef).ToList();
+        }
 
-            var now = DateTime.UtcNow;
+        public async Task<List<Chef>> GetApprovedChefsAsync(int battleId)
+        {
+            var battleChefs = await _db.BattleChefs
+                .Include(bc => bc.Chef)
+                .Where(bc => bc.BattleId == battleId && bc.IsApproved)
+                .ToListAsync();
 
-            if (now < battle.RegistrationStart)
-                return (false, $"Реєстрація почнеться {battle.RegistrationStart:dd.MM.yyyy HH:mm}");
-
-            if (now > battle.RegistrationEnd)
-                return (false, "Реєстрацію закрито");
-
-            if (battle.Status != StatusBattleEnum.Pending)
-                return (false, "Батл вже почався або завершився");
-
-            if (battle.BattleJudges.Any(bj => bj.JudgeId == judgeId))
-                return (false, "Суддя вже зареєстрований");
-
-            battle.BattleJudges.Add(new BattleJudge { BattleId = battleId, JudgeId = judgeId });
-            await _db.SaveChangesAsync();
-
-            await ClearCacheAsync();  
-
-            return (true, "Суддю успішно зареєстровано!");
+            return battleChefs.Select(bc => bc.Chef).ToList();
         }
 
         public async Task<bool> CloseRegistrationAsync(int battleId)

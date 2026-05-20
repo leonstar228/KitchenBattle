@@ -154,6 +154,9 @@ namespace KitchenBattle.Migrations
                     b.Property<int>("Id")
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("IsApproved")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("BattleId", "ChefId");
 
                     b.HasIndex("ApplicationUserId");

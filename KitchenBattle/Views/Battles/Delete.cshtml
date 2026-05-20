@@ -3,29 +3,36 @@
     ViewData["Title"] = "Видалити батл";
 }
 
-<div class="container mt-4">
+<div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-6">
-            <div class="card shadow-sm border-danger">
-                <div class="card-header bg-danger text-white">
-                    <h4 class="mb-0"><i class="bi bi-exclamation-triangle"></i> Підтвердження видалення</h4>
+            <div class="card" style="background-color: var(--white); border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); overflow: hidden; border: 2px solid var(--accent-red);">
+                <div style="background-color: var(--accent-red); padding: 15px 25px; text-align: center;">
+                    <i class="bi bi-exclamation-triangle-fill" style="font-size: 48px; color: var(--white);"></i>
+                    <h3 style="color: var(--white); font-weight: 700; margin-top: 10px;">Підтвердження видалення</h3>
                 </div>
-                <div class="card-body">
-                    <p class="fw-semibold">Ви впевнені, що хочете видалити батл?</p>
-                    <div class="alert alert-warning">
-                        <strong>@Model.BattleName</strong>
+                <div style="padding: 30px; text-align: center;">
+                    <p style="color: var(--dark); font-size: 16px;">Ви впевнені, що хочете видалити цей батл?</p>
+                    
+                    <div style="background-color: var(--gold-200); border-radius: 16px; padding: 15px; margin: 20px 0;">
+                        <strong style="color: var(--primary); font-size: 18px;">@Model.BattleName</strong>
                         <br />
-                        <small class="text-muted">@Model.Description</small>
+                        <small style="color: var(--neutral-600);">@Model.Description</small>
                     </div>
-                    <p class="text-danger small">
-                        <i class="bi bi-info-circle"></i> Ця дія незворотна!
+                    
+                    <p style="color: var(--accent-red); font-size: 14px;">
+                        <i class="bi bi-info-circle"></i> Ця дія незворотна! Всі пов'язані дані будуть видалені.
                     </p>
 
                     <form asp-action="DeleteConfirmed" asp-route-id="@Model.Id" method="post">
                         @Html.AntiForgeryToken()
-                        <div class="d-flex justify-content-between">
-                            <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-secondary">Скасувати</a>
-                            <button type="submit" class="btn btn-danger">Видалити</button>
+                        <div class="d-flex justify-content-between gap-3 mt-4">
+                            <a asp-action="Details" asp-route-id="@Model.Id" class="btn" style="flex: 1; border: 1px solid var(--neutral-600); color: var(--neutral-600); border-radius: 25px; padding: 10px; text-align: center;">
+                                <i class="bi bi-x-circle"></i> Скасувати
+                            </a>
+                            <button type="submit" class="btn" style="flex: 1; background-color: var(--accent-red); color: var(--white); border-radius: 25px; padding: 10px;">
+                                <i class="bi bi-trash"></i> Підтвердити
+                            </button>
                         </div>
                     </form>
                 </div>
