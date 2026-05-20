@@ -4,35 +4,213 @@
     ViewData["Title"] = "Перевірка рецептів";
 }
 
-<div class="container mt-4">
-    <h2 class="mb-4">Рецепти на модерації</h2>
+<style>
+    :root {
+        --kb-primary: #4A6741;
+        --kb-secondary: #C47B2B;
+        --kb-bg: #F5F1E8;
+        --kb-dark: #2C2C2A;
+        --kb-green-400: #6B8F5E;
+        --kb-neutral-600: #8B7355;
+    }
+
+    body { background-color: var(--kb-bg) !important; color: #2C2C2A; }
+
+    .kb-recipe-card { 
+        border: none; 
+        border-radius: 12px; 
+        background: #ffffff; 
+        overflow: hidden;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border-left: 4px solid transparent;
+        position: relative;
+    }
+
+    .kb-recipe-card:hover {
+        transform: translateY(-6px) scale(1.02);
+        box-shadow: 0 12px 24px rgba(0,0,0,0.12) !important;
+        border-left-color: var(--kb-secondary);
+    }
+
+    .kb-recipe-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--kb-secondary), var(--kb-primary));
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .kb-recipe-card:hover::before {
+        opacity: 1;
+    }
+
+    .kb-btn-approve { 
+        background: linear-gradient(135deg, #4A6741 0%, #6B8F5E 100%);
+        color: #ffffff !important; 
+        border: none; 
+        border-radius: 6px; 
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(74, 103, 65, 0.2);
+    }
+    .kb-btn-approve:hover { 
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(74, 103, 65, 0.3);
+    }
+
+    .kb-btn-reject { 
+        background: linear-gradient(135deg, #D4483B 0%, #b8392e 100%);
+        color: #ffffff !important; 
+        border: none; 
+        border-radius: 6px; 
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(212, 72, 59, 0.2);
+    }
+    .kb-btn-reject:hover { 
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(212, 72, 59, 0.3);
+    }
+
+    .kb-btn-details { 
+        border: 2px solid var(--kb-secondary) !important; 
+        color: var(--kb-secondary) !important; 
+        background: transparent; 
+        border-radius: 6px; 
+        font-weight: 600;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .kb-btn-details::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background-color: var(--kb-secondary);
+        transition: left 0.3s ease;
+        z-index: -1;
+    }
+
+    .kb-btn-details:hover {
+        color: #ffffff !important;
+        box-shadow: 0 6px 16px rgba(196, 123, 43, 0.2);
+    }
+
+    .kb-btn-details:hover::before {
+        left: 0;
+    }
+
+    .kb-btn-back { 
+        background-color: transparent; 
+        border: 2px solid var(--kb-neutral-600); 
+        color: var(--kb-neutral-600); 
+        font-weight: 600; 
+        border-radius: 6px;
+        transition: all 0.3s ease;
+    }
+    .kb-btn-back:hover { 
+        background-color: var(--kb-neutral-600); 
+        color: #ffffff;
+        box-shadow: 0 4px 12px rgba(139, 115, 85, 0.2);
+    }
+
+    .empty-state {
+        background: linear-gradient(135deg, #F5F1E8 0%, #FEFCF8 100%);
+        border-left: 4px solid var(--kb-primary);
+        animation: slideInAnim 0.6s ease-out;
+    }
+
+    @@keyframes slideInAnim {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div>
+            <h2 class="fw-bold m-0 d-flex align-items-center" style="color: #2C2C2A; font-size: 2rem;">
+                <i class="bi bi-bookmark-check" style="margin-right: 0.75rem; color: var(--kb-primary);"></i>
+                Рецепти на модерації
+            </h2>
+            <p class="text-muted m-0 mt-2 small">Перевірка та публікація нових страв від користувачів</p>
+        </div>
+        <a asp-controller="Admin" asp-action="Dashboard" class="btn btn-sm kb-btn-back px-4 py-2">
+            <i class="bi bi-arrow-left"></i> Назад
+        </a>
+    </div>
 
     @if (!Model.Any())
     {
-        <div class="alert alert-success">Всі рецепти перевірено!</div>
+        <div class="alert empty-state text-center p-5 shadow-sm" style="border-radius: 12px;">
+            <div style="font-size: 3rem; color: var(--kb-primary); margin-bottom: 1rem;">
+                <i class="bi bi-check-circle"></i>
+            </div>
+            <h5 class="fw-bold m-0" style="color: var(--kb-primary); font-size: 1.25rem;">Усі рецепти успішно перевірено</h5>
+            <p class="text-muted m-0 mt-2">Немає рецептів, які очікують на модерацію</p>
+        </div>
     }
     else
     {
         <div class="row">
             @foreach (var recipe in Model)
             {
-                <div class="col-md-6 mb-3">
-                    <div class="card shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title">@recipe.Title</h5>
-                            <p class="text-muted small">Автор: @recipe.ChefName | Категорія: @recipe.Category</p>
-                            <div class="d-flex gap-2">
-                                <a asp-controller="Recipes" asp-action="Details" asp-route-id="@recipe.Id" class="btn btn-sm btn-outline-info">Деталі</a>
-                                
-                                <form asp-action="ApproveRecipe" asp-route-id="@recipe.Id" method="post" class="d-inline">
-                                    @Html.AntiForgeryToken()
-                                    <button type="submit" class="btn btn-sm btn-success">Схвалити</button>
-                                </form>
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card kb-recipe-card shadow-sm h-100">
+                        <div class="card-body p-4 d-flex flex-column justify-content-between">
+                            <div>
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <span class="badge px-3 py-2" style="background: linear-gradient(135deg, #E8D5A3 0%, #d4b896 100%); color: #2C2C2A; font-weight: 600;">
+                                        <i class="bi bi-tag"></i> @recipe.Category
+                                    </span>
+                                    <small class="text-muted" style="font-weight: 500;">ID: @recipe.Id</small>
+                                </div>
 
-                                <form asp-action="RejectRecipe" asp-route-id="@recipe.Id" method="post" class="d-inline">
-                                    @Html.AntiForgeryToken()
-                                    <button type="submit" class="btn btn-sm btn-danger">Відхилити</button>
-                                </form>
+                                <h4 class="card-title fw-bold mb-3" style="color: #2C2C2A; font-size: 1.1rem;">@recipe.Title</h4>
+
+                                <div class="mb-4 pt-3 border-top" style="font-size: 0.9rem; color: var(--kb-neutral-600);">
+                                    <div class="mb-2"><i class="bi bi-person-circle" style="margin-right: 0.5rem;"></i><strong>Автор:</strong> @recipe.ChefName</div>
+                                    <div><i class="bi bi-hourglass-split" style="margin-right: 0.5rem; color: #D4483B;"></i><strong>Статус:</strong> <span style="color: #D4483B; font-weight: 600;">Очікує перевірки</span></div>
+                                </div>
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <a asp-controller="Recipes" asp-action="Details" asp-route-id="@recipe.Id" class="btn kb-btn-details py-2">
+                                    <i class="bi bi-eye"></i> Переглянути деталі
+                                </a>
+
+                                <div class="row g-2">
+                                    <div class="col-6">
+                                        <form asp-controller="Admin" asp-action="ApproveRecipe" asp-route-id="@recipe.Id" method="post" class="w-100">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn kb-btn-approve w-100 py-2">
+                                                <i class="bi bi-check-lg"></i> Схвалити
+                                            </button>
+                                        </form>
+                                    </div>
+                                    <div class="col-6">
+                                        <form asp-controller="Admin" asp-action="RejectRecipe" asp-route-id="@recipe.Id" method="post" class="w-100">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn kb-btn-reject w-100 py-2">
+                                                <i class="bi bi-x-lg"></i> Відхилити
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

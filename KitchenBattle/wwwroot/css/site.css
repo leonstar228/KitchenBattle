@@ -37,6 +37,8 @@ html {
 
 body {
   margin-bottom: 60px;
+  background-color: var(--background);
+  color: var(--dark);
 }
 
 .form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {

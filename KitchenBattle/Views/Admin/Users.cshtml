@@ -4,36 +4,196 @@
     ViewData["Title"] = "Користувачі";
 }
 
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>Зареєстровані користувачі</h2>
-        <a asp-action="Dashboard" class="btn btn-sm btn-secondary">Назад</a>
+<style>
+    :root {
+        --kb-primary: #4A6741;
+        --kb-secondary: #C47B2B;
+        --kb-bg: #F5F1E8;
+        --kb-dark: #2C2C2A;
+        --kb-neutral-600: #8B7355;
+    }
+
+    body { background-color: var(--kb-bg) !important; color: #2C2C2A; }
+
+    .kb-table-container { 
+        background: #ffffff; 
+        border-radius: 12px; 
+        border: none; 
+        overflow: hidden;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    }
+
+    .kb-table-container table {
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    .kb-table-container thead th {
+        background: linear-gradient(135deg, #FDFBF7 0%, #F9F5ED 100%) !important;
+        color: var(--kb-neutral-600) !important;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        padding: 1rem !important;
+        border-bottom: 2px solid #E8D5A3;
+        font-weight: 600;
+    }
+
+    .kb-table-container tbody tr {
+        border-bottom: 1px solid rgba(0,0,0,0.04);
+        transition: all 0.3s ease;
+    }
+
+    .kb-table-container tbody tr:hover {
+        background-color: #FEFCF8 !important;
+        box-shadow: inset 4px 0 0 var(--kb-secondary);
+    }
+
+    .kb-table-container tbody td {
+        padding: 1rem !important;
+        color: var(--kb-dark);
+    }
+
+    .kb-btn-delete { 
+        background-color: transparent; 
+        color: #D4483B; 
+        border: 2px solid #D4483B; 
+        font-weight: 600; 
+        border-radius: 6px; 
+        padding: 6px 16px;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .kb-btn-delete::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background-color: #D4483B;
+        transition: left 0.3s ease;
+        z-index: -1;
+    }
+
+    .kb-btn-delete:hover { 
+        color: #ffffff;
+        box-shadow: 0 4px 12px rgba(212, 72, 59, 0.2);
+    }
+
+    .kb-btn-delete:hover::before {
+        left: 0;
+    }
+
+    .kb-btn-back { 
+        background-color: transparent; 
+        border: 2px solid var(--kb-neutral-600); 
+        color: var(--kb-neutral-600); 
+        font-weight: 600; 
+        border-radius: 6px;
+        transition: all 0.3s ease;
+    }
+
+    .kb-btn-back:hover { 
+        background-color: var(--kb-neutral-600); 
+        color: #ffffff;
+        box-shadow: 0 4px 12px rgba(139, 115, 85, 0.2);
+    }
+
+    .user-badge {
+        display: inline-block;
+        padding: 0.4rem 0.8rem;
+        background: linear-gradient(135deg, #4A6741 0%, #6B8F5E 100%);
+        color: #ffffff;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    .empty-state {
+        background: linear-gradient(135deg, #F5F1E8 0%, #FEFCF8 100%);
+        border-left: 4px solid var(--kb-primary);
+        animation: slideInAnim 0.6s ease-out;
+    }
+
+    @@keyframes slideInAnim {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div>
+            <h2 class="fw-bold m-0 d-flex align-items-center" style="color: #2C2C2A; font-size: 2rem;">
+                <i class="bi bi-people-fill" style="margin-right: 0.75rem; color: var(--kb-primary);"></i>
+                Керування користувачами
+            </h2>
+            <p class="text-muted m-0 mt-2 small">Список зареєстрованих облікових записів у системі</p>
+        </div>
+        <a asp-controller="Admin" asp-action="Dashboard" class="btn kb-btn-back px-4 py-2">
+            <i class="bi bi-arrow-left"></i> Назад
+        </a>
     </div>
 
-    <div class="table-responsive bg-white p-3 shadow-sm rounded">
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th>Username</th>
-                    <th>Email</th>
-                    <th class="text-end">Дії</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var user in Model)
-                {
+    <div class="table-responsive kb-table-container shadow-sm">
+        @if (Model.Any())
+        {
+            <table class="table align-middle m-0 table-hover">
+                <thead>
                     <tr>
-                        <td>@user.UserName</td>
-                        <td class="text-end">
-                            <form asp-action="DeleteUser" asp-route-id="@user.Id" method="post"
-                                  onsubmit="return confirm('Ви впевнені, що хочете видалити цього користувача?');">
-                                @Html.AntiForgeryToken()
-                                <button type="submit" class="btn btn-sm btn-outline-danger">Видалити</button>
-                            </form>
-                        </td>
+                        <th class="py-3 px-4">
+                            <i class="bi bi-person-circle" style="margin-right: 0.5rem;"></i>Ім'я користувача
+                        </th>
+                        <th class="py-3 px-4">
+                            <i class="bi bi-calendar" style="margin-right: 0.5rem;"></i>Дата реєстрації
+                        </th>
+                        <th class="py-3 px-4 text-end">
+                            <i class="bi bi-sliders" style="margin-right: 0.5rem;"></i>Дії
+                        </th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach (var user in Model)
+                    {
+                        <tr>
+                            <td class="py-3 px-4 fw-semibold" style="color: #2C2C2A;">
+                                @user.UserName
+                            </td>
+                            <td class="py-3 px-4" style="color: var(--kb-neutral-600);">
+                                @user.CreatedAt.ToString("dd.MM.yyyy")
+                            </td>
+                            <td class="py-3 px-4 text-end">
+                                <form asp-controller="Admin" asp-action="DeleteUser" asp-route-id="@user.Id" method="post"
+                                      onsubmit="return confirm('Ви впевнені, що хочете видалити цього користувача?');" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-sm kb-btn-delete">
+                                        <i class="bi bi-trash"></i> Видалити
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <div class="text-center p-5">
+                <div style="font-size: 3rem; color: var(--kb-primary); margin-bottom: 1rem;">
+                    <i class="bi bi-people"></i>
+                </div>
+                <h5 class="fw-bold" style="color: var(--kb-primary);">Користувачів не знайдено</h5>
+                <p class="text-muted mt-2">У системі поки немає зареєстрованих користувачів</p>
+            </div>
+        }
     </div>
 </div>
