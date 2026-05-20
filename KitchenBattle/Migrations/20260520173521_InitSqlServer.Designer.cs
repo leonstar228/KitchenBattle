@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KitchenBattle.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260519171202_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20260520173521_InitSqlServer")]
+    partial class InitSqlServer
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
