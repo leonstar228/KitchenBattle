@@ -107,6 +107,7 @@ builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<RedisService>();
 builder.Services.AddScoped<ScoreService>();
+builder.Services.AddScoped<AdminService>();
 builder.Services.AddScoped<BattleService>();
 builder.Services.AddScoped<LeaderBoardService>();
 builder.Services.AddScoped<IRecipeService, RecipeService>();

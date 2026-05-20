@@ -4,64 +4,42 @@
     ViewData["Title"] = "Статистика категорій";
 }
 
-<style>
-    body { background-color: #F5F1E8 !important; color: #2C2C2A; }
-    .kb-table-card { border: none; border-radius: 12px; background: #ffffff; overflow: hidden; }
-    .progress { background-color: #E8D5A3 !important; border-radius: 4px; overflow: hidden; }
-    .progress-bar { background-color: #C47B2B !important; }
-    .kb-badge-score { background-color: #4A6741 !important; color: #ffffff !important; font-size: 0.9rem !important; padding: 6px 12px !important; border-radius: 4px !important; font-weight: 600; }
-    .kb-btn-back { background-color: transparent; border: 1px solid #8B7355; color: #8B7355; font-weight: 600; border-radius: 4px; }
-    .kb-btn-back:hover { background-color: #8B7355; color: #ffffff; }
-</style>
-
-<div class="container mt-5">
+<div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h2 class="fw-bold m-0" style="color: #2C2C2A;">Рейтинг за категоріями</h2>
-            <p class="text-muted m-0 small">Середній бал оцінок страв у розрізі кулінарних категорій</p>
-        </div>
-        <a asp-controller="Admin" asp-action="Dashboard" class="btn kb-btn-back px-4 py-2">Назад до панелі</a>
+        <h2>Середній бал за категоріями</h2>
+        <a asp-action="Dashboard" class="btn btn-secondary">Назад</a>
     </div>
 
-    <div class="card kb-table-card shadow-sm">
-        <div class="card-body p-4">
-            <div class="table-responsive">
-                <table class="table align-middle m-0">
-                    <thead style="background-color: #FDFBF7; color: #8B7355; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em;">
+    <div class="card shadow">
+        <div class="card-body">
+            <table class="table align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Категорія</th>
+                        <th style="width: 50%">Рейтинг</th>
+                        <th class="text-center">Бал</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var stat in Model)
+                    {
+                        var progressWidth = (stat.Value / 10.0) * 100;
                         <tr>
-                            <th class="py-3 border-0 px-4">Категорія</th>
-                            <th class="py-3 border-0" style="width: 50%">Графік розподілу</th>
-                            <th class="py-3 border-0 text-center px-4">Середній бал</th>
+                            <td><strong>@stat.Key</strong></td>
+                            <td>
+                                <div class="progress" style="height: 15px;">
+                                    <div class="progress-bar bg-warning" role="progressbar"
+                                         style="width: @progressWidth%"
+                                         aria-valuenow="@stat.Value" aria-valuemin="0" aria-valuemax="10"></div>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <span class="badge bg-primary fs-6">@stat.Value.ToString("F2") / 10</span>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var stat in Model) {
-    var displayValue = stat.Value;
-    if (displayValue > 10.0) 
-    {
-        displayValue = 10.0; 
-    }
-    var progressWidth = (displayValue / 10.0) * 100;
-
-    <tr style="border-bottom: 1px solid rgba(0,0,0,0.04);">
-        <td class="py-3 px-4">
-            <span class="fw-semibold" style="color: #2C2C2A;">@stat.Key</span>
-        </td>
-        <td class="py-3">
-            <div class="progress" style="height: 12px; max-width: 100%; overflow: hidden;">
-                <div class="progress-bar" role="progressbar"
-                     style="width: @progressWidth%"
-                     aria-valuenow="@displayValue" aria-valuemin="0" aria-valuemax="10"></div>
-            </div>
-        </td>
-        <td class="text-center py-3 px-4">
-            <span class="badge kb-badge-score">@(stat.Value > 10.0 ? "10.00" : stat.Value.ToString("F2")) / 10</span>
-        </td>
-    </tr> 
-                        }
-                    </tbody>
-                </table>
-            </div>
+                    }
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
