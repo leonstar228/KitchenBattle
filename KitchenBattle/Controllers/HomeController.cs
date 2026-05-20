@@ -62,6 +62,7 @@ namespace KitchenBattle.Controllers
                 RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
             });
         }
+        
     }
 }
 
