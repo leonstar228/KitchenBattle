@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace KitchenBattle.Models
 {
-    public class Judge: IdentityUser
+    public class Judge : IdentityUser
     {
         [Required]
         [StringLength(100)]
