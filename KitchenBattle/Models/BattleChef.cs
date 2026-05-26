@@ -5,8 +5,8 @@
         public int Id { get; set; }
         public int BattleId { get; set; }
         public string ChefId { get; set; }
-
-        // Навігаційні властивості
+        
+        public bool IsApproved { get; set; } = false;
         public Battle Battle { get; set; }
         public Chef Chef { get; set; }
     }

@@ -18,16 +18,48 @@ namespace KitchenBattle.Controllers
             _redisService = redisService;
         }
         
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string status, string category, string sortBy, string search, int page = 1)
         {
             var battles = await _redisService.GetBattlesAsync();
-            return View(battles);
+            if (!string.IsNullOrEmpty(status))
+            {
+                battles = battles.Where(b => b.Status.ToString() == status).ToList();
+            }
+
+            if (!string.IsNullOrEmpty(category))
+            {
+                battles = battles.Where(b => b.Category.ToString() == category).ToList();
+            }
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                battles = battles.Where(b => b.BattleName.Contains(search) || b.Description.Contains(search)).ToList();
+            }
+
+            battles = sortBy switch
+            {
+                "date" => battles.OrderByDescending(b => b.StartedAt).ToList(),
+                "date_old" => battles.OrderBy(b => b.StartedAt).ToList(),
+                "name" => battles.OrderBy(b => b.BattleName).ToList(),
+                 _ => battles
+            };
+            int pageSize = 9;
+            int total = (int)Math.Ceiling(battles.Count/ (double)pageSize);
+            var pagedBattles = battles.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+            
+            ViewBag.CurrentPage = page;
+            ViewBag.Totalpages = total;
+            return View(pagedBattles);
         }
         
         public async Task<IActionResult> Details(int id)
         {
             var battle = await _battleService.GetBattleByIdAsync(id);
             if (battle == null) return NotFound();
+            
+            ViewBag.PendingChefs = await _battleService.GetPendingChefsAsync(id);
+            ViewBag.ApprovedChefs = await _battleService.GetApprovedChefsAsync(id);
+            
             return View(battle);
         }
         
@@ -109,8 +141,8 @@ namespace KitchenBattle.Controllers
 
             return View(battle);
         }
-
-        [HttpPost, ActionName("Delete")]
+        
+        [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -124,7 +156,14 @@ namespace KitchenBattle.Controllers
         [Authorize(Roles = "chef")]
         public async Task<IActionResult> RegisterChef(int id)
         {
-            var chefId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "";
+            var chefId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? 
+                         User.FindFirstValue("sub") ??          
+                         User.FindFirstValue("id") ??            
+                         User.FindFirstValue("preferred_username") ?? 
+                         User.Identity?.Name ?? "";
+    
+            Console.WriteLine($"ChefId used: {chefId}");
+    
             var (success, message) = await _battleService.RegisterChefAsync(id, chefId);
 
             if (success) TempData["Success"] = message;
@@ -137,13 +176,30 @@ namespace KitchenBattle.Controllers
         [Authorize(Roles = "judge")]
         public async Task<IActionResult> RegisterJudge(int id)
         {
-            var judgeId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "";
+            var judgeId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? 
+                          User.FindFirstValue("sub") ??         
+                          User.FindFirstValue("id") ??          
+                          User.FindFirstValue("preferred_username") ?? 
+                          User.Identity?.Name ?? "";
+    
+            Console.WriteLine($"JudgeId used: {judgeId}");
+    
             var (success, message) = await _battleService.RegisterJudgeAsync(id, judgeId);
 
             if (success) TempData["Success"] = message;
             else TempData["Error"] = message;
 
             return RedirectToAction(nameof(Details), new { id });
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> ApproveChef(int battleId, string chefId)
+        {
+            var (success, message) = await _battleService.ApproveChefAsync(battleId, chefId);
+            if (success) TempData["Success"] = message;
+            else TempData["Error"] = message;
+            return RedirectToAction(nameof(Details), new { id = battleId });
         }
 
         [HttpPost]

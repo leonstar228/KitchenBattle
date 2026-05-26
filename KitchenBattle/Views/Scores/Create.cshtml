@@ -4,69 +4,383 @@
     ViewData["Title"] = "Додати оцінку";
 }
 
-<div class="row justify-content-center">
-    <div class="col-md-7 col-lg-6">
-        <div class="card shadow-sm border-0">
-            <div class="card-header bg-white border-bottom py-3">
-                <h4 class="mb-0">
-                    <i class="bi bi-star text-warning me-2"></i>Оцінити рецепт
-                </h4>
+<style>
+    :root {
+        --clr-green: #4A6741;
+        --clr-green-hover: #6B8F5E;
+        --clr-gold: #C47B2B;
+        --clr-gold-light: #E8D5A3;
+        --clr-ivory: #F5F1E8;
+        --clr-white: #FFFFFF;
+        --clr-dark: #2C2C2A;
+        --clr-brown: #887355;
+        --clr-red: #D4483B;
+        --radius-card: 16px;
+        --radius-btn: 6px;
+        --radius-pill: 20px;
+        --shadow-card: 0 4px 20px rgba(0,0,0,0.08);
+        --shadow-card-hover: 0 8px 36px rgba(0,0,0,0.12);
+        --transition: 0.3s ease;
+    }
+
+    .score-page-wrap {
+        min-height: 80vh;
+        background: var(--clr-ivory);
+        padding: 48px 0;
+    }
+
+    .score-card {
+        background: var(--clr-white);
+        border-radius: var(--radius-card);
+        box-shadow: var(--shadow-card);
+        border: none;
+        overflow: hidden;
+        animation: cardReveal 0.5s ease both;
+    }
+
+    @@keyframes cardReveal {
+        from { opacity: 0; transform: translateY(24px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .score-card-header {
+        background: var(--clr-green);
+        padding: 28px 32px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .score-card-header::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: repeating-linear-gradient(
+            45deg,
+            transparent,
+            transparent 12px,
+            rgba(255,255,255,0.03) 12px,
+            rgba(255,255,255,0.03) 24px
+        );
+    }
+
+    .score-card-header h4 {
+        color: var(--clr-white);
+        font-family: 'Georgia', 'Times New Roman', serif;
+        font-size: 22px;
+        font-weight: 700;
+        margin: 0;
+        position: relative;
+        z-index: 1;
+    }
+
+    .score-card-header .header-sub {
+        color: var(--clr-gold-light);
+        font-size: 13px;
+        margin-top: 4px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .score-card-body {
+        padding: 32px;
+    }
+
+    .score-field {
+        margin-bottom: 28px;
+        animation: fieldSlide 0.4s ease both;
+    }
+
+    .score-field:nth-child(1) { animation-delay: 0.1s; }
+    .score-field:nth-child(2) { animation-delay: 0.18s; }
+    .score-field:nth-child(3) { animation-delay: 0.26s; }
+    .score-field:nth-child(4) { animation-delay: 0.34s; }
+
+    @@keyframes fieldSlide {
+        from { opacity: 0; transform: translateX(-12px); }
+        to   { opacity: 1; transform: translateX(0); }
+    }
+
+    .score-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--clr-dark);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin-bottom: 8px;
+    }
+
+    .score-label .label-icon {
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        flex-shrink: 0;
+    }
+
+    .icon-taste   { background: rgba(212,72,59,0.12); color: var(--clr-red); }
+    .icon-present { background: rgba(74,103,65,0.12); color: var(--clr-green); }
+    .icon-create  { background: rgba(196,123,43,0.12); color: var(--clr-gold); }
+    .icon-comment { background: rgba(136,115,85,0.10); color: var(--clr-brown); }
+
+    .score-label .range-hint {
+        margin-left: auto;
+        font-size: 11px;
+        font-weight: 400;
+        color: var(--clr-brown);
+        letter-spacing: 0;
+        text-transform: none;
+    }
+
+    .score-input {
+        border: 1.5px solid #E2DDD4;
+        border-radius: var(--radius-btn);
+        padding: 12px 16px;
+        font-size: 16px;
+        color: var(--clr-dark);
+        background: var(--clr-white);
+        width: 100%;
+        transition: var(--transition);
+        outline: none;
+        font-family: inherit;
+        appearance: none;
+        -moz-appearance: textfield;
+    }
+
+    .score-input:focus {
+        border-color: var(--clr-green);
+        box-shadow: 0 0 0 3px rgba(74,103,65,0.12);
+    }
+
+    .score-input::placeholder {
+        color: #B8B0A4;
+    }
+
+    textarea.score-input {
+        resize: vertical;
+        min-height: 96px;
+    }
+
+    .field-error {
+        font-size: 12px;
+        color: var(--clr-red);
+        margin-top: 5px;
+        display: block;
+    }
+
+    .score-divider {
+        height: 1px;
+        background: linear-gradient(to right, transparent, #E2DDD4, transparent);
+        margin: 4px 0 28px;
+    }
+
+    .btn-score-submit {
+        background: var(--clr-gold);
+        color: var(--clr-white);
+        border: none;
+        border-radius: var(--radius-btn);
+        padding: 13px 32px;
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        transition: var(--transition);
+        cursor: pointer;
+        flex: 1;
+    }
+
+    .btn-score-submit:hover {
+        background: #B36B20;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 16px rgba(196,123,43,0.35);
+        color: var(--clr-white);
+    }
+
+    .btn-score-submit:active {
+        transform: translateY(0);
+    }
+
+    .btn-score-cancel {
+        background: transparent;
+        color: var(--clr-brown);
+        border: 1.5px solid #C8C0B4;
+        border-radius: var(--radius-btn);
+        padding: 13px 24px;
+        font-size: 14px;
+        font-weight: 500;
+        transition: var(--transition);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        white-space: nowrap;
+    }
+
+    .btn-score-cancel:hover {
+        border-color: var(--clr-green);
+        color: var(--clr-green);
+        background: rgba(74,103,65,0.05);
+    }
+
+    .validation-summary-errors {
+        background: rgba(212,72,59,0.08);
+        border: 1px solid rgba(212,72,59,0.25);
+        border-radius: var(--radius-btn);
+        color: var(--clr-red);
+        padding: 12px 16px;
+        font-size: 13px;
+        margin-bottom: 24px;
+    }
+
+    .score-total-preview {
+        background: var(--clr-ivory);
+        border-radius: 12px;
+        padding: 16px 20px;
+        margin-bottom: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border: 1px solid #E2DDD4;
+    }
+
+    .score-total-preview .preview-label {
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--clr-brown);
+    }
+
+    .score-total-preview .preview-value {
+        font-family: 'Georgia', serif;
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--clr-green);
+    }
+
+    .score-total-preview .preview-max {
+        font-size: 13px;
+        color: var(--clr-brown);
+    }
+</style>
+
+<div class="score-page-wrap">
+    <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-6">
+
+            <div class="score-card">
+                <div class="score-card-header">
+                    <h4><i class="bi bi-star-fill me-2" style="color: var(--clr-gold-light);"></i>Оцінити рецепт</h4>
+                    <p class="header-sub">Виставте оцінку за трьома критеріями — максимум 30 балів</p>
+                </div>
+
+                <div class="score-card-body">
+                    <form asp-action="Create" method="post" id="scoreForm">
+                        <div asp-validation-summary="ModelOnly" class="validation-summary-errors" role="alert"></div>
+
+                        <input asp-for="RecipeId" type="hidden" />
+
+                        <div class="score-total-preview">
+                            <div>
+                                <div class="preview-label">Загальна оцінка</div>
+                                <div class="preview-max">з 30 балів</div>
+                            </div>
+                            <div class="preview-value" id="totalPreview">—</div>
+                        </div>
+
+                        <div class="score-field">
+                            <label asp-for="Taste" class="score-label">
+                                <span class="label-icon icon-taste"><i class="bi bi-fire"></i></span>
+                                Смак
+                                <span class="range-hint">1–10 балів</span>
+                            </label>
+                            <input asp-for="Taste" type="number" min="1" max="10"
+                                   class="score-input" placeholder="Оцінка за смак"
+                                   id="fieldTaste" />
+                            <span asp-validation-for="Taste" class="field-error"></span>
+                        </div>
+
+                        <div class="score-field">
+                            <label asp-for="Presentation" class="score-label">
+                                <span class="label-icon icon-present"><i class="bi bi-palette"></i></span>
+                                Презентація
+                                <span class="range-hint">1–10 балів</span>
+                            </label>
+                            <input asp-for="Presentation" type="number" min="1" max="10"
+                                   class="score-input" placeholder="Оцінка за подачу"
+                                   id="fieldPresentation" />
+                            <span asp-validation-for="Presentation" class="field-error"></span>
+                        </div>
+
+                        <div class="score-field">
+                            <label asp-for="Creativity" class="score-label">
+                                <span class="label-icon icon-create"><i class="bi bi-lightbulb"></i></span>
+                                Креативність
+                                <span class="range-hint">1–10 балів</span>
+                            </label>
+                            <input asp-for="Creativity" type="number" min="1" max="10"
+                                   class="score-input" placeholder="Оцінка за оригінальність"
+                                   id="fieldCreativity" />
+                            <span asp-validation-for="Creativity" class="field-error"></span>
+                        </div>
+
+                        <div class="score-divider"></div>
+
+                        <div class="score-field">
+                            <label asp-for="Comments" class="score-label">
+                                <span class="label-icon icon-comment"><i class="bi bi-chat-left-text"></i></span>
+                                Коментар
+                                <span class="range-hint">необов'язково</span>
+                            </label>
+                            <textarea asp-for="Comments" class="score-input" rows="3"
+                                      placeholder="Ваші враження від страви..."></textarea>
+                            <span asp-validation-for="Comments" class="field-error"></span>
+                        </div>
+
+                        <div class="d-flex gap-3 mt-2">
+                            <button type="submit" class="btn-score-submit">
+                                <i class="bi bi-check-lg me-1"></i>Зберегти оцінку
+                            </button>
+                            <a asp-controller="Recipes" asp-action="Details" asp-route-id="@Model.RecipeId"
+                               class="btn-score-cancel">
+                                <i class="bi bi-x"></i>Скасувати
+                            </a>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <div class="card-body p-4">
-                <form asp-action="Create" method="post">
-                    <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2" role="alert"></div>
 
-                    <input asp-for="RecipeId" type="hidden" />
-
-                    <div class="mb-4">
-                        <label asp-for="Taste" class="form-label fw-semibold">
-                            <i class="bi bi-fire text-danger me-1"></i>Смак
-                            <span class="text-muted fw-normal small">(1–10)</span>
-                        </label>
-                        <input asp-for="Taste" type="number" min="1" max="10" class="form-control form-control-lg" placeholder="Оцінка за смак" />
-                        <span asp-validation-for="Taste" class="text-danger small"></span>
-                    </div>
-
-                    <div class="mb-4">
-                        <label asp-for="Presentation" class="form-label fw-semibold">
-                            <i class="bi bi-palette text-info me-1"></i>Презентація
-                            <span class="text-muted fw-normal small">(1–10)</span>
-                        </label>
-                        <input asp-for="Presentation" type="number" min="1" max="10" class="form-control form-control-lg" placeholder="Оцінка за подачу" />
-                        <span asp-validation-for="Presentation" class="text-danger small"></span>
-                    </div>
-
-                    <div class="mb-4">
-                        <label asp-for="Creativity" class="form-label fw-semibold">
-                            <i class="bi bi-lightbulb text-success me-1"></i>Креативність
-                            <span class="text-muted fw-normal small">(1–10)</span>
-                        </label>
-                        <input asp-for="Creativity" type="number" min="1" max="10" class="form-control form-control-lg" placeholder="Оцінка за оригінальність" />
-                        <span asp-validation-for="Creativity" class="text-danger small"></span>
-                    </div>
-                    <div class="mb-4">
-                        <label asp-for="Comments" class="form-label fw-semibold">
-                            <i class="bi bi-chat-left-text text-muted me-1"></i>Коментар
-                            <span class="text-muted fw-normal small">(необов'язково)</span>
-                        </label>
-                        <textarea asp-for="Comments" class="form-control" rows="3" placeholder="Ваші враження від страви..."></textarea>
-                        <span asp-validation-for="Comments" class="text-danger small"></span>
-                    </div>
-
-                    <div class="d-flex gap-2">
-                        <button type="submit" class="btn btn-primary flex-fill">
-                            <i class="bi bi-check-lg me-1"></i>Зберегти оцінку
-                        </button>
-                        <a asp-controller="Recipes" asp-action="Details" asp-route-id="@Model.RecipeId" class="btn btn-outline-secondary">
-                            Скасувати
-                        </a>
-                    </div>
-                </form>
-            </div>
         </div>
     </div>
 </div>
 
 @section Scripts {
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    <script>
+        (function () {
+            const taste = document.getElementById('fieldTaste');
+            const pres  = document.getElementById('fieldPresentation');
+            const creat = document.getElementById('fieldCreativity');
+            const total = document.getElementById('totalPreview');
+
+            function update() {
+                const t = parseInt(taste.value) || 0;
+                const p = parseInt(pres.value)  || 0;
+                const c = parseInt(creat.value) || 0;
+                const sum = t + p + c;
+                total.textContent = (t || p || c) ? sum : '—';
+                total.style.color = sum >= 24 ? 'var(--clr-green)'
+                    : sum >= 15 ? 'var(--clr-gold)'
+                    : sum > 0   ? 'var(--clr-red)'
+                    : 'var(--clr-green)';
+            }
+
+            [taste, pres, creat].forEach(el => el.addEventListener('input', update));
+        })();
+    </script>
 }
