@@ -42,8 +42,7 @@ namespace KitchenBattle.Migrations
                 name: "ApplicationUsers",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                    Id = table.Column<string>(type: "TEXT", nullable: false),
                     UserName = table.Column<string>(type: "TEXT", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
@@ -140,7 +139,7 @@ namespace KitchenBattle.Migrations
                     BattleId = table.Column<int>(type: "INTEGER", nullable: false),
                     ChefId = table.Column<string>(type: "TEXT", nullable: false),
                     Id = table.Column<int>(type: "INTEGER", nullable: false),
-                    ApplicationUserId = table.Column<int>(type: "INTEGER", nullable: true)
+                    ApplicationUserId = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -171,7 +170,7 @@ namespace KitchenBattle.Migrations
                     BattleId = table.Column<int>(type: "INTEGER", nullable: false),
                     JudgeId = table.Column<string>(type: "TEXT", nullable: false),
                     Id = table.Column<int>(type: "INTEGER", nullable: false),
-                    ApplicationUserId = table.Column<int>(type: "INTEGER", nullable: true)
+                    ApplicationUserId = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -214,7 +213,7 @@ namespace KitchenBattle.Migrations
                     Category = table.Column<int>(type: "INTEGER", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
                     AdminId = table.Column<string>(type: "TEXT", nullable: true),
-                    ApplicationUserId = table.Column<int>(type: "INTEGER", nullable: true),
+                    ApplicationUserId = table.Column<string>(type: "TEXT", nullable: true),
                     BattleId = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
@@ -240,7 +239,7 @@ namespace KitchenBattle.Migrations
                         column: x => x.ChefId,
                         principalTable: "Chefs",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -255,7 +254,7 @@ namespace KitchenBattle.Migrations
                     Presentation = table.Column<int>(type: "INTEGER", nullable: false),
                     Creativity = table.Column<int>(type: "INTEGER", nullable: false),
                     Comments = table.Column<string>(type: "TEXT", nullable: false),
-                    ApplicationUserId = table.Column<int>(type: "INTEGER", nullable: true)
+                    ApplicationUserId = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {

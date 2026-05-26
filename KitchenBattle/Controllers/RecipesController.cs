@@ -102,14 +102,30 @@ namespace KitchenBattle.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(RecipeCreateViewModel model)
         {
             if (!ModelState.IsValid) return View(model);
 
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var user = await _context.ApplicationUsers.FindAsync(userId);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)
+             ?? User.FindFirstValue("sub")
+             ?? User.FindFirstValue("id");
+            if (userId == null) return RedirectToAction("Login", "Account");
 
-            if (user == null) return Unauthorized();
+            var userName = User.Identity?.Name ?? User.FindFirstValue("preferred_username") ?? "Unknown";
+
+            var user = await _context.ApplicationUsers.FindAsync(userId);
+            if (user == null)
+            {
+                user = new ApplicationUser
+                {
+                    Id = userId,
+                    UserName = userName,
+                    CreatedAt = DateTime.UtcNow
+                };
+                _context.ApplicationUsers.Add(user);
+                await _context.SaveChangesAsync();
+            }
 
             await _recipeService.CreateRecipeAsync(model, userId, user.UserName);
 

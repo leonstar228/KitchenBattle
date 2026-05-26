@@ -6,42 +6,56 @@
 <div class="container py-4">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <div class="card bg-dark border-0 shadow-lg">
-                <div class="card-header bg-transparent border-0 pt-4">
-                    <h1 class="display-5 fw-bold text-center">🍽️ Новий рецепт</h1>
-                    <p class="text-center text-muted">Поділіться своєю кулінарною майстерністю</p>
+            <div class="create-recipe-card">
+                <div class="create-recipe-header">
+                    <i class="bi bi-plus-circle-fill" style="font-size: 48px; color: #C47B2B;"></i>
+                    <h1 class="display-5 fw-bold mt-2" style="color: #2C2C2A;">🍽️ Новий рецепт</h1>
+                    <p style="color: #6c757d;">Поділіться своєю кулінарною майстерністю</p>
                 </div>
-                <div class="card-body p-4">
+                <div class="create-recipe-body">
                     <form asp-action="Create" method="post" enctype="multipart/form-data">
                         <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
 
-                        <div class="mb-3">
-                            <label asp-for="Title" class="form-label fw-bold"></label>
-                            <input asp-for="Title" class="form-control bg-secondary text-white border-0" placeholder="Назва страви">
-                            <span asp-validation-for="Title" class="text-danger"></span>
+                        <div class="form-group mb-4">
+                            <label asp-for="Title" class="form-label" style="color: #2C2C2A; font-weight: 600; margin-bottom: 8px;">
+                                <i class="bi bi-card-heading me-2" style="color: #C47B2B;"></i>Назва страви
+                            </label>
+                            <input asp-for="Title" class="form-control create-recipe-input" placeholder="Наприклад: Тірамісу" style="background: #FFFFFF; border: 1px solid #e9ecef; border-radius: 12px; padding: 12px 16px; color: #2C2C2A;">
+                            <span asp-validation-for="Title" class="text-danger small"></span>
                         </div>
 
-                        <div class="mb-3">
-                            <label asp-for="Description" class="form-label fw-bold"></label>
-                            <textarea asp-for="Description" class="form-control bg-secondary text-white border-0" rows="4" placeholder="Опишіть страву..."></textarea>
-                            <span asp-validation-for="Description" class="text-danger"></span>
+                        <div class="form-group mb-4">
+                            <label asp-for="Description" class="form-label" style="color: #2C2C2A; font-weight: 600; margin-bottom: 8px;">
+                                <i class="bi bi-file-text me-2" style="color: #C47B2B;"></i>Опис
+                            </label>
+                            <textarea asp-for="Description" class="form-control create-recipe-textarea" rows="4" placeholder="Опишіть страву, її особливості та історію..." style="background: #FFFFFF; border: 1px solid #e9ecef; border-radius: 12px; padding: 12px 16px; color: #2C2C2A;"></textarea>
+                            <span asp-validation-for="Description" class="text-danger small"></span>
                         </div>
 
-                        <div class="mb-3">
-                            <label asp-for="Ingredients" class="form-label fw-bold"></label>
-                            <textarea asp-for="Ingredients" class="form-control bg-secondary text-white border-0" rows="4" placeholder="Список інгредієнтів..."></textarea>
-                            <span asp-validation-for="Ingredients" class="text-danger"></span>
+                        <div class="form-group mb-4">
+                            <label asp-for="Ingredients" class="form-label" style="color: #2C2C2A; font-weight: 600; margin-bottom: 8px;">
+                                <i class="bi bi-basket me-2" style="color: #C47B2B;"></i>Інгредієнти
+                            </label>
+                            <textarea asp-for="Ingredients" class="form-control create-recipe-textarea" rows="4" placeholder="Список інгредієнтів (кожен з нового рядка)..." style="background: #FFFFFF; border: 1px solid #e9ecef; border-radius: 12px; padding: 12px 16px; color: #2C2C2A;"></textarea>
+                            <span asp-validation-for="Ingredients" class="text-danger small"></span>
                         </div>
 
                         <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label asp-for="CookingTime" class="form-label fw-bold"></label>
-                                <input asp-for="CookingTime" class="form-control bg-secondary text-white border-0" placeholder="хвилин">
-                                <span asp-validation-for="CookingTime" class="text-danger"></span>
+                            <div class="col-md-6 mb-4">
+                                <label asp-for="CookingTime" class="form-label" style="color: #2C2C2A; font-weight: 600; margin-bottom: 8px;">
+                                    <i class="bi bi-clock me-2" style="color: #C47B2B;"></i>Час приготування
+                                </label>
+                                <div class="input-group">
+                                    <input asp-for="CookingTime" class="form-control" placeholder="хвилин" style="background: #FFFFFF; border: 1px solid #e9ecef; border-radius: 12px 0 0 12px; padding: 12px 16px; color: #2C2C2A;">
+                                    <span class="input-group-text" style="background: #f8f9fa; border: 1px solid #e9ecef; border-left: none; border-radius: 0 12px 12px 0; color: #6c757d;">хв</span>
+                                </div>
+                                <span asp-validation-for="CookingTime" class="text-danger small"></span>
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <label asp-for="Difficulty" class="form-label fw-bold"></label>
-                                <select asp-for="Difficulty" class="form-select bg-secondary text-white border-0">
+                            <div class="col-md-6 mb-4">
+                                <label asp-for="Difficulty" class="form-label" style="color: #2C2C2A; font-weight: 600; margin-bottom: 8px;">
+                                    <i class="bi bi-bar-chart-steps me-2" style="color: #C47B2B;"></i>Складність
+                                </label>
+                                <select asp-for="Difficulty" class="form-select" style="background: #FFFFFF; border: 1px solid #e9ecef; border-radius: 12px; padding: 12px 16px; color: #2C2C2A;">
                                     <option value="Easy">⭐ Легкий</option>
                                     <option value="Medium">⭐⭐ Середній</option>
                                     <option value="Hard">⭐⭐⭐ Складний</option>
@@ -50,27 +64,37 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label asp-for="Category" class="form-label fw-bold"></label>
-                                <select asp-for="Category" class="form-select bg-secondary text-white border-0">
+                            <div class="col-md-6 mb-4">
+                                <label asp-for="Category" class="form-label" style="color: #2C2C2A; font-weight: 600; margin-bottom: 8px;">
+                                    <i class="bi bi-tags me-2" style="color: #C47B2B;"></i>Категорія
+                                </label>
+                                <select asp-for="Category" class="form-select" style="background: #FFFFFF; border: 1px solid #e9ecef; border-radius: 12px; padding: 12px 16px; color: #2C2C2A;">
                                     @foreach (var cat in Enum.GetValues<CategoryEnum>())
                                     {
                                         <option value="@cat">@cat</option>
                                     }
                                 </select>
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <label asp-for="Picture" class="form-label fw-bold"></label>
-                                <input asp-for="Picture" type="file" class="form-control bg-secondary text-white border-0" accept="image/*">
-                                <span asp-validation-for="Picture" class="text-danger"></span>
+                            <div class="col-md-6 mb-4">
+                                <label asp-for="Picture" class="form-label" style="color: #2C2C2A; font-weight: 600; margin-bottom: 8px;">
+                                    <i class="bi bi-image me-2" style="color: #C47B2B;"></i>Фото страви
+                                </label>
+                                <div class="file-upload-wrapper">
+                                    <input asp-for="Picture" type="file" class="create-recipe-file" accept="image/*" id="fileInput">
+                                    <label for="fileInput" class="file-upload-label">
+                                        <i class="bi bi-cloud-upload"></i> Вибрати файл
+                                    </label>
+                                    <span id="fileName" class="file-name ms-2" style="color: #6c757d;">Файл не вибрано</span>
+                                </div>
+                                <span asp-validation-for="Picture" class="text-danger small"></span>
                             </div>
                         </div>
 
-                        <div class="d-grid gap-2 mt-4">
-                            <button type="submit" class="btn btn-kitchen btn-lg">
+                        <div class="d-grid gap-3 mt-4">
+                            <button type="submit" class="btn btn-create-recipe btn-lg">
                                 <i class="bi bi-check-lg"></i> Створити рецепт
                             </button>
-                            <a asp-action="Index" class="btn btn-secondary">Скасувати</a>
+                            <a asp-action="Index" class="btn btn-cancel">Скасувати</a>
                         </div>
                     </form>
                 </div>
@@ -80,24 +104,138 @@
 </div>
 
 <style>
-    .btn-kitchen {
-        background: linear-gradient(135deg, #e65c00, #f9a826);
-        color: white;
-        border: none;
+    .create-recipe-card {
+        background: #FFFFFF;
+        border-radius: 20px;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+        overflow: hidden;
+        border: 1px solid rgba(0,0,0,0.04);
     }
 
-        .btn-kitchen:hover {
-            background: linear-gradient(135deg, #cc5200, #e69500);
-            color: white;
-        }
+    .create-recipe-header {
+        background: linear-gradient(135deg, #f5f0e6, #FFFFFF);
+        padding: 32px 24px 24px;
+        text-align: center;
+        border-bottom: 1px solid rgba(0,0,0,0.04);
+    }
 
-    .form-control:focus, .form-select:focus {
-        box-shadow: 0 0 0 0.2rem rgba(230, 92, 0, 0.25);
-        border-color: #e65c00;
+    .create-recipe-body {
+        padding: 32px;
+        background: #FFFFFF;
+    }
+
+    .create-recipe-input:focus,
+    .create-recipe-textarea:focus,
+    .form-select:focus {
+        border-color: #C47B2B !important;
+        box-shadow: 0 0 0 3px rgba(196, 123, 43, 0.15) !important;
+        outline: none;
+    }
+
+    .file-upload-wrapper {
+        position: relative;
+    }
+
+    .create-recipe-file {
+        position: absolute;
+        opacity: 0;
+        width: 0.1px;
+        height: 0.1px;
+    }
+
+    .file-upload-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #f8f9fa;
+        border: 1px solid #e9ecef;
+        border-radius: 12px;
+        padding: 10px 20px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        color: #4A6741;
+        font-weight: 500;
+    }
+
+    .file-upload-label:hover {
+        background: #e9ecef;
+        border-color: #C47B2B;
+        color: #C47B2B;
+    }
+
+    .btn-create-recipe {
+        background: linear-gradient(135deg, #C47B2B, #f9a826);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 14px;
+        font-weight: 700;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .btn-create-recipe:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 36px rgba(0,0,0,0.12);
+        color: white;
+    }
+
+    .btn-cancel {
+        background: #e9ecef;
+        border: none;
+        border-radius: 12px;
+        padding: 14px;
+        font-weight: 600;
+        color: #6c757d;
+        text-align: center;
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+
+    .btn-cancel:hover {
+        background: #dee2e6;
+        color: #495057;
+    }
+
+    ::placeholder {
+        color: #adb5bd !important;
+        opacity: 1;
+    }
+
+    @@media (max-width: 768px) {
+        .create-recipe-body {
+            padding: 20px;
+        }
+        .create-recipe-header {
+            padding: 24px 20px 20px;
+        }
+        .create-recipe-header h1 {
+            font-size: 28px;
+        }
+    }
+
+    .text-danger {
+        font-size: 12px;
+        margin-top: 4px;
+        display: block;
+        color: #dc3545;
+    }
+
+    .alert-danger {
+        background: #f8d7da;
+        border: none;
+        border-radius: 12px;
+        color: #842029;
+        padding: 12px 16px;
     }
 </style>
 
 @section Scripts {
+    <script>
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            var fileName = e.target.files[0]?.name || 'Файл не вибрано';
+            document.getElementById('fileName').textContent = fileName;
+        });
+    </script>
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }

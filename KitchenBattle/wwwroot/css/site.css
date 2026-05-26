@@ -1,74 +1,1412 @@
 html {
-  font-size: 14px;
+    font-size: 14px;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
 :root {
     /* Основні кольори*/
-    --primary-green: #4A6741;      /* Основний зелений – картки, акценти, CTA */
-    --secondary-orange: #C47B2B;    /* Другорядний помаранчевий – кнопки, ціни, зірки */
-    --background-page: #F5F1E8;   /* Фон сторінки */
-    --dark: #2C2C2A;         /* Темний – текст, навбар, футер */
-
+    --primary: #4A6741; /* Основний зелений – картки, акценти, CTA */
+    --secondary: #C47B2B; /* Другорядний помаранчевий – кнопки, ціни, зірки */
+    --background: #F5F1E8; /* Фон сторінки */
+    --dark: #2C2C2A; /* Темний – текст, навбар, футер */
     /* Розширена палітра */
-    --hover-green: #6B8F5E;    /* Hover для карток */
-    --light-elements: #E8D5A3;     /* Бежевий – бордери, світлі елементи */
-    --white: #FFFFFF;        /* Білий – картки, секції */
-    --light-brown: #8B7355;  /* Другорядний текст, іконки */
-
+    --green-400: #6B8F5E; /* Hover для карток */
+    --gold-200: #E8D5A3; /* Бежевий – бордери, світлі елементи */
+    --white: #FFFFFF; /* Білий – картки, секції */
+    --neutral-600: #8B7355; /* Другорядний текст, іконки */
     /* Додаткові кольори */
-    --accent-red: #D4483B;   /* Акцентний червоний – знижки, закреслені ціни */
+    --accent-red: #D4483B; /* Акцентний червоний – знижки, закреслені ціни */
+    /* Кнопки */
+    --btn-primary-bg: #492815;
+    --btn-secondary-bg: #a15428;
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
+    background-color: var(--background);
+    color: var(--dark);
 }
 
 .form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
+    color: var(--bs-secondary-color);
+    text-align: end;
 }
 
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
+    text-align: start;
+}
+
+.card-img {
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
 }
 
 .card-green {
-    background-color: var(--bg-color-green); /* зелений */
-    color: var(--color-white);
-    border-radius: 10px;
+    background-color: var(--primary); /* зелений */
+    color: var(--white);
+    border-radius: 20px;
 }
+
+    .card-green:hover {
+        background-color: var(--green-400); /* трохи світліший відтінок при наведенні */
+        color: var(--white);
+    }
 
 .card-yellow {
-    background-color: var(--bg-color-yellow); /* жовтий */
-    color: var(--color-white);
-    border-radius: 10px;
+    background-color: var(--secondary); /* жовтий */
+    color: var(--white);
+    border-radius: 20px;
 }
 
+    .card-yellow:hover {
+        background-color: var(--gold-200); /* трохи світліший відтінок при наведенні */
+        color: var(--white);
+    }
+
+.text {
+    color: var(--secondary);
+    text-transform: uppercase;
+}
+
+.span {
+    background-color: var(--white);
+    border-radius: 20px;
+    border: 2px solid var(--secondary);
+    padding: 10px 15px;
+}
 
 .btn-kitchen {
-    background-color: var(--bg-color-blue); /* Темно-синій */
-    color: var(--color-white); /* білий текст */
-    border-radius: 15px; /* заокруглені краї */
+    background-color: var(--btn-primary-bg); /* Темно-коричневий */
+    color: var(--white); /* білий текст */
+    text-transform: uppercase;
+    padding: 10px 40px;
+    border-radius: 20px; /* заокруглені краї */
     border: none; /* без рамки */
     transition: background-color 0.3s ease;
 }
 
     .btn-kitchen:hover {
-        background-color: var(--bg-color-blue-white); /* трохи світліший відтінок при наведенні */
-        color: var(--color-white);
+        background-color: var(--btn-secondary-bg); /* трохи світліший відтінок при наведенні */
+        color: var(--white);
     }
+
+.btn-kitchen-secondary {
+    background-color: var(--white); /* Білий фон */
+    color: var(--secondary); /* Темний текст */
+    text-transform: uppercase;
+    padding: 10px 40px;
+    border-radius: 20px; /* заокруглені краї */
+    border: 4px solid var(--secondary);
+    transition: background-color 0.3s ease;
+}
+
+    .btn-kitchen-secondary:hover {
+        background-color: var(--secondary); /* жовтий при наведенні */
+        color: var(--white);
+        border: 4px solid var(--secondary);
+    }
+
+}
+
+.card-green h5,
+.card-green p,
+.card-green span,
+.card-green small,
+.card-green a,
+.card-yellow h5,
+.card-yellow p,
+.card-yellow span,
+.card-yellow small,
+.card-yellow a {
+    color: var(--white) !important;
+}
+
+html {
+    font-size: 14px;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+:root {
+    /* Brand palette */
+    --clr-green: #4A6741;
+    --clr-green-400: #6B8F5E;
+    --clr-gold: #C47B2B;
+    --clr-gold-100: #EBD5A3;
+    --clr-ivory: #F5F1E8;
+    --clr-white: #FFFFFF;
+    --clr-dark: #2C2C2A;
+    --clr-brown: #887355;
+    --clr-accent: #D0443B;
+    /* Radii & layout */
+    --radius-card: 16px;
+    --radius-btn: 6px;
+    --radius-pill: 20px;
+    /* Shadows & transition */
+    --shadow-card: 0 6px 20px rgba(0,0,0,0.08);
+    --shadow-card-hover: 0 12px 36px rgba(0,0,0,0.12);
+    --transition: 0.28s ease;
+    /* Panel colour tuning */
+    --panel-header-light: #f5f0e6; /* ingredients/description header */
+    --panel-header-darker: #efe6d4; /* alternate darker header */
+    --panel-bg-darker: #f3efe6;
+    /* Alignment tuning: smaller lift so panels don't jump up */
+    --panels-lift: -24px;
+}
+
+/* Base rules */
+body {
+    background: var(--clr-ivory);
+    margin-bottom: 60px;
+    color: #222;
+}
+
+/* Reusable utilities */
+.container.py-4 {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+}
+
+.text-muted-small {
+    color: rgba(0,0,0,0.45);
+    font-size: 13px;
+}
+
+/* Buttons / CTAs */
+.btn-kitchen {
+    background: linear-gradient(135deg, var(--clr-gold), #f9a826);
+    color: var(--clr-white);
+    border: none;
+    border-radius: var(--radius-btn);
+    padding: 10px 22px;
+    font-weight: 600;
+    transition: transform var(--transition), box-shadow var(--transition);
+    box-shadow: none;
+}
+
+    .btn-kitchen:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-card-hover);
+        color: var(--clr-white);
+    }
+
+.btn-primary-kitchen {
+    background: var(--clr-gold);
+    color: var(--clr-white);
+    border: none;
+    border-radius: var(--radius-btn);
+    padding: 10px 22px;
+    font-weight: 700;
+}
+
+.btn-outline-kitchen {
+    border: 1.5px solid var(--clr-green);
+    color: var(--clr-green);
+    background: transparent;
+    border-radius: var(--radius-btn);
+    padding: 9px 20px;
+    font-weight: 600;
+}
+
+.btn-ghost-pill {
+    border: 1.5px solid var(--clr-gold);
+    color: var(--clr-gold);
+    background: transparent;
+    border-radius: var(--radius-pill);
+    padding: 8px 16px;
+    font-weight: 600;
+}
+
+/* Price badge (circular) */
+.price-badge, .recipe-price {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--clr-green);
+    color: var(--clr-white);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 13px;
+    box-shadow: var(--shadow-card);
+    position: relative;
+}
+
+    .price-badge .old {
+        position: absolute;
+        bottom: -10px;
+        font-size: 10px;
+        opacity: 0.6;
+        text-decoration: line-through;
+    }
+
+/* Recipes page scoped styles (only affect pages with .recipes-page container) */
+.recipes-page {
+    max-width: 1240px; /* chosen to match screenshots — adjust if you want wider */
+    margin: 0 auto;
+    padding-left: 24px;
+    padding-right: 24px;
+}
+
+/* Hero (optional) */
+.recipes-hero {
+    display: grid;
+    gap: 24px;
+    margin-bottom: 40px;
+}
+
+@media(min-width:992px) {
+    .recipes-hero {
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+    }
+}
+
+/* Recipe card that visually matches battles */
+.recipes-page .recipe-card {
+    background: var(--clr-white);
+    border: none;
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    transition: transform var(--transition), box-shadow var(--transition);
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    box-shadow: var(--shadow-card);
+    color: var(--clr-dark);
+}
+
+    /* Top image/green header */
+    .recipes-page .recipe-card .image-wrapper {
+        position: relative;
+        overflow: hidden;
+        background: var(--clr-green); /* fallback while loading */
+        height: 200px;
+    }
+
+        .recipes-page .recipe-card .image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+    /* Difficulty and price badges */
+    .recipes-page .recipe-card .difficulty-badge {
+        position: absolute;
+        left: 12px;
+        top: 12px;
+        background: rgba(255,255,255,0.95);
+        color: var(--clr-dark);
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-weight: 600;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+        font-size: 13px;
+    }
+
+    .recipes-page .recipe-card .price-pill {
+        position: absolute;
+        right: 12px;
+        top: 12px;
+        z-index: 4;
+    }
+
+    /* Card body: make flexible so footer sits on same baseline */
+    .recipes-page .recipe-card .card-body {
+        padding: 18px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        flex: 1 1 auto;
+        color: var(--clr-dark);
+    }
+
+        .recipes-page .recipe-card .card-body .title {
+            font-size: 18px;
+            font-weight: 800;
+            margin: 0;
+        }
+
+        .recipes-page .recipe-card .card-body p {
+            color: #333;
+            margin: 0;
+        }
+
+    /* Card footer: align buttons on same baseline and ensure consistent height */
+    .recipes-page .recipe-card .card-footer {
+        padding: 14px 18px;
+        background: transparent;
+        border-top: 1px solid rgba(0,0,0,0.04);
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        justify-content: space-between;
+        min-height: 64px; /* ensure footer height consistent across cards */
+        box-sizing: border-box;
+    }
+
+        /* Buttons inside footer: equal heights and vertical alignment */
+        .recipes-page .recipe-card .card-footer .btn {
+            height: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 0 18px;
+            white-space: nowrap;
+        }
+
+        .recipes-page .recipe-card .card-footer .btn-primary-kitchen,
+        .recipes-page .recipe-card .card-footer .btn-kitchen {
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--clr-gold), #f9a826);
+            color: var(--clr-white);
+        }
+
+        .recipes-page .recipe-card .card-footer .btn-outline-kitchen {
+            border-radius: 10px;
+            border: 1.5px solid var(--clr-green);
+            color: var(--clr-green);
+            background: transparent;
+        }
+
+        /* Primary CTA grows, outline remains compact */
+        .recipes-page .recipe-card .card-footer .btn-primary-kitchen {
+            flex: 1 1 auto;
+        }
+
+        .recipes-page .recipe-card .card-footer .btn-outline-kitchen {
+            flex: 0 0 auto;
+        }
+
+/* Small helpers */
+.recipes-page .rating {
+    color: var(--clr-gold);
+    font-weight: 600;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.recipes-page .badge-success {
+    background: var(--clr-green) !important;
+    color: #fff !important;
+}
+
+/* Hover */
+.recipes-page .recipe-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-card-hover);
+}
+
+/* Fix: some recipe views used .card.bg-dark — show white content inside recipes scope */
+.recipes-page .card.bg-dark,
+.recipes-page .card.bg-dark.border-0,
+.recipes-page .card.bg-dark.border-0.shadow-lg {
+    background: var(--clr-white) !important;
+    color: var(--clr-dark) !important;
+    box-shadow: var(--shadow-card) !important;
+}
+
+    /* Ensure inputs inside the dark filter bar are readable */
+    .recipes-page .card.bg-dark .form-control,
+    .recipes-page .card.bg-dark .form-select {
+        background: #2b2b30;
+        color: #fff;
+    }
+
+/* Grid helpers: keep bootstrap compatibility as used in markup */
+@media (min-width: 992px) {
+    .recipes-page .recipe-card .image-wrapper {
+        height: 220px;
+    }
+}
+
+/* Small responsive tweak */
+@media (max-width: 576px) {
+    .recipes-page .recipe-card .card-body {
+        padding: 12px;
+    }
+
+    .recipes-page .recipe-card .card-footer {
+        min-height: auto;
+        gap: 8px;
+    }
+
+        .recipes-page .recipe-card .card-footer .btn {
+            height: 40px;
+            padding: 0 12px;
+        }
+}
+
+/* Recipes-specific visual polish (exact index look) */
+:root {
+    --clr-green: #4A6741;
+    --clr-gold: #C47B2B;
+    --clr-ivory: #F5F1E8;
+    --clr-white: #FFFFFF;
+    --clr-dark: #2C2C2A;
+    --shadow-card: 0 6px 20px rgba(0,0,0,0.08);
+    --shadow-strong: 0 12px 36px rgba(0,0,0,0.12);
+    --radius-card: 16px;
+    --radius-pill: 28px;
+    --transition: 0.28s ease;
+}
+
+/* page background / base */
+body {
+    background: var(--clr-ivory);
+    color: #222;
+}
+
+/* Scope everything to recipes pages so other sections unaffected */
+.recipes-page {
+}
+
+    /* Filter bar: rounded white pill with inner controls */
+    .recipes-page .card.bg-dark.border-0.shadow-sm {
+        background: var(--clr-white) !important;
+        border-radius: 14px;
+        box-shadow: var(--shadow-card);
+        padding: 10px;
+        margin-bottom: 1.5rem;
+    }
+
+    .recipes-page .card.bg-dark .card-body {
+        padding: 12px;
+    }
+
+    .recipes-page .card.bg-dark .form-control,
+    .recipes-page .card.bg-dark .form-select {
+        background: #6e777c;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 10px 14px;
+        height: 44px;
+        box-shadow: none;
+    }
+
+        .recipes-page .card.bg-dark .form-control::placeholder {
+            color: rgba(255,255,255,0.75);
+        }
+
+    .recipes-page .card.bg-dark .btn-kitchen {
+        background: linear-gradient(135deg, var(--clr-gold), #f9a826);
+        border-radius: 10px;
+        height: 44px;
+        padding: 0 20px;
+        box-shadow: none;
+    }
+
+    /* Grid spacing (keep bootstrap-compatible markup) */
+    .recipes-page .row.g-4 {
+        gap: 1.5rem;
+    }
+
+    /* Card visual to match Battles exactly */
+    .recipes-page .recipe-card {
+        border-radius: var(--radius-card);
+        overflow: hidden;
+        box-shadow: var(--shadow-card);
+        transition: transform var(--transition), box-shadow var(--transition);
+        background: var(--clr-white);
+        display: flex;
+        flex-direction: column;
+    }
+
+        /* Top green block with image (matches battles) */
+        .recipes-page .recipe-card .image-wrapper {
+            background: var(--clr-green);
+            height: 200px;
+            position: relative;
+        }
+
+            .recipes-page .recipe-card .image-wrapper img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+            }
+
+        /* small difficulty badge top-right */
+        .recipes-page .recipe-card .recipe-badge .badge {
+            font-weight: 700;
+            font-size: 12px;
+            border-radius: 999px;
+            padding: 6px 10px;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.06);
+        }
+
+        /* Card body (white area) */
+        .recipes-page .recipe-card .card-body {
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex: 1 1 auto; /* makes footer align on baseline */
+        }
+
+        .recipes-page .recipe-card h5.card-title {
+            font-weight: 800;
+            margin-bottom: 6px;
+        }
+
+        .recipes-page .recipe-card p.card-text {
+            color: #444;
+            margin-bottom: 0.5rem;
+        }
+
+        /* rating row + small pill */
+        .recipes-page .recipe-card .rating {
+            color: #d6a03a;
+            font-weight: 700;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .recipes-page .recipe-card .badge.bg-info {
+            background: #33c1ff;
+            color: #fff;
+        }
+
+        /* Footer: ensure CTA buttons are same height and aligned across cards */
+        .recipes-page .recipe-card .card-footer {
+            padding: 14px 18px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 64px; /* enforces same baseline for all cards */
+            border-top: 1px solid rgba(0,0,0,0.04);
+            background: transparent;
+            box-sizing: border-box;
+        }
+
+            .recipes-page .recipe-card .card-footer .btn {
+                height: 44px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                padding: 0 18px;
+                white-space: nowrap;
+                border-radius: 10px;
+                font-weight: 700;
+                transition: transform var(--transition);
+            }
+
+            /* Primary CTA (make outline markup render as orange full pill on index) */
+            .recipes-page .recipe-card .card-footer .btn-outline-kitchen {
+                background: linear-gradient(135deg, var(--clr-gold), #f9a826);
+                color: #fff;
+                border: none;
+                flex: 1 1 auto; /* fill remaining width like screenshot */
+            }
+
+                .recipes-page .recipe-card .card-footer .btn-outline-kitchen:hover {
+                    transform: translateY(-2px);
+                    box-shadow: var(--shadow-strong);
+                }
+
+            /* Secondary small pill (e.g., category) */
+            .recipes-page .recipe-card .card-footer .btn-secondary {
+                background: #fff;
+                border: 1px solid rgba(0,0,0,0.06);
+                color: var(--clr-green);
+                flex: 0 0 auto;
+                height: 40px;
+                padding: 0 12px;
+            }
+
+        /* hover lift */
+        .recipes-page .recipe-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-strong);
+        }
+
+    /* Ensure any accidental dark .card inside recipes becomes white and readable */
+    .recipes-page .card.bg-dark,
+    .recipes-page .card.bg-dark.border-0,
+    .recipes-page .card.bg-dark.border-0.shadow-lg {
+        background: var(--clr-white) !important;
+        color: var(--clr-dark) !important;
+        box-shadow: var(--shadow-card) !important;
+    }
+
+/* Responsive tweaks */
+@media (max-width: 576px) {
+    .recipes-page .recipe-card .image-wrapper {
+        height: 160px;
+    }
+
+    .recipes-page .recipe-card .card-footer {
+        min-height: auto;
+        gap: 8px;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+        .recipes-page .recipe-card .card-footer .btn {
+            width: 100%;
+            height: 44px;
+        }
+}
+
+/* Make the summary card ("Млинці з сиром") match the visual treatment of the "Оцінки журі" block */
+.recipes-page .recipes-summary-card .card {
+    background: var(--panel-bg-darker) !important;
+    border: 1px solid rgba(0,0,0,0.04) !important;
+    box-shadow: var(--shadow-card) !important;
+    padding: 20px !important;
+    border-radius: 12px !important;
+}
+
+    /* Make the summary title use the same rounded pill header as the judges header */
+    .recipes-page .recipes-summary-card .card h1.display-5 {
+        background: var(--panel-header-darker) !important;
+        color: var(--clr-green) !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+        padding: 12px 16px !important;
+        border-radius: 14px !important;
+        margin-bottom: 12px !important;
+        box-shadow: none !important;
+    }
+
+/* Recipes details specific styles */
+.recipes-page .details-grid {
+    display: grid;
+    grid-template-columns: 60% 40%;
+    gap: 32px;
+    align-items: start;
+    max-width: 1180px;
+    margin: 0 auto;
+    padding-left: 24px;
+    padding-right: 24px;
+    box-sizing: border-box;
+}
+
+/* Image (left) */
+.details-grid .left-col .image-wrapper {
+    height: 620px;
+    border-radius: 18px;
+    overflow: hidden;
+    background: linear-gradient(180deg, var(--clr-green), #3f5b3e);
+    box-shadow: var(--shadow-strong);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    .details-grid .left-col .image-wrapper img,
+    .details-grid .left-col .image-placeholder {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        border-radius: 16px;
+    }
+
+/* Right column */
+.details-grid .right-col {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+/* Summary card */
+.recipes-summary-card .card {
+    border-radius: 12px;
+    padding: 18px;
+    box-shadow: var(--shadow-card);
+    background: var(--clr-white) !important;
+    border: 1px solid rgba(0,0,0,0.04);
+}
+
+    /* Make the summary title visually use the same panel header look (full-width) */
+    .recipes-summary-card .card h1.display-5 {
+        display: block;
+        width: 100%;
+        background: var(--panel-header-light);
+        color: var(--clr-green);
+        padding: 12px 16px;
+        border-radius: 10px;
+        margin: 0 0 12px 0;
+        box-shadow: none;
+    }
+
+/* Panels grid under summary: keep two columns (ingredients left, description right) */
+.right-col .panels-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 6px;
+}
+
+.right-col .panel-col {
+    box-sizing: border-box;
+}
+
+/* Slight visual offset so small panels sit below the summary card */
+.right-col .panels-grid {
+    margin-top: 6px;
+}
+
+/* Small-panel styles */
+.panel.panel--simple .panel-header {
+    background: var(--panel-header-light);
+    color: var(--clr-green);
+}
+
+.panel.panel--simple .panel-body {
+    background: var(--clr-white);
+}
+
+/* Responsive: stack on tablet/phone */
+@media (max-width: 992px) {
+    .details-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+        .details-grid .left-col .image-wrapper {
+            height: 360px;
+        }
+
+    .right-col .panel-col {
+        max-width: 100%;
+        flex: 1 1 100%;
+    }
+
+    .recipes-page .card.border-0.shadow-lg.p-4.h-100 {
+        margin-top: 0;
+    }
+}
+
+/* Small tweak: keep scores table full width below grid */
+@media (min-width: 993px) {
+    .container .row.mt-4 {
+        margin-top: 28px;
+    }
+}
+
+/* ===== Details: left image, right invisible box (summary top, panels below) ===== */
+
+/* make sure these rules override earlier ones in this file */
+.recipes-page .details-grid {
+    display: grid;
+    grid-template-columns: 60% 40%;
+    gap: 32px;
+    align-items: start;
+    max-width: 1180px;
+    margin: 0 auto;
+    padding-left: 24px;
+    padding-right: 24px;
+    box-sizing: border-box;
+}
+
+    /* left image block — keep large, rounded */
+    .recipes-page .details-grid .left-col .image-wrapper {
+        height: 620px;
+        border-radius: 18px;
+        overflow: hidden;
+        background: linear-gradient(180deg, var(--clr-green), #3f5b3e);
+        box-shadow: var(--shadow-strong);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .recipes-page .details-grid .left-col .image-wrapper img,
+        .recipes-page .details-grid .left-col .image-placeholder {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            border-radius: 18px;
+        }
+
+/* right invisible wrapper that groups summary + panels */
+.recipes-page .right-col .right-card-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+    justify-content: flex-start;
+    width: 100%;
+    box-sizing: border-box;
+    /* invisible 'box' — no background, keeps children together */
+    background: transparent;
+    padding: 0;
+}
+
+/* summary card sits at the top of the wrapper */
+.recipes-page .right-card-wrapper .recipes-summary-card {
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0;
+}
+
+    .recipes-page .right-card-wrapper .recipes-summary-card .card {
+        background: var(--clr-white) !important;
+        box-shadow: var(--shadow-card) !important;
+        border-radius: 12px !important;
+        padding: 18px !important;
+        border: 1px solid rgba(0,0,0,0.04);
+    }
+
+/* panels-grid inside the wrapper: two columns (ingredients left, description right) */
+.recipes-page .right-card-wrapper .panels-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    width: 100%;
+    max-width: none;
+    margin-top: 6px;
+    box-sizing: border-box;
+    margin-top: var(--panels-lift); /* small lift so panels sit close under summary */
+    z-index: 2;
+}
+
+/* make panel content use all available width in column */
+.recipes-page .right-card-wrapper .panel-col {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* keep small panels compact but readable */
+.recipes-page .right-card-wrapper .panel.panel--simple {
+    border-radius: 12px;
+    overflow: visible;
+    box-shadow: var(--shadow-card);
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+    .recipes-page .details-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+        .recipes-page .details-grid .left-col .image-wrapper {
+            height: 420px;
+        }
+
+    .recipes-page .right-card-wrapper .panels-grid {
+        grid-template-columns: 1fr;
+        margin-top: 10px;
+        z-index: 1;
+    }
+}
+
+/* ===== Fix: rectangular Ingredients / Description cards + smaller image ===== */
+
+/* Give the right column more room and reduce image dominance */
+.recipes-page .details-grid {
+    grid-template-columns: 40% 60% !important;
+    gap: 28px !important;
+}
+
+    /* Reduce image height so layout balances visually */
+    .recipes-page .details-grid .left-col .image-wrapper {
+        height: 480px !important;
+        border-radius: 14px !important;
+    }
+
+/* Panels grid: two equal columns, full width of right column */
+.recipes-page .right-card-wrapper .panels-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+    width: 100% !important;
+    max-width: none !important;
+}
+
+/* Ensure each panel uses full column width and looks like a rectangular card */
+.recipes-page .right-card-wrapper .panel-col {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+.recipes-page .right-card-wrapper .panel.panel--simple {
+    border-radius: 12px !important;
+    box-shadow: var(--shadow-card) !important;
+    overflow: hidden !important;
+}
+
+    /* Header and body styling for rectangular appearance */
+    .recipes-page .right-card-wrapper .panel.panel--simple .panel-header {
+        background: var(--panel-header-light) !important;
+        color: var(--clr-green) !important;
+        padding: 10px 14px !important;
+        border-bottom: 1px solid rgba(0,0,0,0.04) !important;
+    }
+
+    .recipes-page .right-card-wrapper .panel.panel--simple .panel-body {
+        padding: 16px !important;
+        min-height: 120px !important;
+        color: var(--clr-dark) !important;
+    }
+
+        /* Improve text wrapping and spacing inside small panels */
+        .recipes-page .right-card-wrapper .panel.panel--simple .panel-body p,
+        .recipes-page .right-card-wrapper .panel.panel--simple .panel-body {
+            word-break: normal !important;
+            white-space: normal !important;
+            line-height: 1.45 !important;
+        }
+
+/* Mobile: stack columns */
+@media (max-width: 992px) {
+    .recipes-page .details-grid {
+        grid-template-columns: 1fr !important;
+        gap: 20px !important;
+    }
+
+        .recipes-page .details-grid .left-col .image-wrapper {
+            height: 360px !important;
+        }
+
+    .recipes-page .right-card-wrapper .panels-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+/* Remove the extra ghost box behind the summary and keep only the real card shadow */
+.recipes-page .card.border-0.shadow-lg.p-4.h-100 {
+    margin-top: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+}
+
+/* Ensure the actual summary card inside the right wrapper uses the intended subtle shadow */
+.recipes-page .right-card-wrapper .recipes-summary-card {
+    margin: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+    .recipes-page .right-card-wrapper .recipes-summary-card .card {
+        background: var(--clr-white) !important;
+        box-shadow: var(--shadow-card) !important;
+        border-radius: 12px !important;
+        padding: 20px !important;
+    }
+
+/* Style the "Оцінки журі" card to keep consistent look; header pill rounded */
+.recipes-page .row.mt-4 > .col-12 > .card.border-0.shadow-lg.p-4 {
+    background: var(--panel-bg-darker);
+    border: 1px solid rgba(0,0,0,0.04);
+    box-shadow: var(--shadow-card);
+    padding: 20px;
+    border-radius: 12px;
+}
+
+    .recipes-page .row.mt-4 > .col-12 > .card.border-0.shadow-lg.p-4 h3.h5 {
+        background: var(--panel-header-darker);
+        color: var(--clr-green);
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 16px;
+        border-radius: 14px;
+        margin-bottom: 12px;
+    }
+
+    /* Make table header more visible against slightly darker background */
+    .recipes-page .row.mt-4 > .col-12 > .card.border-0.shadow-lg.p-4 .table thead th {
+        background: transparent;
+        color: var(--clr-dark);
+        font-weight: 700;
+        border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+
+    /* Ensure the white scores table appears as a single rounded box
+   and that row separators are clipped to those rounded corners. */
+    .recipes-page .row.mt-4 > .col-12 > .card.border-0.shadow-lg.p-4 .table {
+        background: var(--clr-white) !important; /* white box */
+        border-radius: 12px !important; /* visible rounding */
+        border-collapse: separate !important; /* required for radius on table */
+        border-spacing: 0 !important;
+        overflow: hidden !important; /* clip inner rows to rounded corners */
+        box-shadow: none !important; /* keep shadow on card, not table */
+    }
+
+        /* Make cell backgrounds transparent so the table background forms the rounded box */
+        .recipes-page .row.mt-4 > .col-12 > .card.border-0.shadow-lg.p-4 .table thead th,
+        .recipes-page .row.mt-4 > .col-12 > .card.border-0.shadow-lg.p-4 .table tbody td {
+            background: transparent !important;
+        }
+
+            /* Round the four corner cells so borders inside the table don't break the corners */
+            .recipes-page .row.mt-4 > .col-12 > .card.border-0.shadow-lg.p-4 .table thead th:first-child {
+                border-top-left-radius: 12px !important;
+            }
+
+            .recipes-page .row.mt-4 > .col-12 > .card.border-0.shadow-lg.p-4 .table thead th:last-child {
+                border-top-right-radius: 12px !important;
+            }
+
+        .recipes-page .row.mt-4 > .col-12 > .card.border-0.shadow-lg.p-4 .table tbody tr:last-child td:first-child {
+            border-bottom-left-radius: 12px !important;
+        }
+
+        .recipes-page .row.mt-4 > .col-12 > .card.border-0.shadow-lg.p-4 .table tbody tr:last-child td:last-child {
+            border-bottom-right-radius: 12px !important;
+        }
+
+/* Small responsive fallback to avoid clipping issues on very narrow tables */
+@media (max-width: 576px) {
+    .recipes-page .row.mt-4 > .col-12 > .card.border-0.shadow-lg.p-4 .table {
+        border-radius: 10px !important;
+    }
+}
+
+/* Lower the left photo so its top edge aligns with the summary card title */
+.recipes-page .details-grid .left-col .image-wrapper {
+    margin-top: 24px !important; /* match the summary lift (-24px) used on the right */
+    transition: margin-top 0.18s ease;
+}
+
+/* Keep normal flow on narrow screens */
+@media (max-width: 992px) {
+    .recipes-page .details-grid .left-col .image-wrapper {
+        margin-top: 0 !important;
+    }
+}
+
+/* Force the summary card to occupy the full right-column width (exactly the same width
+   as the two small panels: Ingredients + Description). Place at end of file. */
+.recipes-page .details-grid {
+    align-items: start !important;
+}
+
+    /* Make right column a true full-width column container */
+    .recipes-page .details-grid .right-col,
+    .recipes-page .right-card-wrapper {
+        width: 100% !important;
+        box-sizing: border-box !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: stretch !important;
+    }
+
+        /* Ensure summary wrapper fills right column */
+        .recipes-page .right-card-wrapper .recipes-summary-card {
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+            margin: 0 0 8px 0 !important;
+        }
+
+            /* Ensure the actual card element uses full width and doesn't get constrained by padding/margins */
+            .recipes-page .right-card-wrapper .recipes-summary-card > .card,
+            .recipes-page .recipes-summary-card > .card {
+                width: 100% !important;
+                max-width: 100% !important;
+                box-sizing: border-box !important;
+                margin: 0 !important;
+                padding-left: 20px !important;
+                padding-right: 20px !important;
+            }
+
+        /* Make the panels grid explicitly the same width so visual widths match exactly */
+        .recipes-page .right-card-wrapper .panels-grid {
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+        }
+
+/* ЖОРСТКЕ ФІКСУВАННЯ: 3 рецепти в ряд */
+.recipes-page .row.g-4 {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 24px !important;
+}
+
+    .recipes-page .row.g-4 > div {
+        width: auto !important;
+        max-width: none !important;
+        flex: none !important;
+    }
+
+/* Адаптація для планшетів */
+@media (max-width: 992px) {
+    .recipes-page .row.g-4 {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+
+/* Адаптація для телефонів */
+@media (max-width: 768px) {
+    .recipes-page .row.g-4 {
+        grid-template-columns: 1fr !important;
+    }
+}
+/* Стиль для порожнього зображення в деталях (як у списку рецептів) */
+.recipes-page .image-placeholder-empty {
+    width: 100%;
+    height: 100%;
+    min-height: 480px;
+    background: linear-gradient(135deg, #4A6741, #6B8F5E);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    .recipes-page .image-placeholder-empty i {
+        font-size: 80px;
+        color: rgba(255,255,255,0.85);
+        opacity: 0.9;
+    }
+
+/* Адаптація для мобільних */
+@media (max-width: 992px) {
+    .recipes-page .image-placeholder-empty {
+        min-height: 360px;
+    }
+
+        .recipes-page .image-placeholder-empty i {
+            font-size: 56px;
+        }
+}
+
+/* Зменшення відступів у деталях рецепта */
+.recipes-page .details-grid .right-card-wrapper .recipes-summary-card .card {
+    padding: 16px 20px !important;
+}
+
+    .recipes-page .details-grid .right-card-wrapper .recipes-summary-card .card h1.display-5 {
+        margin-bottom: 8px !important;
+        padding: 8px 12px !important;
+        font-size: 28px !important;
+    }
+
+    .recipes-page .details-grid .right-card-wrapper .recipes-summary-card .card .text-muted.small.mb-2 {
+        margin-bottom: 6px !important;
+    }
+
+    .recipes-page .details-grid .right-card-wrapper .recipes-summary-card .card .d-flex.gap-2.flex-wrap.mb-3 {
+        margin-bottom: 10px !important;
+        gap: 8px !important;
+    }
+
+    .recipes-page .details-grid .right-card-wrapper .recipes-summary-card .card .info-row {
+        margin-top: 8px !important;
+        margin-bottom: 0 !important;
+    }
+
+    .recipes-page .details-grid .right-card-wrapper .recipes-summary-card .card .info-box {
+        padding: 8px 12px !important;
+    }
+
+        .recipes-page .details-grid .right-card-wrapper .recipes-summary-card .card .info-box .label {
+            margin-bottom: 4px !important;
+            font-size: 12px !important;
+        }
+
+    .recipes-page .details-grid .right-card-wrapper .recipes-summary-card .card .details-actions {
+        margin-top: 12px !important;
+    }
+
+/* Зменшення відступів між карткою та панелями інгредієнтів/опису */
+.recipes-page .right-card-wrapper .panels-grid {
+    margin-top: 0 !important;
+    gap: 12px !important;
+}
+
+.recipes-page .right-card-wrapper .panel.panel--simple .panel-header {
+    padding: 8px 12px !important;
+}
+
+.recipes-page .right-card-wrapper .panel.panel--simple .panel-body {
+    padding: 12px !important;
+}
+/* Вирівнювання фото по нижньому краю з панелями інгредієнтів та опису */
+.recipes-page .details-grid {
+    align-items: stretch !important;
+}
+
+    .recipes-page .details-grid .left-col {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+        .recipes-page .details-grid .left-col .image-wrapper {
+            height: auto !important;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
+            .recipes-page .details-grid .left-col .image-wrapper img,
+            .recipes-page .details-grid .left-col .image-placeholder-empty {
+                width: 100%;
+                object-fit: cover;
+            }
+
+            /* Щоб фото не розтягувалось, а мало пропорційну висоту */
+            .recipes-page .details-grid .left-col .image-wrapper img {
+                height: auto;
+                max-height: 380px;
+            }
+
+        .recipes-page .details-grid .left-col .image-placeholder-empty {
+            height: auto;
+            min-height: 0;
+            aspect-ratio: 4 / 3;
+            background: linear-gradient(135deg, #4A6741, #6B8F5E);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 16px;
+        }
+
+/* Адаптація під великі екрани */
+@media (min-width: 1200px) {
+    .recipes-page .details-grid .left-col .image-wrapper img {
+        max-height: 420px;
+    }
+}
+
+/* Адаптація під мобільні */
+@media (max-width: 992px) {
+    .recipes-page .details-grid .left-col .image-wrapper img,
+    .recipes-page .details-grid .left-col .image-placeholder-empty {
+        max-height: 320px;
+    }
+}
+/* Просте вирівнювання таблиці оцінок */
+.recipes-page .row.mt-4 {
+    padding-left: 24px !important;
+    padding-right: 24px !important;
+}
+
+    .recipes-page .row.mt-4 .card {
+        max-width: 1180px !important;
+        margin: 0 auto !important;
+    }
+
+@media (max-width: 992px) {
+    .recipes-page .row.mt-4 {
+        padding-left: 16px !important;
+        padding-right: 16px !important;
+    }
+}
+/* ФІКС: скрол для опису та вирівнювання правого краю */
+.recipes-page .right-card-wrapper .panel-col:last-child .panel-body {
+    max-height: 200px;
+    overflow-y: auto;
+    padding-right: 8px;
+}
+
+    /* Стилізація скролу */
+    .recipes-page .right-card-wrapper .panel-col:last-child .panel-body::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .recipes-page .right-card-wrapper .panel-col:last-child .panel-body::-webkit-scrollbar-track {
+        background: #e9ecef;
+        border-radius: 10px;
+    }
+
+    .recipes-page .right-card-wrapper .panel-col:last-child .panel-body::-webkit-scrollbar-thumb {
+        background: var(--clr-gold);
+        border-radius: 10px;
+    }
+
+/* ФІКС: правий край опису на рівні з оцінками журі */
+.recipes-page .details-grid {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.recipes-page .right-card-wrapper {
+    width: 100%;
+}
+
+.recipes-page .scores-table-new .card,
+.recipes-page .row.mt-4 > .col-12 > .card {
+    width: 100%;
+    box-sizing: border-box;
+}
+/* ФІКС: опис не випирає */
+.recipes-page .right-card-wrapper .panel-body {
+    overflow-x: hidden !important;
+    word-break: break-word !important;
+}
+
+/* ФІКС: опис не ширший за оцінки журі */
+.recipes-page .right-card-wrapper {
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+}
+
+    .recipes-page .right-card-wrapper .panels-grid {
+        max-width: 100% !important;
+    }
+
+    .recipes-page .right-card-wrapper .panel-col:last-child {
+        max-width: 100% !important;
+        min-width: 0 !important;
+    }
+
+        .recipes-page .right-card-wrapper .panel-col:last-child .panel-body {
+            max-width: 100% !important;
+            overflow-x: hidden !important;
+            word-wrap: break-word !important;
+            word-break: break-word !important;
+        }
+
+    /* Щоб інгредієнти теж не розтягувались */
+    .recipes-page .right-card-wrapper .panel-col:first-child {
+        max-width: 100% !important;
+        min-width: 0 !important;
+    }
+
+    /* ОСТАННІЙ ФІКС: всі блоки справа мають однакову ширину */
+    .recipes-page .right-col,
+    .recipes-page .right-card-wrapper,
+    .recipes-page .right-card-wrapper .recipes-summary-card,
+    .recipes-page .right-card-wrapper .recipes-summary-card .card,
+    .recipes-page .right-card-wrapper .panels-grid,
+    .recipes-page .right-card-wrapper .panel-col,
+    .recipes-page .right-card-wrapper .panel {
+        max-width: 100% !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+        .recipes-page .right-card-wrapper .panel-body {
+            max-width: 400px !important;
+        }

@@ -16,5 +16,6 @@
         public ICollection<Score> Scores { get; set; } = new List<Score>();
         public CategoryEnum Category { get; set; } = CategoryEnum.Appetizer;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public Chef Chef { get; internal set; }
     }
 }

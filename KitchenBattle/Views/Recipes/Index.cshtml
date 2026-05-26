@@ -1,9 +1,10 @@
-﻿@model IEnumerable<KitchenBattle.Models.Recipe>
+﻿@using System.Linq
+@model IEnumerable<KitchenBattle.Models.Recipe>
 @{
     ViewData["Title"] = "Рецепти";
 }
 
-<div class="container py-4">
+<div class="container py-4 recipes-page">
     <div class="text-center mb-5">
         <h1 class="fw-bold display-4">🍳 Кулінарні рецепти</h1>
         <p class="lead text-muted">Найкращі страви від наших шеф-кухарів</p>
@@ -25,7 +26,7 @@
                 </div>
                 <div class="col-md-3">
                     <select name="difficulty" class="form-select bg-secondary text-white border-0">
-                        <option value="">Вся складність</option>
+                        <option value="">Всі складність</option>
                         <option value="Easy" selected="@(ViewBag.CurrentDifficulty?.ToString() == "Easy")">⭐ Легкий</option>
                         <option value="Medium" selected="@(ViewBag.CurrentDifficulty?.ToString() == "Medium")">⭐⭐ Середній</option>
                         <option value="Hard" selected="@(ViewBag.CurrentDifficulty?.ToString() == "Hard")">⭐⭐⭐ Складний</option>
@@ -47,29 +48,38 @@
         </div>
     </div>
 
-    <!-- Сітка рецептів -->
+    <!-- Сітка рецептів - 3 колонки на великих екранах -->
     <div class="row g-4">
         @foreach (var recipe in Model)
         {
-            <div class="col-md-6 col-lg-4">
+            <!-- col-lg-4 = 3 колонки на великих екранах (12/4=3) -->
+            <div class="col-12 col-sm-6 col-lg-4">
                 <div class="card recipe-card h-100">
-                    <div class="position-relative">
-                        <img src="@(string.IsNullOrEmpty(recipe.ImageUrl) ? "/images/default-recipe.jpg" : recipe.ImageUrl)"
-                             class="card-img-top" alt="@recipe.Title" style="height: 220px; object-fit: cover;">
+                    <div class="image-wrapper position-relative" style="height: 220px;">
+                        @if (!string.IsNullOrWhiteSpace(recipe.ImageUrl))
+                        {
+                            <img src='@Url.Content(recipe.ImageUrl)' class="card-img-top" alt="@recipe.Title" style="height: 220px; width: 100%; object-fit: cover;">
+                        }
+                        else
+                        {
+                            <!-- Значок фото по центру, коли немає зображення -->
+                            <div class="d-flex align-items-center justify-content-center h-100 w-100" style="background: linear-gradient(135deg, #4A6741, #6B8F5E);">
+                                <i class="bi bi-camera-fill" style="font-size: 48px; color: rgba(255,255,255,0.8);"></i>
+                            </div>
+                        }
                         <div class="recipe-badge position-absolute top-0 end-0 m-2">
-                            <span class="badge bg-kitchen">@recipe.Difficulty</span>
+                            <span class="badge bg-info">@recipe.Difficulty</span>
                         </div>
                     </div>
                     <div class="card-body">
-                        <h5 class="card-title fw-bold">@recipe.Title</h5>
+                        <h5 class="card-title fw-bold title">@recipe.Title</h5>
                         <p class="card-text text-muted small">👨‍🍳 @recipe.ChefName</p>
-                        <p class="card-text">@(recipe.Description.Length > 100 ? recipe.Description.Substring(0, 100) + "..." : recipe.Description)</p>
+                        <p class="card-text">@((recipe.Description ?? string.Empty).Length > 100 ? (recipe.Description ?? string.Empty).Substring(0, 100) + "..." : recipe.Description)</p>
                         <div class="d-flex justify-content-between align-items-center mt-3">
                             <div class="rating">
-                                ⭐ <strong>@recipe.AverageScore.ToString("0.0")</strong>
-                                <span class="text-muted">(@recipe.Scores.Count)</span>
+                                <strong>@recipe.AverageScore.ToString("0.0")</strong>
                             </div>
-                            <span class="badge bg-info">@recipe.Category</span>
+                            <span class="badge bg-success">@recipe.Category</span>
                         </div>
                     </div>
                     <div class="card-footer bg-transparent border-0 pb-3">
@@ -89,42 +99,4 @@
             <h3 class="text-muted mt-3">Рецептів не знайдено</h3>
             <p>Спробуйте змінити параметри пошуку</p>
         </div>
-    }
-</div>
-
-<style>
-    .recipe-card {
-        background: #1a1a2e;
-        border: none;
-        border-radius: 16px;
-        transition: transform 0.3s, box-shadow 0.3s;
-        overflow: hidden;
-    }
-    .recipe-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-    }
-    .btn-kitchen {
-        background: linear-gradient(135deg, #e65c00, #f9a826);
-        color: white;
-        border: none;
-    }
-    .btn-kitchen:hover {
-        background: linear-gradient(135deg, #cc5200, #e69500);
-        color: white;
-    }
-    .btn-outline-kitchen {
-        border: 1px solid #e65c00;
-        color: #e65c00;
-    }
-    .btn-outline-kitchen:hover {
-        background: #e65c00;
-        color: white;
-    }
-    .badge-kitchen {
-        background: #e65c00;
-    }
-    .rating {
-        color: #f9a826;
-    }
-</style>
+    }</div>
