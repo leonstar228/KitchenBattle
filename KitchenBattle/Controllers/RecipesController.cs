@@ -102,6 +102,7 @@ namespace KitchenBattle.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Chef")]
         public async Task<IActionResult> Create(RecipeCreateViewModel model)
         {
             if (!ModelState.IsValid) return View(model);
