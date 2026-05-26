@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KitchenBattle.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260520173521_InitSqlServer")]
-    partial class InitSqlServer
+    [Migration("20260526162027_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -155,6 +155,9 @@ namespace KitchenBattle.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Id")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsApproved")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("BattleId", "ChefId");
