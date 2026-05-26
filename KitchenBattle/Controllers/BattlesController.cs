@@ -18,10 +18,38 @@ namespace KitchenBattle.Controllers
             _redisService = redisService;
         }
         
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string status, string category, string sortBy, string search, int page = 1)
         {
             var battles = await _redisService.GetBattlesAsync();
-            return View(battles);
+            if (!string.IsNullOrEmpty(status))
+            {
+                battles = battles.Where(b => b.Status.ToString() == status).ToList();
+            }
+
+            if (!string.IsNullOrEmpty(category))
+            {
+                battles = battles.Where(b => b.Category.ToString() == category).ToList();
+            }
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                battles = battles.Where(b => b.BattleName.Contains(search) || b.Description.Contains(search)).ToList();
+            }
+
+            battles = sortBy switch
+            {
+                "date" => battles.OrderByDescending(b => b.StartedAt).ToList(),
+                "date_old" => battles.OrderBy(b => b.StartedAt).ToList(),
+                "name" => battles.OrderBy(b => b.BattleName).ToList(),
+                 _ => battles
+            };
+            int pageSize = 9;
+            int total = (int)Math.Ceiling(battles.Count/ (double)pageSize);
+            var pagedBattles = battles.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+            
+            ViewBag.CurrentPage = page;
+            ViewBag.Totalpages = total;
+            return View(pagedBattles);
         }
         
         public async Task<IActionResult> Details(int id)
