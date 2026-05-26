@@ -48,11 +48,11 @@ namespace KitchenBattle.Controllers
             var recipe = await _recipeService.GetRecipeByIdAsync(id);
             if (recipe == null) return NotFound();
 
-            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var isJudge = User.IsInRole("Judge");
+            var currentUserId = User.FindFirstValue("sub") ?? User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "";
+            var isJudge = User.IsInRole("judge");
             var hasScored = false;
 
-            if (isJudge && currentUserId != null)
+            if (isJudge && !string.IsNullOrEmpty(currentUserId))
             {
                 hasScored = await _context.Scores
                     .AnyAsync(s => s.RecipeId == id && s.JudgeId == currentUserId);
@@ -61,11 +61,11 @@ namespace KitchenBattle.Controllers
             var scores = new List<ScoreDisplayViewModel>();
             foreach (var score in recipe.Scores)
             {
-                var judge = await _context.ApplicationUsers.FindAsync(score.JudgeId);
+                var judge = await _context.Judges.FindAsync(score.JudgeId);
                 scores.Add(new ScoreDisplayViewModel
                 {
                     Id = score.Id,
-                    JudgeName = judge?.UserName ?? "Unknown",
+                    JudgeName = judge?.FullName ?? "Unknown",
                     Taste = score.Taste,
                     Presentation = score.Presentation,
                     Creativity = score.Creativity,
@@ -73,7 +73,7 @@ namespace KitchenBattle.Controllers
                 });
             }
 
-            var isOwner = currentUserId != null && recipe.ChefId == currentUserId;
+            var isOwner = !string.IsNullOrEmpty(currentUserId) && recipe.ChefId == currentUserId;
 
             var viewModel = new RecipeDetailsViewModel
             {
@@ -86,7 +86,7 @@ namespace KitchenBattle.Controllers
                 Category = recipe.Category,
                 ImageUrl = recipe.ImageUrl,
                 ChefName = recipe.ChefName,
-                ChefId = int.TryParse(recipe.ChefId, out int chefId) ? chefId : 0,
+                ChefId = 0,
                 Status = recipe.Status,
                 AverageScore = recipe.AverageScore,
                 Scores = scores,
@@ -105,20 +105,44 @@ namespace KitchenBattle.Controllers
         public async Task<IActionResult> Create(RecipeCreateViewModel model)
         {
             if (!ModelState.IsValid) return View(model);
+            
+            var userId = User.FindFirstValue("sub") ?? 
+                         User.FindFirstValue(ClaimTypes.NameIdentifier) ?? 
+                         User.Identity?.Name ?? "";
+            
+            var userName = User.FindFirstValue("preferred_username") ?? 
+                           User.FindFirstValue("name") ?? 
+                           User.Identity?.Name ?? "Unknown";
 
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var user = await _context.ApplicationUsers.FindAsync(userId);
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized();
+            
+            var chef = await _context.Chefs.FindAsync(userId);
+            if (chef == null)
+            {
+                var fullName = User.FindFirstValue("name") ?? 
+                               User.FindFirstValue("preferred_username") ?? 
+                               userName;
+        
+                chef = new Chef
+                {
+                    Id = userId,
+                    UserName = userName,
+                    FullName = fullName,
+                    CreatedAt = DateTime.UtcNow
+                };
+                _context.Chefs.Add(chef);
+                await _context.SaveChangesAsync();
+            }
 
-            if (user == null) return Unauthorized();
-
-            await _recipeService.CreateRecipeAsync(model, userId, user.UserName);
+            await _recipeService.CreateRecipeAsync(model, userId, chef.FullName);
 
             return RedirectToAction(nameof(MyRecipes));
         }
 
         public async Task<IActionResult> Edit(int id)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userId = User.FindFirstValue("sub") ?? User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "";
             var recipe = await _context.Recipes
                 .FirstOrDefaultAsync(r => r.Id == id && r.ChefId == userId);
 
@@ -151,7 +175,7 @@ namespace KitchenBattle.Controllers
         {
             if (!ModelState.IsValid) return View(model);
 
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userId = User.FindFirstValue("sub") ?? User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "";
             var success = await _recipeService.UpdateRecipeAsync(model, userId);
 
             if (!success)
@@ -165,7 +189,7 @@ namespace KitchenBattle.Controllers
 
         public async Task<IActionResult> Delete(int id)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userId = User.FindFirstValue("sub") ?? User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "";
             var recipe = await _context.Recipes
                 .FirstOrDefaultAsync(r => r.Id == id && r.ChefId == userId);
 
@@ -184,7 +208,7 @@ namespace KitchenBattle.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userId = User.FindFirstValue("sub") ?? User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "";
             var success = await _recipeService.DeleteRecipeAsync(id, userId);
 
             if (!success)
@@ -197,7 +221,7 @@ namespace KitchenBattle.Controllers
 
         public async Task<IActionResult> MyRecipes()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userId = User.FindFirstValue("sub") ?? User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "";
             var recipes = await _recipeService.GetUserRecipesAsync(userId);
             return View(recipes);
         }
@@ -206,7 +230,7 @@ namespace KitchenBattle.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SendToReview(int id)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userId = User.FindFirstValue("sub") ?? User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "";
             var success = await _recipeService.SendToReviewAsync(id, userId);
 
             if (!success)
@@ -219,7 +243,7 @@ namespace KitchenBattle.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Publish(int id)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userId = User.FindFirstValue("sub") ?? User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "";
             var success = await _recipeService.PublishRecipeAsync(id, userId);
 
             if (!success)
@@ -228,7 +252,7 @@ namespace KitchenBattle.Controllers
             return RedirectToAction(nameof(MyRecipes));
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Approve(int id)
@@ -241,7 +265,7 @@ namespace KitchenBattle.Controllers
             return RedirectToAction("RecipesForReview", "Admin");
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Reject(int id)
