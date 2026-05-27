@@ -73,8 +73,6 @@ namespace KitchenBattle.Controllers
                 });
             }
 
-            var isOwner = !string.IsNullOrEmpty(currentUserId) && recipe.ChefId == currentUserId;
-
             var viewModel = new RecipeDetailsViewModel
             {
                 Id = recipe.Id,
@@ -86,7 +84,7 @@ namespace KitchenBattle.Controllers
                 Category = recipe.Category,
                 ImageUrl = recipe.ImageUrl,
                 ChefName = recipe.ChefName,
-                ChefId = 0,
+                ChefId = recipe.ChefId, 
                 Status = recipe.Status,
                 AverageScore = recipe.AverageScore,
                 Scores = scores,
@@ -95,7 +93,6 @@ namespace KitchenBattle.Controllers
 
             return View(viewModel);
         }
-
         // GET: показуємо форму — дозволено будь-якому авторизованому
         public IActionResult Create()
         {

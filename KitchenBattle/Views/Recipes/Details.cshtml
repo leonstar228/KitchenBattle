@@ -496,7 +496,7 @@
                 }
 
                 @if (User.Identity.IsAuthenticated &&
-                                User.FindFirst(ClaimTypes.NameIdentifier)?.Value == Model.ChefId.ToString())
+     ((User.FindFirst("sub")?.Value ?? User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value) == Model.ChefId))
                 {
                     <div class="owner-actions">
                         @if (Model.Status == StatusRecipeEnum.Draft)
@@ -528,6 +528,7 @@
                             </form>
                         }
                     </div>
+                }
                 }
             </div>
         </div>
