@@ -275,6 +275,10 @@
                     <div class="form-body">
                         <form asp-action="Create" method="post" enctype="multipart/form-data">
                             <div asp-validation-summary="ModelOnly" class="val-errors"></div>
+                            @if (ViewBag.BattleId != null)
+                            {
+                                <input type="hidden" name="battleId" value="@ViewBag.BattleId" />
+                            }
 
                             <div class="kb-field">
                                 <label asp-for="Title" class="kb-label">
