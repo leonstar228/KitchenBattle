@@ -3,128 +3,357 @@
     ViewData["Title"] = "Рецепти";
 }
 
-<div class="container py-4">
-    <div class="text-center mb-5">
-        <h1 class="fw-bold display-4">🍳 Кулінарні рецепти</h1>
-        <p class="lead text-muted">Найкращі страви від наших шеф-кухарів</p>
-        @if (User.Identity.IsAuthenticated && User.IsInRole("Chef"))
-        {
-            <a asp-action="Create" class="btn btn-kitchen mt-3">
-                <i class="bi bi-plus-circle"></i> Додати рецепт
-            </a>
-        }
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Biryani:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+    :root {
+        --clr-green:      #4A6741;
+        --clr-green-hover:#6B8F5E;
+        --clr-gold:       #C47B2B;
+        --clr-gold-light: #E8D5A3;
+        --clr-ivory:      #F5F1E8;
+        --clr-white:      #FFFFFF;
+        --clr-dark:       #2C2C2A;
+        --clr-brown:      #8B7355;
+        --clr-red:        #D4483B;
+        --radius-card:    16px;
+        --radius-btn:     6px;
+        --radius-pill:    20px;
+        --shadow-card:    0 4px 20px rgba(0,0,0,0.08);
+        --shadow-hover:   0 8px 30px rgba(0,0,0,0.12);
+        --transition:     0.3s ease;
+    }
+
+    body { background: var(--clr-ivory) !important; }
+
+    /* ── PAGE HEADER ── */
+    .rp-header {
+        text-align: center;
+        padding: 40px 0 32px;
+        animation: fadeDown .5s ease both;
+    }
+    .rp-header h1 {
+        font-family: 'Biryani', sans-serif;
+        font-size: 36px;
+        font-weight: 800;
+        color: var(--clr-dark);
+        margin: 0;
+        letter-spacing: -.01em;
+    }
+    .rp-header p { color: var(--clr-brown); font-size: 15px; margin-top: 6px; }
+
+    @@keyframes fadeDown {
+        from { opacity:0; transform:translateY(-14px); }
+        to   { opacity:1; transform:translateY(0); }
+    }
+    @@keyframes cardIn {
+        from { opacity:0; transform:translateY(20px); }
+        to   { opacity:1; transform:translateY(0); }
+    }
+
+    /* ── ADD BUTTON ── */
+    .btn-add {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        background: var(--clr-gold);
+        color: var(--clr-white);
+        border: none;
+        border-radius: var(--radius-btn);
+        padding: 10px 24px;
+        font-size: 14px;
+        font-weight: 700;
+        text-decoration: none;
+        margin-top: 14px;
+        transition: var(--transition);
+        letter-spacing: .03em;
+    }
+    .btn-add:hover {
+        background: #b36520;
+        color: var(--clr-white);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 18px rgba(196,123,43,.35);
+    }
+
+    /* ── FILTER BAR ── */
+    .filter-bar {
+        background: var(--clr-white);
+        border-radius: var(--radius-card);
+        box-shadow: var(--shadow-card);
+        padding: 20px 24px;
+        margin-bottom: 32px;
+    }
+    .filter-lbl {
+        display: block;
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--clr-brown);
+        text-transform: uppercase;
+        letter-spacing: .08em;
+        margin-bottom: 6px;
+    }
+    .filter-ctrl {
+        width: 100%;
+        border: 1.5px solid var(--clr-gold-light);
+        border-radius: var(--radius-pill);
+        padding: 9px 16px;
+        font-size: 14px;
+        color: var(--clr-dark);
+        background: var(--clr-white);
+        outline: none;
+        transition: var(--transition);
+        -webkit-appearance: none;
+    }
+    .filter-ctrl:focus {
+        border-color: var(--clr-green);
+        box-shadow: 0 0 0 3px rgba(74,103,65,.1);
+    }
+    .btn-filter {
+        width: 100%;
+        background: var(--clr-gold);
+        color: var(--clr-white);
+        border: none;
+        border-radius: var(--radius-pill);
+        padding: 9px 0;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: var(--transition);
+    }
+    .btn-filter:hover { background: #b36520; transform: translateY(-1px); }
+
+    /* ── RECIPE CARD ── */
+    .recipe-card {
+        background: var(--clr-white);
+        border-radius: var(--radius-card);
+        box-shadow: var(--shadow-card);
+        overflow: hidden;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        transition: transform var(--transition), box-shadow var(--transition);
+        animation: cardIn .45s ease both;
+    }
+    .recipe-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-hover);
+    }
+
+    .card-img-top-kb {
+        width: 100%;
+        height: 195px;
+        object-fit: cover;
+        display: block;
+        background: var(--clr-green);
+    }
+    .diff-badge {
+        position: absolute;
+        top: 10px; right: 10px;
+        padding: 4px 12px;
+        border-radius: var(--radius-pill);
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--clr-white);
+    }
+    .diff-Easy   { background: var(--clr-green); }
+    .diff-Medium { background: var(--clr-gold); }
+    .diff-Hard   { background: var(--clr-red); }
+
+    .card-body-kb {
+        padding: 16px 18px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    .cat-pill {
+        display: inline-block;
+        background: var(--clr-gold-light);
+        color: var(--clr-dark);
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .07em;
+        padding: 3px 10px;
+        border-radius: var(--radius-pill);
+        margin-bottom: 8px;
+    }
+    .card-title-kb {
+        font-family: 'Biryani', sans-serif;
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--clr-dark);
+        margin-bottom: 4px;
+        line-height: 1.3;
+    }
+    .card-chef  { font-size: 12px; color: var(--clr-brown); margin-bottom: 8px; }
+    .card-desc  { font-size: 13px; color: #666; line-height: 1.5; flex:1; margin-bottom: 12px; }
+    .card-meta  {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 10px;
+        border-top: 1px solid var(--clr-gold-light);
+    }
+    .rating-stars { color: var(--clr-gold); font-weight: 700; font-size: 13px; }
+    .rating-cnt   { color: var(--clr-brown); font-size: 11px; margin-left: 3px; text-decoration: underline; }
+    .cook-time    { font-size: 12px; color: var(--clr-brown); }
+
+    /* ── CARD FOOTER ── */
+    .card-footer-kb {
+        padding: 12px 18px;
+        border-top: 1px solid var(--clr-gold-light);
+        background: transparent;
+        display: flex;
+        gap: 8px;
+    }
+    .btn-details {
+        flex: 1;
+        background: var(--clr-green);
+        color: var(--clr-white);
+        border: none;
+        border-radius: var(--radius-btn);
+        padding: 9px 12px;
+        font-size: 13px;
+        font-weight: 700;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        transition: var(--transition);
+    }
+    .btn-details:hover { background: var(--clr-green-hover); color: var(--clr-white); }
+
+    .btn-rate {
+        flex: 1;
+        background: var(--clr-gold);
+        color: var(--clr-white);
+        border: none;
+        border-radius: var(--radius-btn);
+        padding: 9px 12px;
+        font-size: 13px;
+        font-weight: 700;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        transition: var(--transition);
+    }
+    .btn-rate:hover { background: #b36520; color: var(--clr-white); transform: translateY(-1px); }
+
+    /* ── EMPTY ── */
+    .empty-state { text-align:center; padding:80px 24px; }
+    .empty-icon  { font-size:56px; color:var(--clr-gold-light); margin-bottom:14px; }
+    .empty-state h3 {
+        font-family:'Biryani',sans-serif;
+        font-weight:700; color:var(--clr-green);
+    }
+    .empty-state p { color:var(--clr-brown); }
+</style>
+
+<div class="container">
+    <div class="rp-header">
+        <h1>🍳 Кулінарні рецепти</h1>
+        <p>Найкращі страви від наших шеф-кухарів</p>
     </div>
 
-    <!-- Фільтри -->
-    <div class="card bg-dark border-0 shadow-sm mb-4">
-        <div class="card-body">
-            <form method="get" class="row g-3">
-                <div class="col-md-4">
-                    <input type="text" name="search" class="form-control bg-secondary text-white border-0"
-                           placeholder="Пошук за назвою..." value="@ViewBag.CurrentSearch">
-                </div>
-                <div class="col-md-3">
-                    <select name="difficulty" class="form-select bg-secondary text-white border-0">
-                        <option value="">Вся складність</option>
-                        <option value="Easy" selected="@(ViewBag.CurrentDifficulty?.ToString() == "Easy")">⭐ Легкий</option>
-                        <option value="Medium" selected="@(ViewBag.CurrentDifficulty?.ToString() == "Medium")">⭐⭐ Середній</option>
-                        <option value="Hard" selected="@(ViewBag.CurrentDifficulty?.ToString() == "Hard")">⭐⭐⭐ Складний</option>
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <select name="category" class="form-select bg-secondary text-white border-0">
-                        <option value="">Всі категорії</option>
-                        @foreach (var cat in Enum.GetValues<CategoryEnum>())
-                        {
-                            <option value="@cat" selected="@(ViewBag.CurrentCategory?.ToString() == cat.ToString())">@cat</option>
-                        }
-                    </select>
-                </div>
-                <div class="col-md-2">
-                    <button type="submit" class="btn btn-kitchen w-100">Фільтрувати</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Сітка рецептів -->
-    <div class="row g-4">
-        @foreach (var recipe in Model)
-        {
-            <div class="col-md-6 col-lg-4">
-                <div class="card recipe-card h-100">
-                    <div class="position-relative">
-                        <img src="@(string.IsNullOrEmpty(recipe.ImageUrl) ? "/images/default-recipe.jpg" : recipe.ImageUrl)"
-                             class="card-img-top" alt="@recipe.Title" style="height: 220px; object-fit: cover;">
-                        <div class="recipe-badge position-absolute top-0 end-0 m-2">
-                            <span class="badge bg-kitchen">@recipe.Difficulty</span>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <h5 class="card-title fw-bold">@recipe.Title</h5>
-                        <p class="card-text text-muted small">👨‍🍳 @recipe.ChefName</p>
-                        <p class="card-text">@(recipe.Description.Length > 100 ? recipe.Description.Substring(0, 100) + "..." : recipe.Description)</p>
-                        <div class="d-flex justify-content-between align-items-center mt-3">
-                            <div class="rating">
-                                ⭐ <strong>@recipe.AverageScore.ToString("0.0")</strong>
-                                <span class="text-muted">(@recipe.Scores.Count)</span>
-                            </div>
-                            <span class="badge bg-info">@recipe.Category</span>
-                        </div>
-                    </div>
-                    <div class="card-footer bg-transparent border-0 pb-3">
-                        <a asp-action="Details" asp-route-id="@recipe.Id" class="btn btn-outline-kitchen w-100">
-                            Детальніше <i class="bi bi-arrow-right"></i>
-                        </a>
-                    </div>
-                </div>
+    <!-- ФІЛЬТРИ -->
+    <div class="filter-bar">
+        <form method="get" class="row g-3 align-items-end">
+            <div class="col-md-4">
+                <label class="filter-lbl">Пошук</label>
+                <input type="text" name="search" class="filter-ctrl"
+                       placeholder="Пошук за назвою…" value="@ViewBag.CurrentSearch">
             </div>
-        }
+            <div class="col-md-3">
+                <label class="filter-lbl">Складність</label>
+                <select name="difficulty" class="filter-ctrl">
+                    <option value="">Вся складність</option>
+                    <option value="Easy" selected="@(ViewBag.CurrentDifficulty?.ToString() == "Easy")">⭐ Легкий</option>
+                    <option value="Medium" selected="@(ViewBag.CurrentDifficulty?.ToString() == "Medium")">⭐⭐ Середній</option>
+                    <option value="Hard" selected="@(ViewBag.CurrentDifficulty?.ToString() == "Hard")">⭐⭐⭐ Складний</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="filter-lbl">Категорія</label>
+                <select name="category" class="filter-ctrl">
+                    <option value="">Всі категорії</option>
+                    @foreach (var cat in Enum.GetValues<CategoryEnum>())
+                    {
+                        <option value="@cat" selected="@(ViewBag.CurrentCategory?.ToString() == cat.ToString())">@cat</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="filter-lbl" style="opacity:0;">.</label>
+                <button type="submit" class="btn-filter">
+                    <i class="bi bi-search"></i> Знайти
+                </button>
+            </div>
+        </form>
     </div>
 
     @if (!Model.Any())
     {
-        <div class="text-center py-5">
-            <i class="bi bi-emoji-frown fs-1 text-muted"></i>
-            <h3 class="text-muted mt-3">Рецептів не знайдено</h3>
+        <div class="empty-state">
+            <div class="empty-icon"><i class="bi bi-journal-x"></i></div>
+            <h3>Рецептів не знайдено</h3>
             <p>Спробуйте змінити параметри пошуку</p>
         </div>
     }
+    else
+    {
+        <div class="row g-4 mb-5">
+            @foreach (var recipe in Model)
+            {
+                <div class="col-md-6 col-lg-4">
+                    <div class="recipe-card">
+                        <div class="position-relative">
+                            <img src="@(string.IsNullOrEmpty(recipe.ImageUrl) ? "/images/default-recipe.jpg" : recipe.ImageUrl)"
+                                 class="card-img-top-kb" alt="@recipe.Title">
+                            <span class="diff-badge diff-@recipe.Difficulty.ToString()">
+                                @(recipe.Difficulty == DifficultyEnum.Easy ? "Легкий"
+                                                        : recipe.Difficulty == DifficultyEnum.Medium ? "Середній" : "Складний")
+                                                                                                                           </span>
+                                                                                                                       </div>
+                                                                                                                       <div class="card-body-kb">
+                                                                                                                           <span class="cat-pill">@recipe.Category</span>
+                                                                                                                           <div class="card-title-kb">@recipe.Title</div>
+                                                                                                                           <div class="card-chef"><i class="bi bi-person-fill"></i> @recipe.ChefName</div>
+                                                                                                                           <div class="card-desc">
+                                @(recipe.Description.Length > 90
+                                                        ? recipe.Description.Substring(0, 90) + "…"
+                                                        : recipe.Description)
+                    </div>
+                    <div class="card-meta">
+                        <span>
+                            <span class="rating-stars">
+                                ★ @recipe.AverageScore.ToString("0.0")
+                            </span>
+                            <span class="rating-cnt">(@recipe.Scores.Count)</span>
+                        </span>
+                        <span class="cook-time">
+                            <i class="bi bi-clock"></i> @recipe.CookingTime хв
+                        </span>
+                    </div>
+                </div>
+                <div class="card-footer-kb">
+                    <a asp-action="Details" asp-route-id="@recipe.Id" class="btn-details">
+                        <i class="bi bi-eye"></i> Деталі
+                    </a>
+                    @if (User.IsInRole("judge"))
+                            {
+                                <a asp-controller="Scores" asp-action="Create"
+                                   asp-route-recipeId="@recipe.Id" class="btn-rate">
+                                    <i class="bi bi-star"></i> Оцінити
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
 </div>
-
-<style>
-    .recipe-card {
-        background: #1a1a2e;
-        border: none;
-        border-radius: 16px;
-        transition: transform 0.3s, box-shadow 0.3s;
-        overflow: hidden;
-    }
-    .recipe-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-    }
-    .btn-kitchen {
-        background: linear-gradient(135deg, #e65c00, #f9a826);
-        color: white;
-        border: none;
-    }
-    .btn-kitchen:hover {
-        background: linear-gradient(135deg, #cc5200, #e69500);
-        color: white;
-    }
-    .btn-outline-kitchen {
-        border: 1px solid #e65c00;
-        color: #e65c00;
-    }
-    .btn-outline-kitchen:hover {
-        background: #e65c00;
-        color: white;
-    }
-    .badge-kitchen {
-        background: #e65c00;
-    }
-    .rating {
-        color: #f9a826;
-    }
-</style>
