@@ -3,110 +3,395 @@
     ViewData["Title"] = "Редагування рецепта";
 }
 
-<div class="container py-4">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card bg-dark border-0 shadow-lg">
-                <div class="card-header bg-transparent border-0 pt-4">
-                    <h1 class="display-5 fw-bold text-center">✏️ Редагування</h1>
-                    <p class="text-center text-muted">@Model.Title</p>
-                    <div class="text-center">
-                        <span class="badge @(Model.Status == StatusRecipeEnum.Draft ? "bg-secondary" : "bg-danger")">
-                            Статус: @Model.Status
-                        </span>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Biryani:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+    :root {
+        --clr-green: #4A6741;
+        --clr-green-hover: #6B8F5E;
+        --clr-gold: #C47B2B;
+        --clr-gold-light: #E8D5A3;
+        --clr-ivory: #F5F1E8;
+        --clr-white: #FFFFFF;
+        --clr-dark: #2C2C2A;
+        --clr-brown: #8B7355;
+        --clr-red: #D4483B;
+        --radius-card: 16px;
+        --radius-btn: 6px;
+        --radius-pill: 20px;
+        --shadow-card: 0 4px 20px rgba(0,0,0,0.08);
+        --transition: 0.3s ease;
+    }
+
+    body {
+        background: var(--clr-ivory) !important;
+    }
+
+    .form-page {
+        padding: 48px 0 64px;
+    }
+
+    .form-card {
+        background: var(--clr-white);
+        border-radius: var(--radius-card);
+        box-shadow: var(--shadow-card);
+        overflow: hidden;
+        animation: revealCard .5s ease both;
+    }
+
+    @@keyframes revealCard {
+        from {
+            opacity: 0;
+            transform: translateY(24px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* DARK HEADER */
+    .form-head {
+        background: var(--clr-dark);
+        padding: 26px 32px;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .form-head::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(to right,var(--clr-green),var(--clr-gold));
+        }
+
+        .form-head::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(-45deg,transparent,transparent 12px,rgba(255,255,255,.025) 12px,rgba(255,255,255,.025) 24px);
+        }
+
+        .form-head h4 {
+            font-family: 'Biryani',sans-serif;
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--clr-white);
+            margin: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .form-head p {
+            color: rgba(255,255,255,.5);
+            font-size: 13px;
+            margin: 4px 0 0;
+            position: relative;
+            z-index: 1;
+        }
+
+    .status-chip {
+        display: inline-block;
+        background: rgba(196,123,43,.2);
+        color: var(--clr-gold-light);
+        border-radius: var(--radius-pill);
+        padding: 3px 12px;
+        font-size: 11px;
+        font-weight: 600;
+        position: relative;
+        z-index: 1;
+        margin-top: 8px;
+    }
+
+    .form-body {
+        padding: 32px;
+    }
+
+    .kb-field {
+        margin-bottom: 22px;
+    }
+
+    .kb-label {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--clr-dark);
+        text-transform: uppercase;
+        letter-spacing: .07em;
+        margin-bottom: 8px;
+    }
+
+    .label-icon {
+        width: 26px;
+        height: 26px;
+        border-radius: 7px;
+        background: rgba(74,103,65,.1);
+        color: var(--clr-green);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        flex-shrink: 0;
+    }
+
+    .kb-input, .kb-select, .kb-textarea {
+        width: 100%;
+        border: 1.5px solid #E2DDD4;
+        border-radius: var(--radius-btn);
+        padding: 12px 16px;
+        font-size: 15px;
+        color: var(--clr-dark);
+        background: var(--clr-white);
+        outline: none;
+        transition: var(--transition);
+        font-family: inherit;
+        -webkit-appearance: none;
+    }
+
+        .kb-input:focus, .kb-select:focus, .kb-textarea:focus {
+            border-color: var(--clr-green);
+            box-shadow: 0 0 0 3px rgba(74,103,65,.12);
+        }
+
+    .kb-textarea {
+        resize: vertical;
+        min-height: 100px;
+    }
+
+    .field-err {
+        font-size: 12px;
+        color: var(--clr-red);
+        margin-top: 5px;
+        display: block;
+    }
+
+    .photo-preview {
+        border-radius: 12px;
+        overflow: hidden;
+        border: 2px solid var(--clr-gold-light);
+        margin-bottom: 10px;
+    }
+
+        .photo-preview img {
+            width: 100%;
+            max-height: 150px;
+            object-fit: cover;
+            display: block;
+        }
+
+    .photo-lbl {
+        font-size: 11px;
+        color: var(--clr-brown);
+        text-align: center;
+        padding: 6px;
+        background: var(--clr-ivory);
+    }
+
+    .form-divider {
+        height: 1px;
+        background: linear-gradient(to right,transparent,#E2DDD4,transparent);
+        margin: 28px 0;
+    }
+
+    .edit-notice {
+        background: rgba(196,123,43,.07);
+        border: 1px solid rgba(196,123,43,.2);
+        border-radius: var(--radius-btn);
+        padding: 11px 16px;
+        margin-bottom: 24px;
+        font-size: 13px;
+        color: var(--clr-brown);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .val-errors {
+        background: rgba(212,72,59,.07);
+        border: 1px solid rgba(212,72,59,.25);
+        border-radius: var(--radius-btn);
+        color: var(--clr-red);
+        padding: 12px 16px;
+        font-size: 13px;
+        margin-bottom: 24px;
+    }
+
+    .btn-submit {
+        flex: 1;
+        background: var(--clr-green);
+        color: var(--clr-white);
+        border: none;
+        border-radius: var(--radius-btn);
+        padding: 13px 32px;
+        font-size: 14px;
+        font-weight: 700;
+        letter-spacing: .04em;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: var(--transition);
+    }
+
+        .btn-submit:hover {
+            background: var(--clr-green-hover);
+            color: var(--clr-white);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px rgba(74,103,65,.35);
+        }
+
+    .btn-cancel {
+        background: transparent;
+        color: var(--clr-brown);
+        border: 1.5px solid #C8C0B4;
+        border-radius: var(--radius-btn);
+        padding: 13px 24px;
+        font-size: 14px;
+        font-weight: 500;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: var(--transition);
+        white-space: nowrap;
+    }
+
+        .btn-cancel:hover {
+            border-color: var(--clr-brown);
+            color: var(--clr-dark);
+        }
+</style>
+
+<div class="form-page">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-7">
+                <div class="form-card">
+                    <div class="form-head">
+                        <h4><i class="bi bi-pencil-square me-2" style="color:var(--clr-gold-light);"></i>Редагування рецепта</h4>
+                        <p>@Model.Title</p>
+                        <span class="status-chip">Статус: @Model.Status</span>
                     </div>
-                </div>
-                <div class="card-body p-4">
-                    <form asp-action="Edit" method="post" enctype="multipart/form-data">
-                        <input type="hidden" asp-for="Id" />
-                        <input type="hidden" asp-for="ExistingImageUrl" />
-                        <input type="hidden" asp-for="Status" />
 
-                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                    <div class="form-body">
+                        <form asp-action="Edit" method="post" enctype="multipart/form-data">
+                            <input type="hidden" asp-for="Id" />
+                            <input type="hidden" asp-for="ExistingImageUrl" />
+                            <input type="hidden" asp-for="Status" />
 
-                        @if (!string.IsNullOrEmpty(Model.ExistingImageUrl))
-                        {
-                            <div class="text-center mb-3">
-                                <img src="@Model.ExistingImageUrl" style="max-height: 150px; border-radius: 12px;" />
+                            <div asp-validation-summary="ModelOnly" class="val-errors"></div>
+
+                            <div class="edit-notice">
+                                <i class="bi bi-info-circle"></i>
+                                Редагування доступне лише для чернеток та відхилених рецептів.
                             </div>
-                        }
 
-                        <div class="mb-3">
-                            <label asp-for="Title" class="form-label fw-bold"></label>
-                            <input asp-for="Title" class="form-control bg-secondary text-white border-0">
-                            <span asp-validation-for="Title" class="text-danger"></span>
-                        </div>
+                            @if (!string.IsNullOrEmpty(Model.ExistingImageUrl))
+                            {
+                                <div class="photo-preview">
+                                    <img src="@Model.ExistingImageUrl" alt="Поточне фото">
+                                    <div class="photo-lbl">Поточне фото</div>
+                                </div>
+                            }
 
-                        <div class="mb-3">
-                            <label asp-for="Description" class="form-label fw-bold"></label>
-                            <textarea asp-for="Description" class="form-control bg-secondary text-white border-0" rows="4"></textarea>
-                            <span asp-validation-for="Description" class="text-danger"></span>
-                        </div>
-
-                        <div class="mb-3">
-                            <label asp-for="Ingredients" class="form-label fw-bold"></label>
-                            <textarea asp-for="Ingredients" class="form-control bg-secondary text-white border-0" rows="4"></textarea>
-                            <span asp-validation-for="Ingredients" class="text-danger"></span>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label asp-for="CookingTime" class="form-label fw-bold"></label>
-                                <input asp-for="CookingTime" class="form-control bg-secondary text-white border-0">
-                                <span asp-validation-for="CookingTime" class="text-danger"></span>
+                            <div class="kb-field">
+                                <label asp-for="Title" class="kb-label">
+                                    <span class="label-icon"><i class="bi bi-type"></i></span> Назва страви
+                                </label>
+                                <input asp-for="Title" class="kb-input">
+                                <span asp-validation-for="Title" class="field-err"></span>
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <label asp-for="Difficulty" class="form-label fw-bold"></label>
-                                <select asp-for="Difficulty" class="form-select bg-secondary text-white border-0">
-                                    <option value="Easy">⭐ Легкий</option>
-                                    <option value="Medium">⭐⭐ Середній</option>
-                                    <option value="Hard">⭐⭐⭐ Складний</option>
-                                </select>
-                            </div>
-                        </div>
 
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label asp-for="Category" class="form-label fw-bold"></label>
-                                <select asp-for="Category" class="form-select bg-secondary text-white border-0">
-                                    @foreach (var cat in Enum.GetValues<CategoryEnum>())
-                                    {
-                                        <option value="@cat">@cat</option>
-                                    }
-                                </select>
+                            <div class="kb-field">
+                                <label asp-for="Description" class="kb-label">
+                                    <span class="label-icon"><i class="bi bi-file-text"></i></span> Опис
+                                </label>
+                                <textarea asp-for="Description" class="kb-textarea" rows="4"></textarea>
+                                <span asp-validation-for="Description" class="field-err"></span>
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <label asp-for="Picture" class="form-label fw-bold"></label>
-                                <input asp-for="Picture" type="file" class="form-control bg-secondary text-white border-0" accept="image/*">
-                                <small class="text-muted">Залиште порожнім, щоб не змінювати фото</small>
-                            </div>
-                        </div>
 
-                        <div class="d-grid gap-2 mt-4">
-                            <button type="submit" class="btn btn-kitchen btn-lg">
-                                <i class="bi bi-save"></i> Зберегти зміни
-                            </button>
-                            <a asp-action="MyRecipes" class="btn btn-secondary">Скасувати</a>
-                        </div>
-                    </form>
+                            <div class="kb-field">
+                                <label asp-for="Ingredients" class="kb-label">
+                                    <span class="label-icon"><i class="bi bi-basket"></i></span> Інгредієнти
+                                </label>
+                                <textarea asp-for="Ingredients" class="kb-textarea" rows="4"></textarea>
+                                <span asp-validation-for="Ingredients" class="field-err"></span>
+                            </div>
+
+                            <div class="form-divider"></div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="kb-field">
+                                        <label asp-for="CookingTime" class="kb-label">
+                                            <span class="label-icon"><i class="bi bi-clock"></i></span> Час (хв)
+                                        </label>
+                                        <input asp-for="CookingTime" type="number" class="kb-input">
+                                        <span asp-validation-for="CookingTime" class="field-err"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="kb-field">
+                                        <label asp-for="Difficulty" class="kb-label">
+                                            <span class="label-icon"><i class="bi bi-bar-chart"></i></span> Складність
+                                        </label>
+                                        <select asp-for="Difficulty" class="kb-select">
+                                            <option value="Easy">⭐ Легкий</option>
+                                            <option value="Medium">⭐⭐ Середній</option>
+                                            <option value="Hard">⭐⭐⭐ Складний</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="kb-field">
+                                        <label asp-for="Category" class="kb-label">
+                                            <span class="label-icon"><i class="bi bi-tag"></i></span> Категорія
+                                        </label>
+                                        <select asp-for="Category" class="kb-select">
+                                            @foreach (var cat in Enum.GetValues<CategoryEnum>())
+                                            {
+                                                <option value="@cat">@cat</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="kb-field">
+                                        <label asp-for="Picture" class="kb-label">
+                                            <span class="label-icon"><i class="bi bi-image"></i></span> Нове фото
+                                        </label>
+                                        <input asp-for="Picture" type="file" class="kb-input"
+                                               accept="image/*" style="padding:9px 16px;font-size:13px;">
+                                        <small style="color:var(--clr-brown);font-size:11px;margin-top:4px;display:block;">
+                                            Залиште порожнім, щоб не змінювати фото
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex gap-3 mt-2">
+                                <button type="submit" class="btn-submit">
+                                    <i class="bi bi-check-lg me-1"></i>Зберегти зміни
+                                </button>
+                                <a asp-action="MyRecipes" class="btn-cancel">
+                                    <i class="bi bi-x"></i>Скасувати
+                                </a>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-<style>
-    .btn-kitchen {
-        background: linear-gradient(135deg, #e65c00, #f9a826);
-        color: white;
-        border: none;
-    }
-
-        .btn-kitchen:hover {
-            background: linear-gradient(135deg, #cc5200, #e69500);
-            color: white;
-        }
-</style>
 
 @section Scripts {
     @{

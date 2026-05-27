@@ -73,8 +73,6 @@ namespace KitchenBattle.Controllers
                 });
             }
 
-            var isOwner = !string.IsNullOrEmpty(currentUserId) && recipe.ChefId == currentUserId;
-
             var viewModel = new RecipeDetailsViewModel
             {
                 Id = recipe.Id,
@@ -86,7 +84,7 @@ namespace KitchenBattle.Controllers
                 Category = recipe.Category,
                 ImageUrl = recipe.ImageUrl,
                 ChefName = recipe.ChefName,
-                ChefId = 0,
+                ChefId = recipe.ChefId, 
                 Status = recipe.Status,
                 AverageScore = recipe.AverageScore,
                 Scores = scores,
@@ -95,36 +93,37 @@ namespace KitchenBattle.Controllers
 
             return View(viewModel);
         }
-
+        // GET: показуємо форму — дозволено будь-якому авторизованому
         public IActionResult Create()
         {
             return View();
         }
 
+        // POST: "chef" — маленькими (Keycloak повертає маленькі)
         [HttpPost]
-        [Authorize(Roles = "Chef")]
+        [Authorize(Roles = "chef")]
         public async Task<IActionResult> Create(RecipeCreateViewModel model)
         {
             if (!ModelState.IsValid) return View(model);
-            
-            var userId = User.FindFirstValue("sub") ?? 
-                         User.FindFirstValue(ClaimTypes.NameIdentifier) ?? 
+
+            var userId = User.FindFirstValue("sub") ??
+                         User.FindFirstValue(ClaimTypes.NameIdentifier) ??
                          User.Identity?.Name ?? "";
-            
-            var userName = User.FindFirstValue("preferred_username") ?? 
-                           User.FindFirstValue("name") ?? 
+
+            var userName = User.FindFirstValue("preferred_username") ??
+                           User.FindFirstValue("name") ??
                            User.Identity?.Name ?? "Unknown";
 
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized();
-            
+
             var chef = await _context.Chefs.FindAsync(userId);
             if (chef == null)
             {
-                var fullName = User.FindFirstValue("name") ?? 
-                               User.FindFirstValue("preferred_username") ?? 
+                var fullName = User.FindFirstValue("name") ??
+                               User.FindFirstValue("preferred_username") ??
                                userName;
-        
+
                 chef = new Chef
                 {
                     Id = userId,
@@ -137,7 +136,6 @@ namespace KitchenBattle.Controllers
             }
 
             await _recipeService.CreateRecipeAsync(model, userId, chef.FullName);
-
             return RedirectToAction(nameof(MyRecipes));
         }
 
@@ -213,9 +211,7 @@ namespace KitchenBattle.Controllers
             var success = await _recipeService.DeleteRecipeAsync(id, userId);
 
             if (!success)
-            {
                 TempData["Error"] = "Не вдалося видалити рецепт.";
-            }
 
             return RedirectToAction(nameof(MyRecipes));
         }
@@ -259,10 +255,8 @@ namespace KitchenBattle.Controllers
         public async Task<IActionResult> Approve(int id)
         {
             var success = await _recipeService.ApproveRecipeAsync(id);
-
             if (!success)
                 TempData["Error"] = "Не вдалося схвалити рецепт.";
-
             return RedirectToAction("RecipesForReview", "Admin");
         }
 
@@ -272,10 +266,8 @@ namespace KitchenBattle.Controllers
         public async Task<IActionResult> Reject(int id)
         {
             var success = await _recipeService.RejectRecipeAsync(id);
-
             if (!success)
                 TempData["Error"] = "Не вдалося відхилити рецепт.";
-
             return RedirectToAction("RecipesForReview", "Admin");
         }
 

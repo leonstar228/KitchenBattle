@@ -153,8 +153,10 @@
                                     <i class="bi bi-person-circle"></i> @User.Identity.Name
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                    @if (User.IsInRole("chef"))
+                                    {
                                     <li><a class="dropdown-item" asp-controller="Recipes" asp-action="MyRecipes">Мої рецепти</a></li>
-
+                                    }
                                     @if (User.IsInRole("admin"))
                                     {
                                         <li><a class="dropdown-item" asp-controller="Admin" asp-action="Dashboard">Адмінка</a></li>

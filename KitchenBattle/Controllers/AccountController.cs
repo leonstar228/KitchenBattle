@@ -22,9 +22,12 @@ namespace KitchenBattle.Controllers
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-
             return SignOut(new AuthenticationProperties { RedirectUri = "/" },
                 OpenIdConnectDefaults.AuthenticationScheme);
+        }
+        public IActionResult AccessDenied()
+        {
+            return View();
         }
     }
 }
