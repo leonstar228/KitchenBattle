@@ -431,7 +431,7 @@
                 </h1>
             </div>
             <div class="header-actions">
-                @if (User.IsInRole("Judge"))
+                @if (User.IsInRole("judge"))
                 {
                     <a asp-action="Create" asp-route-recipeId="@recipeId" class="btn-primary-kb">
                         <i class="bi bi-plus-lg"></i>Додати оцінку
@@ -531,7 +531,7 @@
                                 }
                             </div>
 
-                            @if (User.IsInRole("Judge"))
+                            @if (User.IsInRole("judge"))
                             {
                                 <div class="score-card-footer">
                                     <a asp-action="Edit" asp-route-id="@score.Id" class="btn-card-edit">
@@ -560,7 +560,7 @@
                 </div>
                 <h5>Оцінок ще немає</h5>
                 <p>Суддівське журі ще не виставило жодної оцінки для цього рецепту.</p>
-                @if (User.IsInRole("Judge"))
+                @if (User.IsInRole("judge"))
                 {
                     <a asp-action="Create" asp-route-recipeId="@recipeId" class="btn-primary-kb mt-4 d-inline-flex">
                         <i class="bi bi-plus-lg"></i>Бути першим суддею
