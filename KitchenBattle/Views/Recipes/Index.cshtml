@@ -8,24 +8,26 @@
 
 <style>
     :root {
-        --clr-green:      #4A6741;
-        --clr-green-hover:#6B8F5E;
-        --clr-gold:       #C47B2B;
+        --clr-green: #4A6741;
+        --clr-green-hover: #6B8F5E;
+        --clr-gold: #C47B2B;
         --clr-gold-light: #E8D5A3;
-        --clr-ivory:      #F5F1E8;
-        --clr-white:      #FFFFFF;
-        --clr-dark:       #2C2C2A;
-        --clr-brown:      #8B7355;
-        --clr-red:        #D4483B;
-        --radius-card:    16px;
-        --radius-btn:     6px;
-        --radius-pill:    20px;
-        --shadow-card:    0 4px 20px rgba(0,0,0,0.08);
-        --shadow-hover:   0 8px 30px rgba(0,0,0,0.12);
-        --transition:     0.3s ease;
+        --clr-ivory: #F5F1E8;
+        --clr-white: #FFFFFF;
+        --clr-dark: #2C2C2A;
+        --clr-brown: #8B7355;
+        --clr-red: #D4483B;
+        --radius-card: 16px;
+        --radius-btn: 6px;
+        --radius-pill: 20px;
+        --shadow-card: 0 4px 20px rgba(0,0,0,0.08);
+        --shadow-hover: 0 8px 30px rgba(0,0,0,0.12);
+        --transition: 0.3s ease;
     }
 
-    body { background: var(--clr-ivory) !important; }
+    body {
+        background: var(--clr-ivory) !important;
+    }
 
     /* ── PAGE HEADER ── */
     .rp-header {
@@ -33,23 +35,44 @@
         padding: 40px 0 32px;
         animation: fadeDown .5s ease both;
     }
-    .rp-header h1 {
-        font-family: 'Biryani', sans-serif;
-        font-size: 36px;
-        font-weight: 800;
-        color: var(--clr-dark);
-        margin: 0;
-        letter-spacing: -.01em;
-    }
-    .rp-header p { color: var(--clr-brown); font-size: 15px; margin-top: 6px; }
+
+        .rp-header h1 {
+            font-family: 'Biryani', sans-serif;
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--clr-dark);
+            margin: 0;
+            letter-spacing: -.01em;
+        }
+
+        .rp-header p {
+            color: var(--clr-brown);
+            font-size: 15px;
+            margin-top: 6px;
+        }
 
     @@keyframes fadeDown {
-        from { opacity:0; transform:translateY(-14px); }
-        to   { opacity:1; transform:translateY(0); }
+        from {
+            opacity: 0;
+            transform: translateY(-14px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
+
     @@keyframes cardIn {
-        from { opacity:0; transform:translateY(20px); }
-        to   { opacity:1; transform:translateY(0); }
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 
     /* ── ADD BUTTON ── */
@@ -69,12 +92,13 @@
         transition: var(--transition);
         letter-spacing: .03em;
     }
-    .btn-add:hover {
-        background: #b36520;
-        color: var(--clr-white);
-        transform: translateY(-2px);
-        box-shadow: 0 6px 18px rgba(196,123,43,.35);
-    }
+
+        .btn-add:hover {
+            background: #b36520;
+            color: var(--clr-white);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(196,123,43,.35);
+        }
 
     /* ── FILTER BAR ── */
     .filter-bar {
@@ -84,6 +108,7 @@
         padding: 20px 24px;
         margin-bottom: 32px;
     }
+
     .filter-lbl {
         display: block;
         font-size: 11px;
@@ -93,6 +118,7 @@
         letter-spacing: .08em;
         margin-bottom: 6px;
     }
+
     .filter-ctrl {
         width: 100%;
         border: 1.5px solid var(--clr-gold-light);
@@ -105,10 +131,12 @@
         transition: var(--transition);
         -webkit-appearance: none;
     }
-    .filter-ctrl:focus {
-        border-color: var(--clr-green);
-        box-shadow: 0 0 0 3px rgba(74,103,65,.1);
-    }
+
+        .filter-ctrl:focus {
+            border-color: var(--clr-green);
+            box-shadow: 0 0 0 3px rgba(74,103,65,.1);
+        }
+
     .btn-filter {
         width: 100%;
         background: var(--clr-gold);
@@ -121,7 +149,11 @@
         cursor: pointer;
         transition: var(--transition);
     }
-    .btn-filter:hover { background: #b36520; transform: translateY(-1px); }
+
+        .btn-filter:hover {
+            background: #b36520;
+            transform: translateY(-1px);
+        }
 
     /* ── RECIPE CARD ── */
     .recipe-card {
@@ -135,10 +167,11 @@
         transition: transform var(--transition), box-shadow var(--transition);
         animation: cardIn .45s ease both;
     }
-    .recipe-card:hover {
-        transform: translateY(-4px);
-        box-shadow: var(--shadow-hover);
-    }
+
+        .recipe-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-hover);
+        }
 
     .card-img-top-kb {
         width: 100%;
@@ -147,18 +180,54 @@
         display: block;
         background: var(--clr-green);
     }
+
     .diff-badge {
         position: absolute;
-        top: 10px; right: 10px;
+        top: 10px;
+        right: 10px;
         padding: 4px 12px;
         border-radius: var(--radius-pill);
         font-size: 11px;
         font-weight: 700;
         color: var(--clr-white);
     }
-    .diff-Easy   { background: var(--clr-green); }
-    .diff-Medium { background: var(--clr-gold); }
-    .diff-Hard   { background: var(--clr-red); }
+
+    .diff-Easy {
+        background: #7BB661;
+    }
+
+    .diff-Medium {
+        background: var(--clr-gold);
+    }
+
+    .diff-Hard {
+        background: var(--clr-red);
+    }
+
+    /* ── IMAGE PLACEHOLDER ── */
+    .img-placeholder {
+        width: 100%;
+        height: 195px;
+        background: linear-gradient(135deg, var(--clr-green), var(--clr-green-hover));
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+        .img-placeholder i {
+            font-size: 42px;
+            color: rgba(255,255,255,0.35);
+        }
+
+        .img-placeholder span {
+            font-size: 12px;
+            color: rgba(255,255,255,0.3);
+            letter-spacing: .05em;
+            text-transform: uppercase;
+        }
+
 
     .card-body-kb {
         padding: 16px 18px;
@@ -166,6 +235,7 @@
         display: flex;
         flex-direction: column;
     }
+
     .cat-pill {
         display: inline-block;
         background: var(--clr-gold-light);
@@ -178,6 +248,7 @@
         border-radius: var(--radius-pill);
         margin-bottom: 8px;
     }
+
     .card-title-kb {
         font-family: 'Biryani', sans-serif;
         font-size: 16px;
@@ -186,18 +257,46 @@
         margin-bottom: 4px;
         line-height: 1.3;
     }
-    .card-chef  { font-size: 12px; color: var(--clr-brown); margin-bottom: 8px; }
-    .card-desc  { font-size: 13px; color: #666; line-height: 1.5; flex:1; margin-bottom: 12px; }
-    .card-meta  {
+
+    .card-chef {
+        font-size: 12px;
+        color: var(--clr-brown);
+        margin-bottom: 8px;
+    }
+
+    .card-desc {
+        font-size: 13px;
+        color: #666;
+        line-height: 1.5;
+        flex: 1;
+        margin-bottom: 12px;
+    }
+
+    .card-meta {
         display: flex;
         justify-content: space-between;
         align-items: center;
         padding-top: 10px;
         border-top: 1px solid var(--clr-gold-light);
     }
-    .rating-stars { color: var(--clr-gold); font-weight: 700; font-size: 13px; }
-    .rating-cnt   { color: var(--clr-brown); font-size: 11px; margin-left: 3px; text-decoration: underline; }
-    .cook-time    { font-size: 12px; color: var(--clr-brown); }
+
+    .rating-stars {
+        color: var(--clr-gold);
+        font-weight: 700;
+        font-size: 13px;
+    }
+
+    .rating-cnt {
+        color: var(--clr-brown);
+        font-size: 11px;
+        margin-left: 3px;
+        text-decoration: underline;
+    }
+
+    .cook-time {
+        font-size: 12px;
+        color: var(--clr-brown);
+    }
 
     /* ── CARD FOOTER ── */
     .card-footer-kb {
@@ -207,6 +306,7 @@
         display: flex;
         gap: 8px;
     }
+
     .btn-details {
         flex: 1;
         background: var(--clr-green);
@@ -223,7 +323,11 @@
         gap: 5px;
         transition: var(--transition);
     }
-    .btn-details:hover { background: var(--clr-green-hover); color: var(--clr-white); }
+
+        .btn-details:hover {
+            background: var(--clr-green-hover);
+            color: var(--clr-white);
+        }
 
     .btn-rate {
         flex: 1;
@@ -241,16 +345,34 @@
         gap: 5px;
         transition: var(--transition);
     }
-    .btn-rate:hover { background: #b36520; color: var(--clr-white); transform: translateY(-1px); }
+
+        .btn-rate:hover {
+            background: #b36520;
+            color: var(--clr-white);
+            transform: translateY(-1px);
+        }
 
     /* ── EMPTY ── */
-    .empty-state { text-align:center; padding:80px 24px; }
-    .empty-icon  { font-size:56px; color:var(--clr-gold-light); margin-bottom:14px; }
-    .empty-state h3 {
-        font-family:'Biryani',sans-serif;
-        font-weight:700; color:var(--clr-green);
+    .empty-state {
+        text-align: center;
+        padding: 80px 24px;
     }
-    .empty-state p { color:var(--clr-brown); }
+
+    .empty-icon {
+        font-size: 56px;
+        color: var(--clr-gold-light);
+        margin-bottom: 14px;
+    }
+
+    .empty-state h3 {
+        font-family: 'Biryani',sans-serif;
+        font-weight: 700;
+        color: var(--clr-green);
+    }
+
+    .empty-state p {
+        color: var(--clr-brown);
+    }
 </style>
 
 <div class="container">
@@ -311,21 +433,30 @@
                 <div class="col-md-6 col-lg-4">
                     <div class="recipe-card">
                         <div class="position-relative">
-                            <img src="@(string.IsNullOrEmpty(recipe.ImageUrl) ? "/images/default-recipe.jpg" : recipe.ImageUrl)"
-                                 class="card-img-top-kb" alt="@recipe.Title">
-                            <span class="diff-badge diff-@recipe.Difficulty.ToString()">
-                                @(recipe.Difficulty == DifficultyEnum.Easy ? "Легкий"
-                                                        : recipe.Difficulty == DifficultyEnum.Medium ? "Середній" : "Складний")
-                                                                                                                           </span>
-                                                                                                                       </div>
-                                                                                                                       <div class="card-body-kb">
-                                                                                                                           <span class="cat-pill">@recipe.Category</span>
-                                                                                                                           <div class="card-title-kb">@recipe.Title</div>
-                                                                                                                           <div class="card-chef"><i class="bi bi-person-fill"></i> @recipe.ChefName</div>
-                                                                                                                           <div class="card-desc">
-                                @(recipe.Description.Length > 90
-                                                        ? recipe.Description.Substring(0, 90) + "…"
-                                                        : recipe.Description)
+                            @if (string.IsNullOrEmpty(recipe.ImageUrl))
+                            {
+                                <div class="img-placeholder">
+                                    <i class="bi bi-camera"></i>
+                                    <span>Фото відсутнє</span>
+                                </div>
+                            }
+                            else
+                            {
+                                <img src="@recipe.ImageUrl" class="card-img-top-kb" alt="@recipe.Title">
+                            }
+                        <span class="diff-badge diff-@recipe.Difficulty.ToString()">
+                            @(recipe.Difficulty == DifficultyEnum.Easy ? "Легкий"
+                                                    : recipe.Difficulty == DifficultyEnum.Medium ? "Середній" : "Складний")
+                                                                                                                       </span>
+                                                                                                                   </div>
+                                                                                                                   <div class="card-body-kb">
+                                                                                                                       <span class="cat-pill">@recipe.Category</span>
+                                                                                                                       <div class="card-title-kb">@recipe.Title</div>
+                                                                                                                       <div class="card-chef"><i class="bi bi-person-fill"></i> @recipe.ChefName</div>
+                                                                                                                       <div class="card-desc">
+                            @(recipe.Description.Length > 90
+                                                    ? recipe.Description.Substring(0, 90) + "…"
+                                                    : recipe.Description)
                     </div>
                     <div class="card-meta">
                         <span>
