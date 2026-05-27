@@ -10,7 +10,6 @@
         <p class="lead" style="color: #8B7355;">Найкращі рецепти нашого кухарського батлу</p>
     </div>
 
-
     <div class="row g-4 mb-5">
         @for (int i = 0; i < Math.Min(3, Model.Count); i++)
         {
@@ -25,7 +24,6 @@
 
             <div class="col-lg-4 col-md-6">
                 <div class="leader-card h-100 @colorClass position-relative" style="border-radius: 16px; overflow: hidden;">
-
                     <div class="place-badge">
                         <span class="badge rounded-pill fs-3 fw-bold">@item.Place</span>
                     </div>
@@ -88,41 +86,3 @@
         }
     </div>
 </div>
-
-<style>
-    .leader-card {
-        transition: 0.3s ease;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-    }
-    .leader-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 12px 30px rgba(0,0,0,0.15);
-    }
-
-    .top-1 { background: linear-gradient(135deg, #4A6741, #3d5534); }
-    .top-2 { background: linear-gradient(135deg, #6B8F5E, #4A6741); }
-    .top-3 { background: linear-gradient(135deg, #C47B2B, #a86a24); }
-
-    .place-badge {
-        position: absolute;
-        top: -18px;
-        left: 24px;
-        z-index: 10;
-        width: 62px;
-        height: 62px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 50%;
-        background: #FFFFFF;
-        color: #2C2C2A;
-        box-shadow: 0 6px 16px rgba(0,0,0,0.15);
-        font-size: 1.6rem;
-        font-weight: bold;
-    }
-
-    .leader-row:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-    }
-</style>
