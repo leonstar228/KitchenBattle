@@ -3,6 +3,7 @@ using KitchenBattle.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using System.Text.Json;
+using KitchenBattle.ViewModels;
 
 public class RedisService
 {
@@ -90,6 +91,40 @@ public class RedisService
             });
         Console.WriteLine("Данні збережено в кеш.");
         return scores;
+    }
+    private const string LeaderboardsCacheKey = "leaderboards_list";
+    public async Task<List<LeaderboardViewModel>> GetLeaderBoardCach()
+    {
+        var cached = await _cache.GetStringAsync(LeaderboardsCacheKey);
+        if (!string.IsNullOrEmpty(cached))
+        {
+            return JsonSerializer.Deserialize<List<LeaderboardViewModel>>(cached) ?? new List<LeaderboardViewModel>();
+        }
+
+        var topRecipe = await _db.Recipes
+            .OrderByDescending(r => r.AverageScore)
+            .Take(5).ToListAsync();
+        
+        var leaderboard = topRecipe
+            .Select((r, index) => new LeaderboardViewModel
+            {
+                RecipeId = r.Id,
+                RecipeTitle = r.Title,
+                ChefName = r.ChefName,
+                Category = r.Category.ToString(),
+                AverageScore = r.AverageScore,
+                TotalScoresCount = r.Scores.Count,
+                Place = index + 1
+            })
+            .ToList();
+        
+        await _cache.SetStringAsync(LeaderboardsCacheKey,
+            JsonSerializer.Serialize(leaderboard),
+            new DistributedCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5)
+            });
+        return leaderboard;
     }
     
     public static async Task ClearCacheAsync(IDistributedCache cache)

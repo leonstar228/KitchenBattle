@@ -92,52 +92,75 @@ namespace KitchenBattle.Controllers
             };
 
             return View(viewModel);
-        }
-        // GET: показуємо форму — дозволено будь-якому авторизованому
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: "chef" — маленькими (Keycloak повертає маленькі)
-        [HttpPost]
+        } 
         [Authorize(Roles = "chef")]
-        public async Task<IActionResult> Create(RecipeCreateViewModel model)
-        {
-            if (!ModelState.IsValid) return View(model);
-
-            var userId = User.FindFirstValue("sub") ??
-                         User.FindFirstValue(ClaimTypes.NameIdentifier) ??
-                         User.Identity?.Name ?? "";
-
-            var userName = User.FindFirstValue("preferred_username") ??
-                           User.FindFirstValue("name") ??
-                           User.Identity?.Name ?? "Unknown";
-
-            if (string.IsNullOrEmpty(userId))
-                return Unauthorized();
-
-            var chef = await _context.Chefs.FindAsync(userId);
-            if (chef == null)
-            {
-                var fullName = User.FindFirstValue("name") ??
-                               User.FindFirstValue("preferred_username") ??
-                               userName;
-
-                chef = new Chef
-                {
-                    Id = userId,
-                    UserName = userName,
-                    FullName = fullName,
-                    CreatedAt = DateTime.UtcNow
-                };
-                _context.Chefs.Add(chef);
-                await _context.SaveChangesAsync();
-            }
-
-            await _recipeService.CreateRecipeAsync(model, userId, chef.FullName);
-            return RedirectToAction(nameof(MyRecipes));
+        public IActionResult Create(int? battleId)
+       {
+        ViewBag.BattleId = battleId;
+        return View();
         }
+
+     [HttpPost]
+     [Authorize(Roles = "chef")]
+      public async Task<IActionResult> Create(RecipeCreateViewModel model, int? battleId)
+     {
+         if (!ModelState.IsValid) return View(model);
+
+         var userId = User.FindFirstValue("sub") ??
+                 User.FindFirstValue(ClaimTypes.NameIdentifier) ??
+                 User.Identity?.Name ?? "";
+
+         var userName = User.FindFirstValue("preferred_username") ??
+                   User.FindFirstValue("name") ??
+                   User.Identity?.Name ?? "Unknown";
+
+         if (string.IsNullOrEmpty(userId))
+            return Unauthorized();
+
+         var chef = await _context.Chefs.FindAsync(userId);
+         if (chef == null)
+         {
+             var fullName = User.FindFirstValue("name") ??
+                       User.FindFirstValue("preferred_username") ??
+                       userName;
+
+             chef = new Chef
+             {
+                 Id = userId,
+                 UserName = userName,
+                 FullName = fullName,
+                 CreatedAt = DateTime.UtcNow
+             };
+             _context.Chefs.Add(chef);
+             await _context.SaveChangesAsync();
+         }
+
+         await _recipeService.CreateRecipeAsync(model, userId, chef.FullName);
+    
+         if (battleId.HasValue)
+         {
+             var battle = await _context.Battles
+                 .Include(b => b.Recipes)
+                 .FirstOrDefaultAsync(b => b.Id == battleId.Value);
+        
+             if (battle != null)
+             {
+                 var recipe = await _context.Recipes
+                     .OrderByDescending(r => r.Id)
+                     .FirstOrDefaultAsync(r => r.ChefId == userId);
+                 
+                 if (recipe != null && !battle.Recipes.Any(r => r.Id == recipe.Id)) 
+                 { 
+                     battle.Recipes.Add(recipe); 
+                     await _context.SaveChangesAsync(); 
+                 } 
+             }
+             
+             return RedirectToAction("Details", "Battles", new { id = battleId.Value }); 
+         }
+         
+         return RedirectToAction(nameof(MyRecipes)); 
+     }
 
         public async Task<IActionResult> Edit(int id)
         {
