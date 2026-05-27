@@ -22,7 +22,7 @@ namespace KitchenBattle.Controllers
             return View(scores);
         }
         
-        [Authorize(Roles = "judge,admin")]
+        [Authorize(Roles = "judge, admin")]
         public IActionResult Create(int recipeId)
         {
             var vm = new ScoreCreateViewModel
@@ -33,14 +33,15 @@ namespace KitchenBattle.Controllers
         }
         
         [HttpPost]
-        [Authorize(Roles = "judge,admin")]
+        [Authorize(Roles = "judge, admin")]
         public async Task<IActionResult> Create(ScoreCreateViewModel vm)
         {
             if (!ModelState.IsValid)
                 return View(vm);
 
-            var judgeId = User.FindFirstValue("sub") ?? 
-                          User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var judgeId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (judgeId == null)
+                return Unauthorized();
 
             var recipeId = int.Parse(vm.RecipeId);
 
@@ -55,7 +56,7 @@ namespace KitchenBattle.Controllers
             return RedirectToAction("Details", "Recipes", new { id = recipeId });
         }
         
-        [Authorize(Roles = "judge,admin")]
+        [Authorize(Roles = "judge, admin")]
         public async Task<IActionResult> Edit(int id)
         {
             var score = await _scoreService.GetByIdAsync(id);
@@ -74,7 +75,7 @@ namespace KitchenBattle.Controllers
         }
         
         [HttpPost]
-        [Authorize(Roles = "judge,admin")]
+        [Authorize(Roles = "judge, admin")]
         public async Task<IActionResult> Edit(int id, ScoreCreateViewModel vm)
         {
             if (!ModelState.IsValid)
@@ -85,7 +86,7 @@ namespace KitchenBattle.Controllers
         }
         
         [HttpPost]
-        [Authorize(Roles = "judge,admin")]
+        [Authorize(Roles = "judge, admin")]
         public async Task<IActionResult> Delete(int id, int recipeId)
         {
             await _scoreService.DeleteScore(id);
