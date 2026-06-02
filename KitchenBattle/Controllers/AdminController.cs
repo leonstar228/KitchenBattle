@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using KitchenBattle.Models;
 using KitchenBattle.ViewModels;
@@ -7,7 +7,7 @@ using Microsoft.Extensions.Caching.Distributed;
 
 namespace KitchenBattle.Controllers
 {
-    [Authorize(Roles = "admin")] 
+    [Authorize(Roles = "admin")]
     public class AdminController : Controller
     {
         private readonly IAdminService _adminService;
@@ -44,20 +44,37 @@ namespace KitchenBattle.Controllers
         public async Task<IActionResult> ApproveRecipe(int id)
         {
             var success = await _recipeService.ApproveRecipeAsync(id);
-
             if (success)
             {
                 await RedisService.ClearCacheAsync(_cache);
+                TempData["Success"] = "Рецепт успішно опубліковано!";
             }
-
+            else
+            {
+                TempData["Error"] = "Не вдалося схвалити рецепт.";
+            }
             return RedirectToAction(nameof(RecipesForReview));
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RejectRecipe(int id)
+        public async Task<IActionResult> RejectRecipe(int id, string rejectionReason)
         {
-            await _recipeService.RejectRecipeAsync(id);
+            if (string.IsNullOrWhiteSpace(rejectionReason))
+            {
+                TempData["Error"] = "Будь ласка, вкажіть причину відхилення.";
+                return RedirectToAction(nameof(RecipesForReview));
+            }
+
+            var success = await _recipeService.RejectRecipeWithReasonAsync(id, rejectionReason);
+            if (success)
+            {
+                TempData["Success"] = "Рецепт відхилено. Шеф отримає повідомлення з причиною.";
+            }
+            else
+            {
+                TempData["Error"] = "Не вдалося відхилити рецепт.";
+            }
             return RedirectToAction(nameof(RecipesForReview));
         }
 

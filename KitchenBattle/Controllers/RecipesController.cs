@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using KitchenBattle.Models;
@@ -73,8 +73,6 @@ namespace KitchenBattle.Controllers
                 });
             }
 
-            var isOwner = !string.IsNullOrEmpty(currentUserId) && recipe.ChefId == currentUserId;
-
             var viewModel = new RecipeDetailsViewModel
             {
                 Id = recipe.Id,
@@ -86,7 +84,7 @@ namespace KitchenBattle.Controllers
                 Category = recipe.Category,
                 ImageUrl = recipe.ImageUrl,
                 ChefName = recipe.ChefName,
-                ChefId = 0,
+                ChefId = recipe.ChefId,
                 Status = recipe.Status,
                 AverageScore = recipe.AverageScore,
                 Scores = scores,
@@ -96,13 +94,11 @@ namespace KitchenBattle.Controllers
             return View(viewModel);
         }
 
-        // GET: показуємо форму — дозволено будь-якому авторизованому
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: "chef" — маленькими (Keycloak повертає маленькі)
         [HttpPost]
         [Authorize(Roles = "chef")]
         public async Task<IActionResult> Create(RecipeCreateViewModel model)
@@ -117,8 +113,7 @@ namespace KitchenBattle.Controllers
                            User.FindFirstValue("name") ??
                            User.Identity?.Name ?? "Unknown";
 
-            if (string.IsNullOrEmpty(userId))
-                return Unauthorized();
+            if (string.IsNullOrEmpty(userId)) return Unauthorized();
 
             var chef = await _context.Chefs.FindAsync(userId);
             if (chef == null)
@@ -139,6 +134,7 @@ namespace KitchenBattle.Controllers
             }
 
             await _recipeService.CreateRecipeAsync(model, userId, chef.FullName);
+            TempData["Success"] = "Рецепт створено! Тепер надішліть його на перевірку.";
             return RedirectToAction(nameof(MyRecipes));
         }
 
@@ -186,6 +182,7 @@ namespace KitchenBattle.Controllers
                 return View(model);
             }
 
+            TempData["Success"] = "Рецепт оновлено!";
             return RedirectToAction(nameof(MyRecipes));
         }
 
@@ -233,21 +230,10 @@ namespace KitchenBattle.Controllers
             var userId = User.FindFirstValue("sub") ?? User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "";
             var success = await _recipeService.SendToReviewAsync(id, userId);
 
-            if (!success)
-                TempData["Error"] = "Не вдалося відправити рецепт на перевірку.";
-
-            return RedirectToAction(nameof(MyRecipes));
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Publish(int id)
-        {
-            var userId = User.FindFirstValue("sub") ?? User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "";
-            var success = await _recipeService.PublishRecipeAsync(id, userId);
-
-            if (!success)
-                TempData["Error"] = "Не вдалося опублікувати рецепт.";
+            if (success)
+                TempData["Success"] = "Рецепт надіслано на перевірку! Очікуйте рішення адміністратора.";
+            else
+                TempData["Error"] = "Не вдалося надіслати рецепт на перевірку.";
 
             return RedirectToAction(nameof(MyRecipes));
         }
