@@ -358,15 +358,17 @@
         border-radius: var(--radius-btn);
         font-size: 13px;
         font-weight: 700;
-        border: none;
+        border: 2px solid var(--kb-red);
         cursor: pointer;
         transition: var(--transition);
-        background: linear-gradient(135deg, var(--kb-red), #b8392e);
-        color: #fff;
-        box-shadow: 0 2px 8px rgba(212,72,59,.2);
+        background: linear-gradient(135deg, #fff, #fee);
+        color: var(--kb-red);
+        box-shadow: 0 2px 8px rgba(212,72,59,.1);
     }
 
         .btn-reject-trigger:hover {
+            background: linear-gradient(135deg, var(--kb-red), #b8392e);
+            color: #fff;
             transform: translateY(-2px);
             box-shadow: 0 6px 16px rgba(212,72,59,.3);
         }
@@ -674,7 +676,7 @@
                                     <i class="bi bi-check-lg"></i> Схвалити
                                 </button>
                             </form>
-                            <button type="button" class="btn kb-btn-reject w-100 py-2"
+                            <button type="button" class="btn-reject-trigger"
                                     onclick="openRejectModal(@recipe.Id, '@Html.Raw(recipe.Title.Replace("'", "\\'"))', '@recipe.ChefName')">
                                 <i class="bi bi-x-lg"></i> Відхилити
                             </button>
@@ -687,13 +689,14 @@
 </div>
 
 <!-- REJECT MODAL -->
-<div class="modal-overlay" id="rejectModal" style="display:none; position:fixed; inset:0; background:rgba(44,44,42,.55); z-index:1000; align-items:center; justify-content:center;">
+<div id="rejectModal" style="display:none; position:fixed; inset:0; background:rgba(44,44,42,.55); backdrop-filter:blur(3px); z-index:1000; align-items:center; justify-content:center;">
     <div style="background:#fff; border-radius:16px; box-shadow:0 20px 60px rgba(0,0,0,.2); width:100%; max-width:500px; overflow:hidden; margin:16px;">
-        <div style="background:linear-gradient(135deg,#D4483B,#b8392e); padding:22px 28px;">
-            <h5 style="color:#fff; font-size:18px; font-weight:700; margin:0;">
+        <div style="background:linear-gradient(135deg,#D4483B,#b8392e); padding:22px 28px; position:relative; overflow:hidden;">
+            <div style="position:absolute; inset:0; background:repeating-linear-gradient(-45deg, transparent, transparent 12px, rgba(255,255,255,.04) 12px, rgba(255,255,255,.04) 24px);"></div>
+            <h5 style="color:#fff; font-size:18px; font-weight:700; margin:0; position:relative; z-index:1;">
                 <i class="bi bi-x-circle"></i> Відхилення рецепта
             </h5>
-            <p style="color:rgba(255,255,255,.7); font-size:13px; margin:4px 0 0;">
+            <p style="color:rgba(255,255,255,.7); font-size:13px; margin:4px 0 0; position:relative; z-index:1;">
                 Шеф отримає ваше повідомлення і зможе виправити рецепт
             </p>
         </div>
@@ -740,50 +743,15 @@
             modal.style.display = 'flex';
             setTimeout(() => document.getElementById('rejectionReason').focus(), 100);
         }
+
         function closeRejectModal() {
             document.getElementById('rejectModal').style.display = 'none';
         }
+
         function submitReject() {
             var reason = document.getElementById('rejectionReason').value.trim();
             if (!reason) {
                 document.getElementById('rejectionReason').style.borderColor = '#D4483B';
-                document.getElementById('rejectionReason').focus();
-                return;
-            }
-            document.getElementById('rejectForm').submit();
-        }
-        function updateCharCount(el) {
-            document.getElementById('charCount').textContent = el.value.length + ' / 500 символів';
-        }
-        document.getElementById('rejectModal').addEventListener('click', function(e) {
-            if (e.target === this) closeRejectModal();
-        });
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') closeRejectModal();
-        });
-    </script>
-}
-
-@section Scripts {
-    <script>
-        function openRejectModal(id, title, chef) {
-            document.getElementById('rejectRecipeId').value = id;
-            document.getElementById('modalRecipeName').textContent = title;
-            document.getElementById('modalChefName').textContent = 'Шеф: ' + chef;
-            document.getElementById('rejectionReason').value = '';
-            document.getElementById('charCount').textContent = '0 / 500 символів';
-            document.getElementById('rejectModal').classList.add('open');
-            setTimeout(() => document.getElementById('rejectionReason').focus(), 100);
-        }
-
-        function closeRejectModal() {
-            document.getElementById('rejectModal').classList.remove('open');
-        }
-
-        function submitReject() {
-            const reason = document.getElementById('rejectionReason').value.trim();
-            if (!reason) {
-                document.getElementById('rejectionReason').style.borderColor = 'var(--kb-red)';
                 document.getElementById('rejectionReason').focus();
                 return;
             }
