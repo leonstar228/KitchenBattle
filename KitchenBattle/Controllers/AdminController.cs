@@ -47,11 +47,11 @@ namespace KitchenBattle.Controllers
             if (success)
             {
                 await RedisService.ClearCacheAsync(_cache);
-                TempData["Success"] = "Рецепт успішно опубліковано!";
+                TempData["AdminSuccess"] = "Рецепт успішно опубліковано!";
             }
             else
             {
-                TempData["Error"] = "Не вдалося схвалити рецепт.";
+                TempData["AdminError"] = "Не вдалося схвалити рецепт.";
             }
             return RedirectToAction(nameof(RecipesForReview));
         }
@@ -62,18 +62,18 @@ namespace KitchenBattle.Controllers
         {
             if (string.IsNullOrWhiteSpace(rejectionReason))
             {
-                TempData["Error"] = "Будь ласка, вкажіть причину відхилення.";
+                TempData["AdminError"] = "Будь ласка, вкажіть причину відхилення.";
                 return RedirectToAction(nameof(RecipesForReview));
             }
 
             var success = await _recipeService.RejectRecipeWithReasonAsync(id, rejectionReason);
             if (success)
             {
-                TempData["Success"] = "Рецепт відхилено. Шеф отримає повідомлення з причиною.";
+                TempData["AdminSuccess"] = "Рецепт відхилено. Шеф отримає повідомлення з причиною.";
             }
             else
             {
-                TempData["Error"] = "Не вдалося відхилити рецепт.";
+                TempData["AdminError"] = "Не вдалося відхилити рецепт.";
             }
             return RedirectToAction(nameof(RecipesForReview));
         }

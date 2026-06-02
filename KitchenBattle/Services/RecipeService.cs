@@ -152,7 +152,8 @@ namespace KitchenBattle.Services
         public async Task<bool> SendToReviewAsync(int recipeId, string chefId)
         {
             var recipe = await _context.Recipes.FirstOrDefaultAsync(r => r.Id == recipeId && r.ChefId == chefId);
-            if (recipe == null || recipe.Status != StatusRecipeEnum.Draft) return false;
+            if (recipe == null || (recipe.Status != StatusRecipeEnum.Draft && recipe.Status != StatusRecipeEnum.Rejected))
+                return false;
 
             recipe.Status = StatusRecipeEnum.Checked;
             recipe.RejectionReason = null;

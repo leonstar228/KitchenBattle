@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KitchenBattle.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260602141920_InitialCreate")]
+    [Migration("20260602153431_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
