@@ -84,7 +84,7 @@ namespace KitchenBattle.Controllers
                 Category = recipe.Category,
                 ImageUrl = recipe.ImageUrl,
                 ChefName = recipe.ChefName,
-                ChefId = recipe.ChefId,
+                ChefId = int.TryParse(recipe.ChefId, out var chefIdInt) ? chefIdInt : 0,
                 Status = recipe.Status,
                 AverageScore = recipe.AverageScore,
                 Scores = scores,

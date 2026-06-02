@@ -213,6 +213,7 @@ namespace KitchenBattle.Migrations
                     AverageScore = table.Column<double>(type: "REAL", nullable: false),
                     Category = table.Column<int>(type: "INTEGER", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    RejectionReason = table.Column<string>(type: "TEXT", nullable: true),
                     AdminId = table.Column<string>(type: "TEXT", nullable: true),
                     ApplicationUserId = table.Column<string>(type: "TEXT", nullable: true),
                     BattleId = table.Column<int>(type: "INTEGER", nullable: true)

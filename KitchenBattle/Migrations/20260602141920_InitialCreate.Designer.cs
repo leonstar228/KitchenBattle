@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KitchenBattle.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260527102640_InitialCreate")]
+    [Migration("20260602141920_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -360,6 +360,9 @@ namespace KitchenBattle.Migrations
 
                     b.Property<string>("Ingredients")
                         .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("RejectionReason")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Status")
