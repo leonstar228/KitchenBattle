@@ -101,66 +101,83 @@ namespace KitchenBattle.Controllers
         }
 
      [HttpPost]
-     [Authorize(Roles = "chef")]
-      public async Task<IActionResult> Create(RecipeCreateViewModel model, int? battleId)
-     {
-         if (!ModelState.IsValid) return View(model);
+[Authorize(Roles = "chef")]
+public async Task<IActionResult> Create(RecipeCreateViewModel model, int? battleId)
+{
+    if (!ModelState.IsValid) return View(model);
 
-         var userId = User.FindFirstValue("sub") ??
+    var userId = User.FindFirstValue("sub") ??
                  User.FindFirstValue(ClaimTypes.NameIdentifier) ??
                  User.Identity?.Name ?? "";
 
-         var userName = User.FindFirstValue("preferred_username") ??
+    var userName = User.FindFirstValue("preferred_username") ??
                    User.FindFirstValue("name") ??
                    User.Identity?.Name ?? "Unknown";
 
-         if (string.IsNullOrEmpty(userId))
-            return Unauthorized();
+    if (string.IsNullOrEmpty(userId))
+        return Unauthorized();
 
-         var chef = await _context.Chefs.FindAsync(userId);
-         if (chef == null)
-         {
-             var fullName = User.FindFirstValue("name") ??
+    var chef = await _context.Chefs.FindAsync(userId);
+    if (chef == null)
+    {
+        var fullName = User.FindFirstValue("name") ??
                        User.FindFirstValue("preferred_username") ??
                        userName;
 
-             chef = new Chef
-             {
-                 Id = userId,
-                 UserName = userName,
-                 FullName = fullName,
-                 CreatedAt = DateTime.UtcNow
-             };
-             _context.Chefs.Add(chef);
-             await _context.SaveChangesAsync();
-         }
-
-         await _recipeService.CreateRecipeAsync(model, userId, chef.FullName);
+        chef = new Chef
+        {
+            Id = userId,
+            UserName = userName,
+            FullName = fullName,
+            CreatedAt = DateTime.UtcNow
+        };
+        _context.Chefs.Add(chef);
+        await _context.SaveChangesAsync();
+    }
     
-         if (battleId.HasValue)
-         {
-             var battle = await _context.Battles
-                 .Include(b => b.Recipes)
-                 .FirstOrDefaultAsync(b => b.Id == battleId.Value);
+    if (battleId.HasValue)
+    {
+        var battle = await _context.Battles
+            .Include(b => b.Recipes)
+            .FirstOrDefaultAsync(b => b.Id == battleId.Value);
         
-             if (battle != null)
-             {
-                 var recipe = await _context.Recipes
-                     .OrderByDescending(r => r.Id)
-                     .FirstOrDefaultAsync(r => r.ChefId == userId);
-                 
-                 if (recipe != null && !battle.Recipes.Any(r => r.Id == recipe.Id)) 
-                 { 
-                     battle.Recipes.Add(recipe); 
-                     await _context.SaveChangesAsync(); 
-                 } 
-             }
-             
-             return RedirectToAction("Details", "Battles", new { id = battleId.Value }); 
-         }
-         
-         return RedirectToAction(nameof(MyRecipes)); 
-     }
+        if (battle != null)
+        {
+            var chefHasRecipe = battle.Recipes.Any(r => r.ChefId == userId);
+            if (chefHasRecipe)
+            {
+                TempData["Error"] = "Ви вже додали рецепт до цього батлу. Можна додати тільки один рецепт.";
+                return RedirectToAction("Details", "Battles", new { id = battleId.Value });
+            }
+        }
+    }
+
+    await _recipeService.CreateRecipeAsync(model, userId, chef.FullName);
+    
+    if (battleId.HasValue)
+    {
+        var battle = await _context.Battles
+            .Include(b => b.Recipes)
+            .FirstOrDefaultAsync(b => b.Id == battleId.Value);
+        
+        if (battle != null)
+        {
+            var recipe = await _context.Recipes
+                .OrderByDescending(r => r.Id)
+                .FirstOrDefaultAsync(r => r.ChefId == userId);
+            
+            if (recipe != null && !battle.Recipes.Any(r => r.Id == recipe.Id))
+            {
+                battle.Recipes.Add(recipe);
+                await _context.SaveChangesAsync();
+            }
+        }
+        
+        return RedirectToAction("Details", "Battles", new { id = battleId.Value });
+    }
+
+    return RedirectToAction(nameof(MyRecipes));
+}
 
         public async Task<IActionResult> Edit(int id)
         {
