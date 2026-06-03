@@ -67,11 +67,11 @@ namespace KitchenBattle.Controllers
             var chefId = User.FindFirstValue("sub") ?? 
                          User.FindFirstValue(ClaimTypes.NameIdentifier) ?? 
                          User.Identity?.Name ?? "";
-            
+
             var allChefRecipes = await _context.Recipes
-                .Where(r => r.ChefId == chefId)
-                .ToListAsync();
-            
+    .Where(r => r.ChefId == chefId && r.Status == StatusRecipeEnum.Published)
+    .ToListAsync();
+
             var existingRecipeIds = battle.Recipes.Select(r => r.Id).ToHashSet();
             
             var chefRecipes = allChefRecipes.Where(r => !existingRecipeIds.Contains(r.Id)).ToList();
@@ -99,6 +99,12 @@ namespace KitchenBattle.Controllers
         {
             if (!ModelState.IsValid) return View(model);
 
+            if (model.RegistrationStart < DateTime.UtcNow)
+            {
+                ModelState.AddModelError("RegistrationStart", "Початок реєстрації не може бути в минулому");
+                return View(model);
+            }
+
             if (model.RegistrationStart >= model.RegistrationEnd)
             {
                 ModelState.AddModelError("RegistrationEnd", "Кінець реєстрації має бути після початку");
@@ -108,6 +114,12 @@ namespace KitchenBattle.Controllers
             if (model.RegistrationEnd >= model.StartedAt)
             {
                 ModelState.AddModelError("StartedAt", "Батл має початись після завершення реєстрації");
+                return View(model);
+            }
+
+            if (model.EndedAt.HasValue && model.EndedAt.Value <= model.StartedAt)
+            {
+                ModelState.AddModelError("EndedAt", "Дата завершення має бути після початку батлу");
                 return View(model);
             }
 

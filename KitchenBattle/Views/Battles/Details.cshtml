@@ -176,16 +176,6 @@
                     else
                     {
                         <div class="d-flex flex-column gap-3">
-                            <a asp-controller="Recipes" asp-action="Create" asp-route-battleId="@Model.Id" 
-                               class="btn" style="background-color: var(--secondary); color: var(--white); border-radius: 25px; padding: 12px 20px;">
-                                <i class="bi bi-file-earmark-plus"></i> Створити новий рецепт
-                            </a>
-                            
-                            <div class="text-center" style="color: var(--neutral-600); position: relative;">
-                                <hr style="border-color: var(--gold-200);">
-                                <span style="position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--white); padding: 0 15px;">або</span>
-                            </div>
-                            
                             @if (chefRecipes.Any())
                             {
                                 <div>
@@ -216,10 +206,9 @@
                                 <div class="text-center p-4" style="background-color: var(--ivory); border-radius: 12px;">
                                     <i class="bi bi-journal-x" style="font-size: 48px; color: var(--gold-200);"></i>
                                     <p class="mt-2" style="color: var(--neutral-600);">У вас немає рецептів для додавання</p>
-                                    <a asp-controller="Recipes" asp-action="Create" asp-route-battleId="@Model.Id" 
-                                       class="btn" style="background-color: var(--secondary); color: white; border-radius: 25px; padding: 8px 16px;">
-                                        Створити перший рецепт
-                                    </a>
+                                    <p style="color: var(--neutral-600); font-size: 13px; margin-top: 8px;">
+                                        Спочатку створіть та опублікуйте рецепт у розділі «Мої рецепти»
+                                    </p>
                                 </div>
                             }
                         </div>
