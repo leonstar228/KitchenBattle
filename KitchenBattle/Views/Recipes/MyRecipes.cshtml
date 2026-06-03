@@ -1,4 +1,4 @@
-﻿@model IEnumerable<KitchenBattle.Models.Recipe>
+@model IEnumerable<KitchenBattle.Models.Recipe>
 @{
     ViewData["Title"] = "Мої рецепти";
 }
@@ -15,6 +15,20 @@
         </a>
     </div>
 
+    <!-- Alerts -->
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert-kb alert-success-kb">
+            <i class="bi bi-check-circle-fill"></i> @TempData["Success"]
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert-kb alert-error-kb">
+            <i class="bi bi-exclamation-triangle-fill"></i> @TempData["Error"]
+        </div>
+    }
+
     @if (!Model.Any())
     {
         <div class="empty-state">
@@ -28,6 +42,11 @@
     }
     else
     {
+        <div class="moderation-note">
+            <i class="bi bi-info-circle-fill"></i>
+            Після надсилання на перевірку рецепт розглядається адміністратором. Публікація відбувається лише після схвалення.
+        </div>
+
         <div class="table-wrap">
             <div class="table-responsive">
                 <table class="kb-table">
@@ -65,54 +84,72 @@
                                         <i class="bi bi-bar-chart"></i> @recipe.Difficulty
                                     </div>
                                 </td>
-                                <td style="color:var(--clr-brown);font-size:13px;">
-                                    @recipe.Category
-                                </td>
+                                <td style="color:var(--clr-brown);font-size:13px;">@recipe.Category</td>
                                 <td>
                                     ★ <span class="rating-val">@recipe.AverageScore.ToString("0.0")</span>
                                     <span class="rating-cnt">(@recipe.Scores.Count)</span>
                                 </td>
                                 <td>
                                     <span class="s-pill s-@recipe.Status.ToString()">
-                                        @recipe.Status
+                                        @(recipe.Status == StatusRecipeEnum.Draft ? "Чернетка" :
+                                          recipe.Status == StatusRecipeEnum.Checked ? "На перевірці" :
+                                          recipe.Status == StatusRecipeEnum.Published ? "Опубліковано" :
+                                          "Відхилено")
                                     </span>
                                 </td>
                                 <td>
-                                    <a asp-action="Details" asp-route-id="@recipe.Id" class="ab ab-view">
+                                    <a asp-action="Details" asp-route-id="@recipe.Id" class="ab ab-view" title="Переглянути">
                                         <i class="bi bi-eye"></i>
                                     </a>
                                     @if (recipe.Status == StatusRecipeEnum.Draft || recipe.Status == StatusRecipeEnum.Rejected)
                                     {
-                                        <a asp-action="Edit" asp-route-id="@recipe.Id" class="ab ab-edit">
+                                        <a asp-action="Edit" asp-route-id="@recipe.Id" class="ab ab-edit" title="Редагувати">
                                             <i class="bi bi-pencil"></i>
                                         </a>
                                     }
                                     @if (recipe.Status == StatusRecipeEnum.Draft)
                                     {
                                         <form asp-action="SendToReview" asp-route-id="@recipe.Id" method="post" class="d-inline">
-                                            <button type="submit" class="ab ab-send"
-                                                    onclick="return confirm('Відправити на перевірку?')">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="ab ab-send" title="Надіслати на перевірку"
+                                                    onclick="return confirm('Надіслати рецепт на перевірку адміністратору?')">
                                                 <i class="bi bi-send"></i>
                                             </button>
                                         </form>
                                     }
-                                    @if (recipe.Status == StatusRecipeEnum.Checked)
+                                    @if (recipe.Status == StatusRecipeEnum.Rejected)
                                     {
-                                        <form asp-action="Publish" asp-route-id="@recipe.Id" method="post" class="d-inline">
-                                            <button type="submit" class="ab ab-pub"
-                                                    onclick="return confirm('Опублікувати рецепт?')">
-                                                <i class="bi bi-globe"></i>
+                                        <form asp-action="SendToReview" asp-route-id="@recipe.Id" method="post" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="ab ab-send" title="Надіслати повторно"
+                                                    onclick="return confirm('Надіслати виправлений рецепт на повторну перевірку?')">
+                                                <i class="bi bi-arrow-repeat"></i>
                                             </button>
                                         </form>
                                     }
-                                    @if (recipe.Status != StatusRecipeEnum.Published)
+                                    @if (recipe.Status != StatusRecipeEnum.Published && recipe.Status != StatusRecipeEnum.Checked)
                                     {
-                                        <a asp-action="Delete" asp-route-id="@recipe.Id" class="ab ab-del">
+                                        <a asp-action="Delete" asp-route-id="@recipe.Id" class="ab ab-del" title="Видалити">
                                             <i class="bi bi-trash"></i>
                                         </a>
                                     }
                                 </td>
                             </tr>
+
+                            @* Показуємо причину відхилення якщо є *@
+                            @if (recipe.Status == StatusRecipeEnum.Rejected && !string.IsNullOrWhiteSpace(recipe.RejectionReason))
+                            {
+                                <tr class="rejection-row">
+                                    <td colspan="6">
+                                        <div class="rejection-box">
+                                            <i class="bi bi-chat-left-text-fill"></i>
+                                            <span>
+                                                <strong>Коментар адміністратора:</strong> @recipe.RejectionReason
+                                            </span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
                         }
                     </tbody>
                 </table>

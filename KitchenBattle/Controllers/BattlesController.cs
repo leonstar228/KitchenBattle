@@ -67,11 +67,11 @@ namespace KitchenBattle.Controllers
             var chefId = User.FindFirstValue("sub") ?? 
                          User.FindFirstValue(ClaimTypes.NameIdentifier) ?? 
                          User.Identity?.Name ?? "";
-            
+
             var allChefRecipes = await _context.Recipes
-                .Where(r => r.ChefId == chefId)
-                .ToListAsync();
-            
+    .Where(r => r.ChefId == chefId && r.Status == StatusRecipeEnum.Published)
+    .ToListAsync();
+
             var existingRecipeIds = battle.Recipes.Select(r => r.Id).ToHashSet();
             
             var chefRecipes = allChefRecipes.Where(r => !existingRecipeIds.Contains(r.Id)).ToList();
@@ -99,6 +99,12 @@ namespace KitchenBattle.Controllers
         {
             if (!ModelState.IsValid) return View(model);
 
+            if (model.RegistrationStart < DateTime.UtcNow)
+            {
+                ModelState.AddModelError("RegistrationStart", "Початок реєстрації не може бути в минулому");
+                return View(model);
+            }
+
             if (model.RegistrationStart >= model.RegistrationEnd)
             {
                 ModelState.AddModelError("RegistrationEnd", "Кінець реєстрації має бути після початку");
@@ -108,6 +114,12 @@ namespace KitchenBattle.Controllers
             if (model.RegistrationEnd >= model.StartedAt)
             {
                 ModelState.AddModelError("StartedAt", "Батл має початись після завершення реєстрації");
+                return View(model);
+            }
+
+            if (model.EndedAt.HasValue && model.EndedAt.Value <= model.StartedAt)
+            {
+                ModelState.AddModelError("EndedAt", "Дата завершення має бути після початку батлу");
                 return View(model);
             }
 
@@ -256,57 +268,65 @@ namespace KitchenBattle.Controllers
             return RedirectToAction(nameof(Details), new { id });
         }
 
-        [HttpPost]
-        [Authorize(Roles = "chef")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddExistingRecipe(int battleId, int recipeId)
-        {
+        [HttpPost] 
+        [Authorize(Roles = "chef")] 
+        [ValidateAntiForgeryToken] 
+        public async Task<IActionResult> AddExistingRecipe(int battleId, int recipeId) 
+        { 
             var chefId = User.FindFirstValue("sub") ?? 
-                         User.FindFirstValue(ClaimTypes.NameIdentifier) ?? 
-                         User.Identity?.Name ?? "";
+                       User.FindFirstValue(ClaimTypes.NameIdentifier) ?? 
+                       User.Identity?.Name ?? "";
             
             var battle = await _context.Battles
                 .Include(b => b.Recipes)
                 .Include(b => b.BattleChefs)
                 .FirstOrDefaultAsync(b => b.Id == battleId);
             
-            if (battle == null)
-            {
-                TempData["Error"] = "Батл не знайдено";
-                return RedirectToAction(nameof(Details), new { id = battleId });
+            if (battle == null) 
+            { 
+                TempData["Error"] = "Батл не знайдено"; 
+                return RedirectToAction(nameof(Details), new { id = battleId }); 
             }
             
-            var isApproved = battle.BattleChefs.Any(bc => bc.ChefId == chefId && bc.IsApproved);
-            if (!isApproved)
-            {
-                TempData["Error"] = "Ви не зареєстровані на цей батл";
-                return RedirectToAction(nameof(Details), new { id = battleId });
+            var isApproved = battle.BattleChefs.Any(bc => bc.ChefId == chefId && bc.IsApproved); 
+            if (!isApproved) 
+            { 
+                TempData["Error"] = "Ви не зареєстровані на цей батл"; 
+                return RedirectToAction(nameof(Details), new { id = battleId }); 
             }
             
-            if (battle.Status != StatusBattleEnum.InProgress)
-            {
-                TempData["Error"] = "Батл вже завершено або ще не почався";
-                return RedirectToAction(nameof(Details), new { id = battleId });
+            if (battle.Status != StatusBattleEnum.InProgress) 
+            { 
+                TempData["Error"] = "Батл вже завершено або ще не почався"; 
+                return RedirectToAction(nameof(Details), new { id = battleId }); 
             }
             
-            var recipe = await _context.Recipes.FindAsync(recipeId);
+            var chefHasRecipe = battle.Recipes.Any(r => r.ChefId == chefId); 
+            if (chefHasRecipe) 
+            { 
+                TempData["Error"] = "Ви вже додали рецепт до цього батлу. Можна додати тільки один рецепт."; 
+                return RedirectToAction(nameof(Details), new { id = battleId }); 
+            }
+
+            
+            var recipe = await _context.Recipes.FindAsync(recipeId); 
             if (recipe == null || recipe.ChefId != chefId)
-            {
-                TempData["Error"] = "Рецепт не знайдено";
-                return RedirectToAction(nameof(Details), new { id = battleId });
+            { 
+                TempData["Error"] = "Рецепт не знайдено"; 
+                return RedirectToAction(nameof(Details), new { id = battleId }); 
             }
             
-            if (battle.Recipes.Any(r => r.Id == recipeId))
-            {
-                TempData["Error"] = "Цей рецепт вже додано до батлу";
-                return RedirectToAction(nameof(Details), new { id = battleId });
+            if (battle.Recipes.Any(r => r.Id == recipeId)) 
+            { 
+                TempData["Error"] = "Цей рецепт вже додано до батлу"; 
+                return RedirectToAction(nameof(Details), new { id = battleId }); 
             }
             
-            battle.Recipes.Add(recipe);
+            battle.Recipes.Add(recipe); 
             await _context.SaveChangesAsync();
             
-            TempData["Success"] = "Рецепт успішно додано до батлу!";
-            return RedirectToAction(nameof(Details), new { id = battleId });
+            TempData["Success"] = "Рецепт успішно додано до батлу!"; 
+            return RedirectToAction(nameof(Details), new { id = battleId }); 
         }
     }
 }

@@ -5,82 +5,772 @@
     ViewData["Title"] = "Перевірка рецептів";
 }
 
+<style>
+    :root {
+        --kb-primary: #4A6741;
+        --kb-secondary: #C47B2B;
+        --kb-bg: #F5F1E8;
+        --kb-dark: #2C2C2A;
+        --kb-green-400: #6B8F5E;
+        --kb-gold-200: #E8D5A3;
+        --kb-neutral-600: #8B7355;
+        --kb-red: #D4483B;
+        --kb-white: #FFFFFF;
+        --radius-card: 16px;
+        --radius-btn: 6px;
+        --transition: 0.3s ease;
+        --shadow-card: 0 4px 20px rgba(0,0,0,0.08);
+        --shadow-hover: 0 12px 28px rgba(0,0,0,0.13);
+    }
+
+    body {
+        background-color: var(--kb-bg) !important;
+        color: var(--kb-dark);
+    }
+
+    @@keyframes fadeDown {
+        from {
+            opacity: 0;
+            transform: translateY(-12px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@keyframes cardIn {
+        from {
+            opacity: 0;
+            transform: translateY(18px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* ── HEADER ── */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 36px;
+        animation: fadeDown .5s ease both;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+        .page-header h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--kb-dark);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+            .page-header h2 i {
+                color: var(--kb-primary);
+            }
+
+        .page-header p {
+            color: var(--kb-neutral-600);
+            margin: 6px 0 0;
+            font-size: 0.9rem;
+        }
+
+    .btn-back {
+        background: transparent;
+        border: 2px solid var(--kb-neutral-600);
+        color: var(--kb-neutral-600);
+        font-weight: 600;
+        border-radius: var(--radius-btn);
+        padding: 8px 20px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: var(--transition);
+        font-size: 14px;
+    }
+
+        .btn-back:hover {
+            background: var(--kb-neutral-600);
+            color: #fff;
+        }
+
+    /* ── ALERTS ── */
+    .alert-kb {
+        border-radius: var(--radius-btn);
+        padding: 14px 18px;
+        margin-bottom: 24px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 14px;
+        font-weight: 500;
+        animation: fadeDown .4s ease both;
+    }
+
+    .alert-success-kb {
+        background: rgba(74,103,65,.1);
+        border: 1px solid rgba(74,103,65,.3);
+        color: var(--kb-primary);
+    }
+
+    .alert-error-kb {
+        background: rgba(212,72,59,.08);
+        border: 1px solid rgba(212,72,59,.25);
+        color: var(--kb-red);
+    }
+
+    /* ── COUNTER BADGE ── */
+    .count-badge {
+        background: linear-gradient(135deg, var(--kb-secondary), #b8742a);
+        color: #fff;
+        border-radius: 20px;
+        padding: 3px 12px;
+        font-size: 13px;
+        font-weight: 700;
+        margin-left: 6px;
+    }
+
+    /* ── RECIPE GRID ── */
+    .recipe-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+        gap: 24px;
+    }
+
+    /* ── RECIPE CARD ── */
+    .recipe-card {
+        background: var(--kb-white);
+        border-radius: var(--radius-card);
+        box-shadow: var(--shadow-card);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        transition: transform var(--transition), box-shadow var(--transition);
+        border-left: 4px solid transparent;
+        animation: cardIn .4s ease both;
+        position: relative;
+    }
+
+        .recipe-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+            border-left-color: var(--kb-secondary);
+        }
+
+        .recipe-card:nth-child(1) {
+            animation-delay: .04s;
+        }
+
+        .recipe-card:nth-child(2) {
+            animation-delay: .09s;
+        }
+
+        .recipe-card:nth-child(3) {
+            animation-delay: .14s;
+        }
+
+        .recipe-card:nth-child(4) {
+            animation-delay: .19s;
+        }
+
+        .recipe-card:nth-child(5) {
+            animation-delay: .24s;
+        }
+
+        .recipe-card:nth-child(6) {
+            animation-delay: .29s;
+        }
+
+    .card-accent-bar {
+        height: 4px;
+        background: linear-gradient(to right, var(--kb-primary), var(--kb-secondary));
+    }
+
+    .card-body-kb {
+        padding: 22px 24px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Category + ID row */
+    .card-meta-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 14px;
+    }
+
+    .cat-badge {
+        background: linear-gradient(135deg, var(--kb-gold-200), #d4b896);
+        color: var(--kb-dark);
+        border-radius: 20px;
+        padding: 4px 12px;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: .04em;
+        text-transform: uppercase;
+    }
+
+    .recipe-id {
+        font-size: 11px;
+        color: var(--kb-neutral-600);
+        font-weight: 500;
+    }
+
+    /* Title */
+    .recipe-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--kb-dark);
+        margin-bottom: 10px;
+        line-height: 1.3;
+    }
+
+    /* Info rows */
+    .info-rows {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+        margin-bottom: 16px;
+        padding-top: 12px;
+        border-top: 1px solid #F0EBE2;
+    }
+
+    .info-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        color: var(--kb-neutral-600);
+    }
+
+        .info-item i {
+            color: var(--kb-primary);
+            font-size: 14px;
+            width: 16px;
+        }
+
+        .info-item strong {
+            color: var(--kb-dark);
+        }
+
+    /* Description preview */
+    .desc-preview {
+        font-size: 13px;
+        color: #666;
+        line-height: 1.6;
+        margin-bottom: 16px;
+        flex: 1;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    /* Date chip */
+    .date-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        background: rgba(74,103,65,.08);
+        color: var(--kb-primary);
+        border-radius: 20px;
+        padding: 3px 10px;
+        font-size: 11px;
+        font-weight: 600;
+        margin-bottom: 16px;
+    }
+
+    /* ── ACTION FOOTER ── */
+    .card-footer-kb {
+        padding: 16px 24px;
+        border-top: 1px solid #F0EBE2;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        background: #FEFCF8;
+    }
+
+    .btn-details-kb {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        padding: 9px 16px;
+        border-radius: var(--radius-btn);
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: var(--transition);
+        border: 2px solid var(--kb-secondary);
+        color: var(--kb-secondary);
+        background: transparent;
+    }
+
+        .btn-details-kb:hover {
+            background: var(--kb-secondary);
+            color: #fff;
+        }
+
+    .action-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+
+    .btn-approve {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        padding: 10px 16px;
+        border-radius: var(--radius-btn);
+        font-size: 13px;
+        font-weight: 700;
+        border: none;
+        cursor: pointer;
+        transition: var(--transition);
+        background: linear-gradient(135deg, #4A6741, #6B8F5E);
+        color: #fff;
+        box-shadow: 0 2px 8px rgba(74,103,65,.2);
+    }
+
+        .btn-approve:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(74,103,65,.3);
+        }
+
+    .btn-reject-trigger {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        padding: 10px 16px;
+        border-radius: var(--radius-btn);
+        font-size: 13px;
+        font-weight: 700;
+        border: 2px solid var(--kb-red);
+        cursor: pointer;
+        transition: var(--transition);
+        background: transparent;
+        color: var(--kb-red);
+    }
+
+        .btn-reject-trigger:hover {
+            background: var(--kb-red);
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(212,72,59,.3);
+        }
+
+    /* ── EMPTY STATE ── */
+    .empty-state {
+        text-align: center;
+        padding: 80px 24px;
+        background: var(--kb-white);
+        border-radius: var(--radius-card);
+        box-shadow: var(--shadow-card);
+        animation: cardIn .5s ease both;
+    }
+
+    .empty-icon-wrap {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: rgba(74,103,65,.08);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+        font-size: 34px;
+        color: var(--kb-primary);
+    }
+
+    .empty-state h5 {
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--kb-primary);
+        margin-bottom: 8px;
+    }
+
+    .empty-state p {
+        color: var(--kb-neutral-600);
+        font-size: 14px;
+    }
+
+    /* ── REJECT MODAL ── */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(44,44,42,.55);
+        backdrop-filter: blur(3px);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+        animation: fadeDown .25s ease both;
+    }
+
+        .modal-overlay.open {
+            display: flex;
+        }
+
+    .modal-box {
+        background: var(--kb-white);
+        border-radius: var(--radius-card);
+        box-shadow: 0 20px 60px rgba(0,0,0,.2);
+        width: 100%;
+        max-width: 500px;
+        overflow: hidden;
+        margin: 16px;
+        animation: cardIn .3s ease both;
+    }
+
+    .modal-head {
+        background: linear-gradient(135deg, var(--kb-red), #b8392e);
+        padding: 22px 28px;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .modal-head::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(-45deg, transparent, transparent 12px, rgba(255,255,255,.04) 12px, rgba(255,255,255,.04) 24px);
+        }
+
+        .modal-head h5 {
+            color: #fff;
+            font-size: 18px;
+            font-weight: 700;
+            margin: 0;
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .modal-head p {
+            color: rgba(255,255,255,.7);
+            font-size: 13px;
+            margin: 4px 0 0;
+            position: relative;
+            z-index: 1;
+        }
+
+    .modal-body {
+        padding: 28px;
+    }
+
+    .modal-recipe-info {
+        background: var(--kb-bg);
+        border-left: 4px solid var(--kb-red);
+        border-radius: 0 var(--radius-btn) var(--radius-btn) 0;
+        padding: 12px 16px;
+        margin-bottom: 22px;
+    }
+
+        .modal-recipe-info .recipe-name {
+            font-weight: 700;
+            color: var(--kb-dark);
+            font-size: 15px;
+        }
+
+        .modal-recipe-info .recipe-chef {
+            font-size: 12px;
+            color: var(--kb-neutral-600);
+            margin-top: 3px;
+        }
+
+    .field-label {
+        display: block;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .06em;
+        color: var(--kb-neutral-600);
+        margin-bottom: 8px;
+    }
+
+    .field-textarea {
+        width: 100%;
+        border: 1.5px solid #E2DDD4;
+        border-radius: var(--radius-btn);
+        padding: 12px 16px;
+        font-size: 14px;
+        color: var(--kb-dark);
+        background: var(--kb-white);
+        outline: none;
+        resize: vertical;
+        min-height: 110px;
+        font-family: inherit;
+        transition: var(--transition);
+    }
+
+        .field-textarea:focus {
+            border-color: var(--kb-red);
+            box-shadow: 0 0 0 3px rgba(212,72,59,.1);
+        }
+
+    .char-hint {
+        font-size: 11px;
+        color: var(--kb-neutral-600);
+        margin-top: 5px;
+        display: block;
+    }
+
+    .modal-footer-kb {
+        display: flex;
+        gap: 10px;
+        padding: 0 28px 28px;
+    }
+
+    .btn-modal-confirm {
+        flex: 1;
+        background: linear-gradient(135deg, var(--kb-red), #b8392e);
+        color: #fff;
+        border: none;
+        border-radius: var(--radius-btn);
+        padding: 12px 20px;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+    }
+
+        .btn-modal-confirm:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px rgba(212,72,59,.35);
+        }
+
+    .btn-modal-cancel {
+        background: transparent;
+        color: var(--kb-neutral-600);
+        border: 1.5px solid #C8C0B4;
+        border-radius: var(--radius-btn);
+        padding: 12px 20px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+        .btn-modal-cancel:hover {
+            border-color: var(--kb-neutral-600);
+            color: var(--kb-dark);
+        }
+</style>
+
 <div class="container mt-5">
-    <div class="d-flex justify-content-between align-items-center mb-5">
+    <!-- Header -->
+    <div class="page-header">
         <div>
-            <h2 class="fw-bold m-0 d-flex align-items-center" style="color: #2C2C2A; font-size: 2rem;">
-                <i class="bi bi-bookmark-check" style="margin-right: 0.75rem; color: var(--kb-primary);"></i>
+            <h2>
+                <i class="bi bi-bookmark-check-fill"></i>
                 Рецепти на модерації
+                @if (Model.Any())
+                {
+                    <span class="count-badge">@Model.Count()</span>
+                }
             </h2>
-            <p class="text-muted m-0 mt-2 small">Перевірка та публікація нових страв від користувачів</p>
+            <p>Перевірте рецепти шефів і схваліть або відхиліть з поясненням</p>
         </div>
-        <a asp-controller="Admin" asp-action="Dashboard" class="btn btn-sm kb-btn-back px-4 py-2">
-            <i class="bi bi-arrow-left"></i> Назад
+        <a asp-controller="Admin" asp-action="Dashboard" class="btn-back">
+            <i class="bi bi-arrow-left"></i> До панелі
         </a>
     </div>
 
+    <!-- Alerts -->
+    @if (TempData["AdminSuccess"] != null)
+    {
+        <div class="alert-kb alert-success-kb">
+            <i class="bi bi-check-circle-fill"></i> @TempData["AdminSuccess"]
+        </div>
+    }
+    @if (TempData["AdminError"] != null)
+    {
+        <div class="alert-kb alert-error-kb">
+            <i class="bi bi-exclamation-triangle-fill"></i> @TempData["AdminError"]
+        </div>
+    }
+
     @if (!Model.Any())
     {
-        <div class="alert empty-state text-center p-5 shadow-sm" style="border-radius: 12px;">
-            <div style="font-size: 3rem; color: var(--kb-primary); margin-bottom: 1rem;">
-                <i class="bi bi-check-circle"></i>
-            </div>
-            <h5 class="fw-bold m-0" style="color: var(--kb-primary); font-size: 1.25rem;">Усі рецепти успішно перевірено</h5>
-            <p class="text-muted m-0 mt-2">Немає рецептів, які очікують на модерацію</p>
+        <div class="empty-state">
+            <div class="empty-icon-wrap"><i class="bi bi-check2-circle"></i></div>
+            <h5>Усі рецепти перевірено!</h5>
+            <p>Немає рецептів, що очікують на модерацію.</p>
         </div>
     }
     else
     {
-        <div class="row">
+        <div class="recipe-grid">
             @foreach (var recipe in Model)
             {
-                <div class="col-md-6 col-lg-4 mb-4">
-                    <div class="card kb-recipe-card shadow-sm h-100">
-                        <div class="card-body p-4 d-flex flex-column justify-content-between">
-                            <div>
-                                <div class="d-flex justify-content-between align-items-start mb-3">
-                                    <span class="badge px-3 py-2" style="background: linear-gradient(135deg, #E8D5A3 0%, #d4b896 100%); color: #2C2C2A; font-weight: 600;">
-                                        <i class="bi bi-tag"></i> @recipe.Category
-                                    </span>
-                                    <small class="text-muted" style="font-weight: 500;">ID: @recipe.Id</small>
-                                </div>
+                <div class="recipe-card">
+                    <div class="card-accent-bar"></div>
+                    <div class="card-body-kb">
+                        <div class="card-meta-top">
+                            <span class="cat-badge"><i class="bi bi-tag"></i> @recipe.Category</span>
+                            <span class="recipe-id">#@recipe.Id</span>
+                        </div>
 
-                                <h4 class="card-title fw-bold mb-3" style="color: #2C2C2A; font-size: 1.1rem;">@recipe.Title</h4>
+                        <div class="recipe-title">@recipe.Title</div>
 
-                                <div class="mb-4 pt-3 border-top" style="font-size: 0.9rem; color: var(--kb-neutral-600);">
-                                    <div class="mb-2"><i class="bi bi-person-circle" style="margin-right: 0.5rem;"></i><strong>Автор:</strong> @recipe.ChefName</div>
-                                    <div><i class="bi bi-hourglass-split" style="margin-right: 0.5rem; color: #D4483B;"></i><strong>Статус:</strong> <span style="color: #D4483B; font-weight: 600;">Очікує перевірки</span></div>
-                                </div>
+                        <div class="date-chip">
+                            <i class="bi bi-calendar3"></i>
+                            @recipe.CreatedAt.ToString("dd.MM.yyyy HH:mm")
+                        </div>
+
+                        <p class="desc-preview">@recipe.Description</p>
+
+                        <div class="info-rows">
+                            <div class="info-item">
+                                <i class="bi bi-person-circle"></i>
+                                <span><strong>Шеф:</strong> @recipe.ChefName</span>
                             </div>
-
-                            <div class="d-grid gap-2">
-                                <a asp-controller="Recipes" asp-action="Details" asp-route-id="@recipe.Id" class="btn kb-btn-details py-2">
-                                    <i class="bi bi-eye"></i> Переглянути деталі
-                                </a>
-
-                                <div class="row g-2">
-                                    <div class="col-6">
-                                        <form asp-controller="Admin" asp-action="ApproveRecipe" asp-route-id="@recipe.Id" method="post" class="w-100">
-                                            @Html.AntiForgeryToken()
-                                            <button type="submit" class="btn kb-btn-approve w-100 py-2">
-                                                <i class="bi bi-check-lg"></i> Схвалити
-                                            </button>
-                                        </form>
-                                    </div>
-                                    <div class="col-6">
-                                        <form asp-controller="Admin" asp-action="RejectRecipe" asp-route-id="@recipe.Id" method="post" class="w-100">
-                                            @Html.AntiForgeryToken()
-                                            <button type="submit" class="btn kb-btn-reject w-100 py-2">
-                                                <i class="bi bi-x-lg"></i> Відхилити
-                                            </button>
-                                        </form>
-                                    </div>
-                                </div>
+                            <div class="info-item">
+                                <i class="bi bi-clock"></i>
+                                <span><strong>Час:</strong> @recipe.CookingTime хв</span>
                             </div>
+                            <div class="info-item">
+                                <i class="bi bi-bar-chart"></i>
+                                <span>
+                                    <strong>Складність:</strong>
+                                    @(recipe.Difficulty.ToString() == "Easy" ? "Легкий" :
+                                                                recipe.Difficulty.ToString() == "Medium" ? "Середній" : "Складний")
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+                    <div class="card-footer-kb">
+                        <a asp-controller="Recipes" asp-action="Details" asp-route-id="@recipe.Id"
+                           class="btn-details-kb" target="_blank">
+                            <i class="bi bi-eye"></i> Переглянути рецепт
+                        </a>
+                        <div class="action-row">
+                            <form asp-action="ApproveRecipe" asp-route-id="@recipe.Id" method="post">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn-approve w-100"
+                                        onclick="return confirm('Схвалити та опублікувати рецепт «@recipe.Title»?')">
+                                    <i class="bi bi-check-lg"></i> Схвалити
+                                </button>
+                            </form>
+                            <button type="button" class="btn-reject-trigger"
+                                    onclick="openRejectModal(@recipe.Id, '@Html.Raw(recipe.Title.Replace("'", "\\'"))', '@recipe.ChefName')">
+                                <i class="bi bi-x-lg"></i> Відхилити
+                            </button>
                         </div>
                     </div>
                 </div>
-            }
+                }
         </div>
     }
 </div>
+
+<!-- REJECT MODAL -->
+<div id="rejectModal" style="display:none; position:fixed; inset:0; background:rgba(44,44,42,.55); backdrop-filter:blur(3px); z-index:1000; align-items:center; justify-content:center;">
+    <div style="background:#fff; border-radius:16px; box-shadow:0 20px 60px rgba(0,0,0,.2); width:100%; max-width:500px; overflow:hidden; margin:16px;">
+        <div style="background:linear-gradient(135deg,#D4483B,#b8392e); padding:22px 28px; position:relative; overflow:hidden;">
+            <div style="position:absolute; inset:0; background:repeating-linear-gradient(-45deg, transparent, transparent 12px, rgba(255,255,255,.04) 12px, rgba(255,255,255,.04) 24px);"></div>
+            <h5 style="color:#fff; font-size:18px; font-weight:700; margin:0; position:relative; z-index:1;">
+                <i class="bi bi-x-circle"></i> Відхилення рецепта
+            </h5>
+            <p style="color:rgba(255,255,255,.7); font-size:13px; margin:4px 0 0; position:relative; z-index:1;">
+                Шеф отримає ваше повідомлення і зможе виправити рецепт
+            </p>
+        </div>
+        <div style="padding:28px;">
+            <div id="modalRecipeInfo" style="background:#F5F1E8; border-left:4px solid #D4483B; border-radius:0 6px 6px 0; padding:12px 16px; margin-bottom:22px;">
+                <div id="modalRecipeName" style="font-weight:700; color:#2C2C2A; font-size:15px;">—</div>
+                <div id="modalChefName" style="font-size:12px; color:#8B7355; margin-top:3px;">—</div>
+            </div>
+            <form id="rejectForm" asp-controller="Admin" asp-action="RejectRecipe" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" id="rejectRecipeId" value="" />
+                <label style="display:block; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:#8B7355; margin-bottom:8px;">
+                    Причина відхилення *
+                </label>
+                <textarea name="rejectionReason" id="rejectionReason"
+                          style="width:100%; border:1.5px solid #E2DDD4; border-radius:6px; padding:12px 16px; font-size:14px; min-height:110px; font-family:inherit; resize:vertical; outline:none;"
+                          placeholder="Наприклад: Недостатньо деталізований опис інгредієнтів..."
+                          maxlength="500" oninput="updateCharCount(this)"></textarea>
+                <span style="font-size:11px; color:#8B7355; margin-top:5px; display:block;" id="charCount">0 / 500 символів</span>
+            </form>
+        </div>
+        <div style="display:flex; gap:10px; padding:0 28px 28px;">
+            <button type="button" onclick="submitReject()"
+                    style="flex:1; background:linear-gradient(135deg,#D4483B,#b8392e); color:#fff; border:none; border-radius:6px; padding:12px 20px; font-size:14px; font-weight:700; cursor:pointer;">
+                <i class="bi bi-x-circle"></i> Відхилити рецепт
+            </button>
+            <button type="button" onclick="closeRejectModal()"
+                    style="background:transparent; color:#8B7355; border:1.5px solid #C8C0B4; border-radius:6px; padding:12px 20px; font-size:14px; cursor:pointer;">
+                <i class="bi bi-x"></i> Скасувати
+            </button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function openRejectModal(id, title, chef) {
+            document.getElementById('rejectRecipeId').value = id;
+            document.getElementById('modalRecipeName').textContent = title;
+            document.getElementById('modalChefName').textContent = 'Шеф: ' + chef;
+            document.getElementById('rejectionReason').value = '';
+            document.getElementById('charCount').textContent = '0 / 500 символів';
+            var modal = document.getElementById('rejectModal');
+            modal.style.display = 'flex';
+            setTimeout(() => document.getElementById('rejectionReason').focus(), 100);
+        }
+
+        function closeRejectModal() {
+            document.getElementById('rejectModal').style.display = 'none';
+        }
+
+        function submitReject() {
+            var reason = document.getElementById('rejectionReason').value.trim();
+            if (!reason) {
+                document.getElementById('rejectionReason').style.borderColor = '#D4483B';
+                document.getElementById('rejectionReason').focus();
+                return;
+            }
+            document.getElementById('rejectForm').submit();
+        }
+
+        function updateCharCount(el) {
+            document.getElementById('charCount').textContent = el.value.length + ' / 500 символів';
+            el.style.borderColor = el.value.trim() ? '#E2DDD4' : '';
+        }
+
+        // Close on overlay click
+        document.getElementById('rejectModal').addEventListener('click', function(e) {
+            if (e.target === this) closeRejectModal();
+        });
+
+        // Close on Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeRejectModal();
+        });
+    </script>
+}
