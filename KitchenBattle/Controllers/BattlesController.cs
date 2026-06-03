@@ -69,8 +69,8 @@ namespace KitchenBattle.Controllers
                          User.Identity?.Name ?? "";
 
             var allChefRecipes = await _context.Recipes
-    .Where(r => r.ChefId == chefId && r.Status == StatusRecipeEnum.Published)
-    .ToListAsync();
+                .Where(r => r.ChefId == chefId && r.Status == StatusRecipeEnum.Published)
+                .ToListAsync();
 
             var existingRecipeIds = battle.Recipes.Select(r => r.Id).ToHashSet();
             
@@ -183,24 +183,104 @@ namespace KitchenBattle.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "chef")]
-        public async Task<IActionResult> RegisterChef(int id)
+[Authorize(Roles = "chef")]
+public async Task<IActionResult> RegisterChef(int id)
+{
+    Console.WriteLine("=== REGISTER CHEF CALLED ===");
+    
+    var chefId = User.FindFirstValue("sub") ?? 
+                 User.FindFirstValue(ClaimTypes.NameIdentifier) ??          
+                 User.FindFirstValue("id") ??            
+                 User.FindFirstValue("preferred_username") ?? 
+                 User.Identity?.Name ?? "";
+    
+    Console.WriteLine($"ChefId: {chefId}");
+    
+    if (string.IsNullOrEmpty(chefId))
+    {
+        Console.WriteLine("ERROR: Empty chefId");
+        TempData["Error"] = "Не вдалося отримати ID користувача";
+        return RedirectToAction(nameof(Details), new { id });
+    }
+    
+    var chef = await _context.Chefs.FindAsync(chefId);
+    if (chef == null)
+    {
+        Console.WriteLine("Chef not found, creating...");
+        var userName = User.FindFirstValue("preferred_username") ?? 
+                       User.FindFirstValue("name") ?? 
+                       User.Identity?.Name ?? "Chef";
+        
+        chef = new Chef
         {
-            var chefId = User.FindFirstValue("sub") ?? 
-                         User.FindFirstValue(ClaimTypes.NameIdentifier) ??          
-                         User.FindFirstValue("id") ??            
-                         User.FindFirstValue("preferred_username") ?? 
-                         User.Identity?.Name ?? "";
+            Id = chefId,
+            UserName = userName,
+            FullName = userName,
+            CreatedAt = DateTime.UtcNow
+        };
+        _context.Chefs.Add(chef);
+        await _context.SaveChangesAsync();
+        Console.WriteLine($"Chef created: {chefId}");
+    }
+    else
+    {
+        Console.WriteLine($"Chef exists: {chef.FullName}");
+    }
     
-            Console.WriteLine($"ChefId used: {chefId}");
+    var battle = await _context.Battles
+        .Include(b => b.BattleChefs)
+        .FirstOrDefaultAsync(b => b.Id == id);
     
-            var (success, message) = await _battleService.RegisterChefAsync(id, chefId);
-
-            if (success) TempData["Success"] = message;
-            else TempData["Error"] = message;
-
-            return RedirectToAction(nameof(Details), new { id });
-        }
+    if (battle == null)
+    {
+        Console.WriteLine("Battle not found");
+        TempData["Error"] = "Батл не знайдено";
+        return RedirectToAction(nameof(Details), new { id });
+    }
+    
+    Console.WriteLine($"Battle: {battle.BattleName}, Status: {battle.Status}");
+    Console.WriteLine($"RegistrationStart: {battle.RegistrationStart}");
+    Console.WriteLine($"RegistrationEnd: {battle.RegistrationEnd}");
+    Console.WriteLine($"Now UTC: {DateTime.UtcNow}");
+    
+    var now = DateTime.UtcNow;
+    
+    if (now < battle.RegistrationStart)
+    {
+        Console.WriteLine("Registration not started");
+        TempData["Error"] = $"Реєстрація почнеться {battle.RegistrationStart:dd.MM.yyyy HH:mm}";
+        return RedirectToAction(nameof(Details), new { id });
+    }
+    
+    if (now > battle.RegistrationEnd)
+    {
+        Console.WriteLine("Registration closed");
+        TempData["Error"] = "Реєстрацію закрито";
+        return RedirectToAction(nameof(Details), new { id });
+    }
+    
+    if (battle.Status != StatusBattleEnum.Pending)
+    {
+        Console.WriteLine($"Wrong status: {battle.Status}");
+        TempData["Error"] = "Батл вже почався або завершився";
+        return RedirectToAction(nameof(Details), new { id });
+    }
+    
+    if (battle.BattleChefs.Any(bc => bc.ChefId == chefId))
+    {
+        Console.WriteLine("Already registered");
+        TempData["Error"] = "Ви вже зареєстровані";
+        return RedirectToAction(nameof(Details), new { id });
+    }
+    
+    battle.BattleChefs.Add(new BattleChef { BattleId = id, ChefId = chefId, IsApproved = false });
+    await _context.SaveChangesAsync();
+    
+    Console.WriteLine("SUCCESS! Chef registered!");
+    TempData["Success"] = "Ви успішно зареєстровані на батл!";
+    
+    return RedirectToAction(nameof(Details), new { id });
+}
 
         [HttpPost]
         [Authorize(Roles = "judge")]
@@ -212,7 +292,40 @@ namespace KitchenBattle.Controllers
                           User.FindFirstValue("preferred_username") ?? 
                           User.Identity?.Name ?? "";
     
-            Console.WriteLine($"JudgeId used: {judgeId}");
+            Console.WriteLine($"=== REGISTER JUDGE ===");
+            Console.WriteLine($"JudgeId: {judgeId}");
+            Console.WriteLine($"Is judge role: {User.IsInRole("judge")}");
+            
+            if (string.IsNullOrEmpty(judgeId))
+            {
+                TempData["Error"] = "Не вдалося отримати ID користувача";
+                return RedirectToAction(nameof(Details), new { id });
+            }
+            
+            var judge = await _context.Judges.FindAsync(judgeId);
+            if (judge == null)
+            {
+                var userName = User.FindFirstValue("preferred_username") ?? 
+                               User.FindFirstValue("name") ?? 
+                               User.Identity?.Name ?? 
+                               "Judge";
+                
+                judge = new Judge
+                {
+                    Id = judgeId,
+                    UserName = userName,
+                    FullName = userName,
+                    CreatedAt = DateTime.UtcNow
+                };
+                
+                _context.Judges.Add(judge);
+                await _context.SaveChangesAsync();
+                Console.WriteLine($"✅ Створено нового суддю: {judgeId} - {userName}");
+            }
+            else
+            {
+                Console.WriteLine($"✅ Суддя вже існує: {judge.FullName}");
+            }
     
             var (success, message) = await _battleService.RegisterJudgeAsync(id, judgeId);
 
