@@ -56,6 +56,7 @@
                             <div class="col-md-6 mb-3">
                                 <label asp-for="EndedAt" class="form-label fw-semibold" style="color: var(--primary);">Завершення батлу (опціонально)</label>
                                 <input asp-for="EndedAt" class="form-control" type="datetime-local" style="border-radius: 25px; border-color: var(--gold-200); padding: 10px 15px;" />
+                                <span asp-validation-for="EndedAt" class="text-danger"></span>
                             </div>
                         </div>
 
