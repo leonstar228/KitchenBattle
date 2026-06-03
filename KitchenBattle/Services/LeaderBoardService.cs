@@ -17,6 +17,7 @@ namespace KitchenBattle.Services
         public async Task<List<LeaderboardViewModel>> GetTopLeaderboard()
         {
             var topRecipe = await _db.Recipes
+                .Include(r => r.Scores)
                 .OrderByDescending(r => r.AverageScore)
                 .Take(5).ToListAsync();
             
@@ -28,7 +29,7 @@ namespace KitchenBattle.Services
                     ChefName = r.ChefName,
                     Category = r.Category.ToString(),
                     AverageScore = r.AverageScore,
-                    TotalScoresCount = r.Scores.Count,
+                    TotalScoresCount = r.Scores.Sum(s => s.TotalScore),
                     Place = index + 1
                 })
                 .ToList();

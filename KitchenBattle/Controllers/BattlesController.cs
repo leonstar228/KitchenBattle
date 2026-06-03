@@ -4,6 +4,8 @@ using KitchenBattle.Models;
 using KitchenBattle.ViewModels;
 using KitchenBattle.Services;
 using System.Security.Claims;
+using KitchenBattle.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace KitchenBattle.Controllers
 {
@@ -11,11 +13,13 @@ namespace KitchenBattle.Controllers
     {
         private readonly BattleService _battleService;
         private readonly RedisService _redisService;
+        private readonly ApplicationDbContext _context;
 
-        public BattlesController(BattleService battleService, RedisService redisService)
+        public BattlesController(BattleService battleService, RedisService redisService, ApplicationDbContext context)
         {
             _battleService = battleService;
             _redisService = redisService;
+            _context = context;
         }
         
         public async Task<IActionResult> Index(string status, string category, string sortBy, string search, int page = 1)
@@ -56,10 +60,24 @@ namespace KitchenBattle.Controllers
         {
             var battle = await _battleService.GetBattleByIdAsync(id);
             if (battle == null) return NotFound();
-            
+    
             ViewBag.PendingChefs = await _battleService.GetPendingChefsAsync(id);
             ViewBag.ApprovedChefs = await _battleService.GetApprovedChefsAsync(id);
             
+            var chefId = User.FindFirstValue("sub") ?? 
+                         User.FindFirstValue(ClaimTypes.NameIdentifier) ?? 
+                         User.Identity?.Name ?? "";
+            
+            var allChefRecipes = await _context.Recipes
+                .Where(r => r.ChefId == chefId)
+                .ToListAsync();
+            
+            var existingRecipeIds = battle.Recipes.Select(r => r.Id).ToHashSet();
+            
+            var chefRecipes = allChefRecipes.Where(r => !existingRecipeIds.Contains(r.Id)).ToList();
+    
+            ViewBag.ChefRecipes = chefRecipes;
+    
             return View(battle);
         }
         
@@ -156,8 +174,8 @@ namespace KitchenBattle.Controllers
         [Authorize(Roles = "chef")]
         public async Task<IActionResult> RegisterChef(int id)
         {
-            var chefId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? 
-                         User.FindFirstValue("sub") ??          
+            var chefId = User.FindFirstValue("sub") ?? 
+                         User.FindFirstValue(ClaimTypes.NameIdentifier) ??          
                          User.FindFirstValue("id") ??            
                          User.FindFirstValue("preferred_username") ?? 
                          User.Identity?.Name ?? "";
@@ -176,8 +194,8 @@ namespace KitchenBattle.Controllers
         [Authorize(Roles = "judge")]
         public async Task<IActionResult> RegisterJudge(int id)
         {
-            var judgeId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? 
-                          User.FindFirstValue("sub") ??         
+            var judgeId = User.FindFirstValue("sub") ?? 
+                          User.FindFirstValue(ClaimTypes.NameIdentifier) ??         
                           User.FindFirstValue("id") ??          
                           User.FindFirstValue("preferred_username") ?? 
                           User.Identity?.Name ?? "";
@@ -236,6 +254,59 @@ namespace KitchenBattle.Controllers
             await _battleService.SetWinnerAsync(id, winnerChefId);
             TempData["Success"] = "Переможця встановлено!";
             return RedirectToAction(nameof(Details), new { id });
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "chef")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddExistingRecipe(int battleId, int recipeId)
+        {
+            var chefId = User.FindFirstValue("sub") ?? 
+                         User.FindFirstValue(ClaimTypes.NameIdentifier) ?? 
+                         User.Identity?.Name ?? "";
+            
+            var battle = await _context.Battles
+                .Include(b => b.Recipes)
+                .Include(b => b.BattleChefs)
+                .FirstOrDefaultAsync(b => b.Id == battleId);
+            
+            if (battle == null)
+            {
+                TempData["Error"] = "Батл не знайдено";
+                return RedirectToAction(nameof(Details), new { id = battleId });
+            }
+            
+            var isApproved = battle.BattleChefs.Any(bc => bc.ChefId == chefId && bc.IsApproved);
+            if (!isApproved)
+            {
+                TempData["Error"] = "Ви не зареєстровані на цей батл";
+                return RedirectToAction(nameof(Details), new { id = battleId });
+            }
+            
+            if (battle.Status != StatusBattleEnum.InProgress)
+            {
+                TempData["Error"] = "Батл вже завершено або ще не почався";
+                return RedirectToAction(nameof(Details), new { id = battleId });
+            }
+            
+            var recipe = await _context.Recipes.FindAsync(recipeId);
+            if (recipe == null || recipe.ChefId != chefId)
+            {
+                TempData["Error"] = "Рецепт не знайдено";
+                return RedirectToAction(nameof(Details), new { id = battleId });
+            }
+            
+            if (battle.Recipes.Any(r => r.Id == recipeId))
+            {
+                TempData["Error"] = "Цей рецепт вже додано до батлу";
+                return RedirectToAction(nameof(Details), new { id = battleId });
+            }
+            
+            battle.Recipes.Add(recipe);
+            await _context.SaveChangesAsync();
+            
+            TempData["Success"] = "Рецепт успішно додано до батлу!";
+            return RedirectToAction(nameof(Details), new { id = battleId });
         }
     }
 }
