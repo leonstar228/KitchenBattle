@@ -94,33 +94,36 @@ namespace KitchenBattle.Controllers
             return View(viewModel);
         }
 
+        // GET: показуємо форму — дозволено будь-якому авторизованому
         public IActionResult Create()
         {
             return View();
         }
 
+        // POST: "chef" — маленькими (Keycloak повертає маленькі)
         [HttpPost]
         [Authorize(Roles = "chef")]
         public async Task<IActionResult> Create(RecipeCreateViewModel model)
         {
             if (!ModelState.IsValid) return View(model);
 
-            var userId = User.FindFirstValue("sub") ??
-                         User.FindFirstValue(ClaimTypes.NameIdentifier) ??
-                         User.Identity?.Name ?? "";
+    var userId = User.FindFirstValue("sub") ??
+                 User.FindFirstValue(ClaimTypes.NameIdentifier) ??
+                 User.Identity?.Name ?? "";
 
-            var userName = User.FindFirstValue("preferred_username") ??
-                           User.FindFirstValue("name") ??
-                           User.Identity?.Name ?? "Unknown";
+    var userName = User.FindFirstValue("preferred_username") ??
+                   User.FindFirstValue("name") ??
+                   User.Identity?.Name ?? "Unknown";
 
-            if (string.IsNullOrEmpty(userId)) return Unauthorized();
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized();
 
-            var chef = await _context.Chefs.FindAsync(userId);
-            if (chef == null)
-            {
-                var fullName = User.FindFirstValue("name") ??
-                               User.FindFirstValue("preferred_username") ??
-                               userName;
+    var chef = await _context.Chefs.FindAsync(userId);
+    if (chef == null)
+    {
+        var fullName = User.FindFirstValue("name") ??
+                       User.FindFirstValue("preferred_username") ??
+                       userName;
 
                 chef = new Chef
                 {
@@ -134,7 +137,6 @@ namespace KitchenBattle.Controllers
             }
 
             await _recipeService.CreateRecipeAsync(model, userId, chef.FullName);
-            TempData["Success"] = "Рецепт створено! Тепер надішліть його на перевірку.";
             return RedirectToAction(nameof(MyRecipes));
         }
 

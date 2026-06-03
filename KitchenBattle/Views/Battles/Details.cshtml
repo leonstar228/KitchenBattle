@@ -1,8 +1,12 @@
-﻿@model KitchenBattle.Models.Battle
+﻿﻿
+@model KitchenBattle.Models.Battle
 @{
     ViewData["Title"] = Model.BattleName;
     var pendingChefs = ViewBag.PendingChefs as List<KitchenBattle.Models.Chef> ?? new List<KitchenBattle.Models.Chef>();
     var approvedChefs = ViewBag.ApprovedChefs as List<KitchenBattle.Models.Chef> ?? new List<KitchenBattle.Models.Chef>();
+    var chefRecipes = ViewBag.ChefRecipes as List<KitchenBattle.Models.Recipe> ?? new List<KitchenBattle.Models.Recipe>();
+    var chefId = User.FindFirstValue("sub") ?? User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "";
+    var hasRecipeInBattle = Model.Recipes.Any(r => r.ChefId == chefId);
 }
 
 <div class="container mt-4">
@@ -103,11 +107,11 @@
                 <h5 style="color: var(--primary); margin: 0; font-weight: 600;">
                     <i class="bi bi-book"></i> Рецепти (@Model.Recipes.Count)
                 </h5>
-                @if (User.IsInRole("chef") && Model.Status == StatusBattleEnum.InProgress)
+                @if (User.IsInRole("chef") && Model.Status == StatusBattleEnum.InProgress && approvedChefs.Any(c => c.Id == chefId) && !hasRecipeInBattle)
                 {
-                    <a asp-controller="Recipes" asp-action="Create" class="btn" style="background-color: var(--secondary); color: var(--white); border-radius: 25px; padding: 4px 12px; font-size: 13px;">
-                        <i class="bi bi-plus"></i> Додати
-                    </a>
+                    <button type="button" class="btn" style="background-color: var(--secondary); color: var(--white); border-radius: 25px; padding: 4px 12px; font-size: 13px;" data-bs-toggle="modal" data-bs-target="#addRecipeModal">
+                        <i class="bi bi-plus"></i> Додати рецепт
+                    </button>
                 }
             </div>
             <div style="padding: 16px;">
@@ -146,6 +150,81 @@
                         }
                     </div>
                 }
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальне вікно для вибору рецепту -->
+    <div class="modal fade" id="addRecipeModal" tabindex="-1" aria-labelledby="addRecipeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="border-radius: 16px; overflow: hidden;">
+                <div class="modal-header" style="background-color: var(--primary); color: var(--white); border: none;">
+                    <h5 class="modal-title" id="addRecipeModalLabel">
+                        <i class="bi bi-plus-circle"></i> Додати рецепт до батлу
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" style="padding: 24px;">
+                    @if (hasRecipeInBattle)
+                    {
+                        <div class="alert alert-warning text-center" style="border-radius: 12px;">
+                            <i class="bi bi-info-circle"></i>
+                            <strong>Ви вже додали рецепт до цього батлу!</strong><br>
+                            Кожен учасник може додати лише один рецепт.
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="d-flex flex-column gap-3">
+                            <a asp-controller="Recipes" asp-action="Create" asp-route-battleId="@Model.Id" 
+                               class="btn" style="background-color: var(--secondary); color: var(--white); border-radius: 25px; padding: 12px 20px;">
+                                <i class="bi bi-file-earmark-plus"></i> Створити новий рецепт
+                            </a>
+                            
+                            <div class="text-center" style="color: var(--neutral-600); position: relative;">
+                                <hr style="border-color: var(--gold-200);">
+                                <span style="position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--white); padding: 0 15px;">або</span>
+                            </div>
+                            
+                            @if (chefRecipes.Any())
+                            {
+                                <div>
+                                    <label class="form-label fw-semibold" style="color: var(--primary);">Мої рецепти</label>
+                                    <div class="list-group" style="max-height: 300px; overflow-y: auto;">
+                                        @foreach (var recipe in chefRecipes)
+                                        {
+                                            <form asp-action="AddExistingRecipe" asp-route-battleId="@Model.Id" asp-route-recipeId="@recipe.Id" method="post" class="list-group-item" style="border-radius: 12px; margin-bottom: 8px; border: 1px solid var(--gold-200);">
+                                                @Html.AntiForgeryToken()
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <div>
+                                                        <div style="font-weight: 600; color: var(--dark);">@recipe.Title</div>
+                                                        <div style="font-size: 12px; color: var(--neutral-600);">
+                                                            @recipe.Category • ★ @recipe.AverageScore.ToString("F1")
+                                                        </div>
+                                                    </div>
+                                                    <button type="submit" class="btn" style="background-color: var(--green-400); color: white; border-radius: 20px; padding: 5px 15px;">
+                                                        <i class="bi bi-check-lg"></i> Додати
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="text-center p-4" style="background-color: var(--ivory); border-radius: 12px;">
+                                    <i class="bi bi-journal-x" style="font-size: 48px; color: var(--gold-200);"></i>
+                                    <p class="mt-2" style="color: var(--neutral-600);">У вас немає рецептів для додавання</p>
+                                    <a asp-controller="Recipes" asp-action="Create" asp-route-battleId="@Model.Id" 
+                                       class="btn" style="background-color: var(--secondary); color: white; border-radius: 25px; padding: 8px 16px;">
+                                        Створити перший рецепт
+                                    </a>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
             </div>
         </div>
     </div>
@@ -203,7 +282,6 @@
                     </div>
                 }
 
-                <!-- Адмін може підтверджувати -->
                 @if (User.IsInRole("admin") && pendingChefs.Any())
                 {
                     <hr style="border-color: var(--gold-200); margin: 16px 0;">
@@ -226,7 +304,7 @@
             </div>
         </div>
 
-        <!-- Судді (тільки перегляд) -->
+        <!-- Судді -->
         <div style="flex: 1; background-color: var(--white); border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
             <div style="padding: 16px; border-bottom: 1px solid var(--gold-200); background-color: var(--background);">
                 <h5 style="color: var(--primary); margin: 0; font-weight: 600;">

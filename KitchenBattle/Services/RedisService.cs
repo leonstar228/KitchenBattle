@@ -3,6 +3,7 @@ using KitchenBattle.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using System.Text.Json;
+using KitchenBattle.ViewModels;
 
 public class RedisService
 {
@@ -90,6 +91,43 @@ public class RedisService
             });
         Console.WriteLine("Данні збережено в кеш.");
         return scores;
+    }
+    private const string LeaderboardsCacheKey = "leaderboards_list";
+    public async Task<List<LeaderboardViewModel>> GetLeaderBoardCach()
+    {
+        Console.WriteLine("Виклик GetLeaderBoardAsync");
+        var cached = await _cache.GetStringAsync(LeaderboardsCacheKey);
+        if (!string.IsNullOrEmpty(cached))
+        {
+            Console.WriteLine("Данні знайдено в кеші.");
+            return JsonSerializer.Deserialize<List<LeaderboardViewModel>>(cached) ?? new List<LeaderboardViewModel>();
+        }
+        Console.WriteLine("Кеш порожній");
+        var topRecipe = await _db.Recipes
+            .OrderByDescending(r => r.AverageScore)
+            .Take(5).ToListAsync();
+        Console.WriteLine("Данні отримуємо з бд.");
+        var leaderboard = topRecipe
+            .Select((r, index) => new LeaderboardViewModel
+            {
+                RecipeId = r.Id,
+                RecipeTitle = r.Title,
+                ChefName = r.ChefName,
+                Category = r.Category.ToString(),
+                AverageScore = r.AverageScore,
+                TotalScoresCount = r.Scores.Count,
+                Place = index + 1
+            })
+            .ToList();
+        Console.WriteLine("Сформована нова нова в'ю модел.");
+        await _cache.SetStringAsync(LeaderboardsCacheKey,
+            JsonSerializer.Serialize(leaderboard),
+            new DistributedCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5)
+            });
+        Console.WriteLine("Данні збережено в кеш.");
+        return leaderboard;
     }
     
     public static async Task ClearCacheAsync(IDistributedCache cache)

@@ -13,7 +13,7 @@ namespace KitchenBattle.ViewModels
         public CategoryEnum Category { get; set; }
         public string? ImageUrl { get; set; }
         public string ChefName { get; set; } = string.Empty;
-        public int ChefId { get; set; }
+        public string ChefId { get; set; } = string.Empty; 
         public StatusRecipeEnum Status { get; set; }
         public double AverageScore { get; set; }
         public List<ScoreDisplayViewModel> Scores { get; set; } = new();

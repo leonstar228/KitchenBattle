@@ -10,109 +10,6 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
 </head>
 <body>
-    <style>
-        :root {
-            --kb-primary: #4A6741;    
-            --kb-secondary: #C47B2B;   
-            --kb-bg: #F5F1E8;         
-            --kb-dark: #2C2C2A;       
-            --kb-green-400: #6B8F5E;   
-            --kb-gold-200: #E8D5A3;    
-            --kb-neutral-600: #8B7355; 
-        }
-
-        header {
-            background: linear-gradient(135deg, #F5F1E8 0%, #FAF8F3 100%);
-            box-shadow: 0 2px 8px rgba(74, 103, 65, 0.08);
-        }
-
-        .navbar {
-            background: transparent !important;
-            border: none !important;
-            padding: 1rem 0;
-        }
-
-        .navbar-brand {
-            color: var(--kb-primary) !important;
-            font-size: 1.5rem;
-            letter-spacing: 0.05em;
-            transition: color 0.2s ease;
-        }
-
-        .navbar-brand:hover {
-            color: var(--kb-secondary) !important;
-        }
-
-        .nav-link {
-            color: var(--kb-dark) !important;
-            font-weight: 500;
-            transition: all 0.2s ease;
-            position: relative;
-            padding: 0.5rem 1rem !important;
-        }
-
-        .nav-link:hover,
-        .nav-link.active {
-            color: var(--kb-primary) !important;
-        }
-
-        .nav-link:hover::after,
-        .nav-link.active::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 1rem;
-            right: 1rem;
-            height: 2px;
-            background-color: var(--kb-secondary);
-            border-radius: 2px;
-        }
-
-        .dropdown-menu {
-            background-color: #FEFCF8 !important;
-            border: 1px solid #E8D5A3 !important;
-            border-radius: 8px !important;
-            box-shadow: 0 4px 12px rgba(74, 103, 65, 0.12) !important;
-        }
-
-        .dropdown-item {
-            color: var(--kb-dark) !important;
-            transition: all 0.2s ease;
-        }
-
-        .dropdown-item:hover,
-        .dropdown-item:focus {
-            background-color: #F5F1E8 !important;
-            color: var(--kb-primary) !important;
-        }
-
-        .dropdown-divider {
-            border-color: #E8D5A3 !important;
-        }
-
-        .btn-primary {
-            background-color: var(--kb-primary) !important;
-            border-color: var(--kb-primary) !important;
-            color: #ffffff !important;
-            font-weight: 600;
-            border-radius: 25px !important;
-            transition: all 0.2s ease;
-        }
-
-        .btn-primary:hover {
-            background-color: var(--kb-secondary) !important;
-            border-color: var(--kb-secondary) !important;
-            box-shadow: 0 4px 12px rgba(196, 123, 43, 0.2);
-        }
-
-        .navbar-toggler {
-            border-color: var(--kb-primary) !important;
-        }
-
-        .navbar-toggler:focus {
-            box-shadow: 0 0 0 0.25rem rgba(74, 103, 65, 0.25) !important;
-        }
-    </style>
     <header>
         <nav class="navbar navbar-expand-lg">
             <div class="container">
@@ -155,7 +52,7 @@
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                                     @if (User.IsInRole("chef"))
                                     {
-                                    <li><a class="dropdown-item" asp-controller="Recipes" asp-action="MyRecipes">Мої рецепти</a></li>
+                                        <li><a class="dropdown-item" asp-controller="Recipes" asp-action="MyRecipes">Мої рецепти</a></li>
                                     }
                                     @if (User.IsInRole("admin"))
                                     {
@@ -188,12 +85,12 @@
         @RenderBody()
     </main>
 
-    <footer class="text-center mt-5 py-4" style="border-top: 1px solid #E8D5A3; background: linear-gradient(135deg, #F5F1E8 0%, #FEFCF8 100%); color: #8B7355;">
+    <footer class="text-center mt-5 py-4">
         <p class="mb-1">&copy; 2026 KitchenBattle. Всі права захищені.</p>
         <div>
-            <a href="#" class="text-muted me-3" style="color: #8B7355 !important;"><i class="bi bi-facebook"></i></a>
-            <a href="#" class="text-muted me-3" style="color: #8B7355 !important;"><i class="bi bi-instagram"></i></a>
-            <a href="#" class="text-muted" style="color: #8B7355 !important;"><i class="bi bi-twitter"></i></a>
+            <a href="#" class="text-muted me-3"><i class="bi bi-facebook"></i></a>
+            <a href="#" class="text-muted me-3"><i class="bi bi-instagram"></i></a>
+            <a href="#" class="text-muted"><i class="bi bi-twitter"></i></a>
         </div>
     </footer>
 

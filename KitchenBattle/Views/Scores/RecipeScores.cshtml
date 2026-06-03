@@ -5,424 +5,11 @@
     int recipeId = ViewBag.RecipeId;
 }
 
-<style>
-    :root {
-        --clr-green: #4A6741;
-        --clr-green-hover: #6B8F5E;
-        --clr-gold: #C47B2B;
-        --clr-gold-light: #E8D5A3;
-        --clr-ivory: #F5F1E8;
-        --clr-white: #FFFFFF;
-        --clr-dark: #2C2C2A;
-        --clr-brown: #887355;
-        --clr-red: #D4483B;
-        --radius-card: 16px;
-        --radius-btn: 6px;
-        --radius-pill: 20px;
-        --shadow-card: 0 4px 20px rgba(0,0,0,0.08);
-        --shadow-card-hover: 0 8px 36px rgba(0,0,0,0.12);
-        --transition: 0.3s ease;
-    }
-
-    .scores-page {
-        background: var(--clr-ivory);
-        min-height: 80vh;
-        padding: 48px 0;
-    }
-
-    /* ── Page header ── */
-    .scores-page-header {
-        display: flex;
-        align-items: flex-start;
-        justify-content: space-between;
-        gap: 16px;
-        margin-bottom: 40px;
-        flex-wrap: wrap;
-    }
-
-    .scores-page-title {
-        font-family: 'Georgia', 'Times New Roman', serif;
-        font-size: 32px;
-        font-weight: 700;
-        color: var(--clr-dark);
-        margin: 0;
-        line-height: 1.15;
-    }
-
-    .scores-page-title span {
-        display: block;
-        font-size: 13px;
-        font-family: inherit;
-        font-style: italic;
-        color: var(--clr-brown);
-        font-weight: 400;
-        margin-top: 4px;
-    }
-
-    .header-actions {
-        display: flex;
-        gap: 10px;
-        flex-shrink: 0;
-    }
-
-    .btn-primary-kb {
-        background: var(--clr-gold);
-        color: var(--clr-white);
-        border: none;
-        border-radius: var(--radius-btn);
-        padding: 10px 20px;
-        font-size: 13px;
-        font-weight: 600;
-        letter-spacing: 0.04em;
-        text-transform: uppercase;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        transition: var(--transition);
-        cursor: pointer;
-    }
-
-    .btn-primary-kb:hover {
-        background: #B36B20;
-        color: var(--clr-white);
-        transform: translateY(-1px);
-        box-shadow: 0 4px 14px rgba(196,123,43,0.35);
-    }
-
-    .btn-outline-kb {
-        background: transparent;
-        color: var(--clr-brown);
-        border: 1.5px solid #C8C0B4;
-        border-radius: var(--radius-btn);
-        padding: 10px 18px;
-        font-size: 13px;
-        font-weight: 500;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        transition: var(--transition);
-    }
-
-    .btn-outline-kb:hover {
-        border-color: var(--clr-green);
-        color: var(--clr-green);
-        background: rgba(74,103,65,0.05);
-    }
-
-    /* ── Summary bar ── */
-    .scores-summary {
-        background: var(--clr-green);
-        border-radius: var(--radius-card);
-        padding: 24px 32px;
-        margin-bottom: 32px;
-        display: flex;
-        gap: 40px;
-        align-items: center;
-        flex-wrap: wrap;
-        position: relative;
-        overflow: hidden;
-        animation: summaryIn 0.5s ease both;
-    }
-
-    @@keyframes summaryIn {
-        from { opacity: 0; transform: translateY(-16px); }
-        to   { opacity: 1; transform: translateY(0); }
-    }
-
-    .scores-summary::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: repeating-linear-gradient(
-            45deg,
-            transparent,
-            transparent 14px,
-            rgba(255,255,255,0.03) 14px,
-            rgba(255,255,255,0.03) 28px
-        );
-    }
-
-    .summary-stat {
-        position: relative;
-        z-index: 1;
-    }
-
-    .summary-stat .stat-value {
-        font-family: 'Georgia', serif;
-        font-size: 28px;
-        font-weight: 700;
-        color: var(--clr-white);
-        line-height: 1;
-    }
-
-    .summary-stat .stat-label {
-        font-size: 11px;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        color: rgba(255,255,255,0.6);
-        margin-top: 4px;
-    }
-
-    .summary-divider {
-        width: 1px;
-        height: 36px;
-        background: rgba(255,255,255,0.2);
-        position: relative;
-        z-index: 1;
-    }
-
-    /* ── Score cards ── */
-    .score-card {
-        background: var(--clr-white);
-        border-radius: var(--radius-card);
-        box-shadow: var(--shadow-card);
-        border: none;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        transition: transform var(--transition), box-shadow var(--transition);
-        animation: cardIn 0.45s ease both;
-        overflow: hidden;
-    }
-
-    .score-card:nth-child(1) { animation-delay: 0.05s; }
-    .score-card:nth-child(2) { animation-delay: 0.12s; }
-    .score-card:nth-child(3) { animation-delay: 0.19s; }
-    .score-card:nth-child(4) { animation-delay: 0.26s; }
-    .score-card:nth-child(5) { animation-delay: 0.33s; }
-    .score-card:nth-child(6) { animation-delay: 0.40s; }
-
-    @@keyframes cardIn {
-        from { opacity: 0; transform: translateY(20px); }
-        to   { opacity: 1; transform: translateY(0); }
-    }
-
-    .score-card:hover {
-        transform: translateY(-4px);
-        box-shadow: var(--shadow-card-hover);
-    }
-
-    .score-card-accent {
-        height: 4px;
-        background: linear-gradient(to right, var(--clr-green), var(--clr-gold));
-    }
-
-    .score-card-body {
-        padding: 20px 22px;
-        flex: 1;
-    }
-
-    .judge-row {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 18px;
-    }
-
-    .judge-info {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-
-    .judge-avatar {
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        background: var(--clr-green);
-        color: var(--clr-white);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 15px;
-        flex-shrink: 0;
-    }
-
-    .judge-name {
-        font-size: 14px;
-        font-weight: 600;
-        color: var(--clr-dark);
-        margin: 0;
-        line-height: 1.2;
-    }
-
-    .judge-role {
-        font-size: 11px;
-        color: var(--clr-brown);
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-    }
-
-    .score-badge {
-        background: var(--clr-gold);
-        color: var(--clr-white);
-        border-radius: var(--radius-pill);
-        padding: 6px 14px;
-        font-size: 15px;
-        font-weight: 700;
-        font-family: 'Georgia', serif;
-        line-height: 1;
-        white-space: nowrap;
-    }
-
-    /* ── Criteria bars ── */
-    .criteria-list {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        margin-bottom: 16px;
-    }
-
-    .criterion {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-    }
-
-    .criterion-top {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .criterion-name {
-        font-size: 11px;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.07em;
-        color: var(--clr-brown);
-        display: flex;
-        align-items: center;
-        gap: 5px;
-    }
-
-    .criterion-score {
-        font-size: 12px;
-        font-weight: 600;
-        color: var(--clr-dark);
-    }
-
-    .kb-progress {
-        height: 5px;
-        background: #EDE8E0;
-        border-radius: 3px;
-        overflow: hidden;
-    }
-
-    .kb-progress-bar {
-        height: 100%;
-        border-radius: 3px;
-        transition: width 0.6s ease;
-    }
-
-    .bar-taste      { background: var(--clr-red); }
-    .bar-present    { background: var(--clr-green); }
-    .bar-creativity { background: var(--clr-gold); }
-
-    /* ── Comment ── */
-    .score-comment {
-        background: var(--clr-ivory);
-        border-left: 3px solid var(--clr-gold);
-        border-radius: 0 6px 6px 0;
-        padding: 10px 14px;
-        font-size: 13px;
-        font-style: italic;
-        color: var(--clr-dark);
-        line-height: 1.5;
-    }
-
-    /* ── Card footer ── */
-    .score-card-footer {
-        padding: 12px 22px;
-        border-top: 1px solid #F0EBE2;
-        display: flex;
-        gap: 8px;
-        justify-content: flex-end;
-        background: transparent;
-    }
-
-    .btn-card-edit {
-        background: transparent;
-        color: var(--clr-brown);
-        border: 1.5px solid #D8D0C6;
-        border-radius: var(--radius-btn);
-        padding: 6px 14px;
-        font-size: 12px;
-        font-weight: 500;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-        transition: var(--transition);
-    }
-
-    .btn-card-edit:hover {
-        border-color: var(--clr-green);
-        color: var(--clr-green);
-        background: rgba(74,103,65,0.05);
-    }
-
-    .btn-card-delete {
-        background: transparent;
-        color: var(--clr-red);
-        border: 1.5px solid rgba(212,72,59,0.3);
-        border-radius: var(--radius-btn);
-        padding: 6px 14px;
-        font-size: 12px;
-        font-weight: 500;
-        cursor: pointer;
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-        transition: var(--transition);
-    }
-
-    .btn-card-delete:hover {
-        background: rgba(212,72,59,0.08);
-        border-color: var(--clr-red);
-    }
-
-    /* ── Empty state ── */
-    .empty-state {
-        text-align: center;
-        padding: 80px 24px;
-        animation: cardIn 0.5s ease both;
-    }
-
-    .empty-icon-wrap {
-        width: 72px;
-        height: 72px;
-        border-radius: 50%;
-        background: rgba(74,103,65,0.08);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 20px;
-        font-size: 30px;
-        color: var(--clr-green);
-    }
-
-    .empty-state h5 {
-        font-family: 'Georgia', serif;
-        font-size: 20px;
-        color: var(--clr-dark);
-        margin-bottom: 8px;
-    }
-
-    .empty-state p {
-        color: var(--clr-brown);
-        font-size: 14px;
-        max-width: 300px;
-        margin: 0 auto;
-    }
-</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Biryani:wght@400;600;700;800&display=swap" rel="stylesheet">
 
 <div class="scores-page">
     <div class="container">
-
         <div class="scores-page-header">
             <div>
                 <h1 class="scores-page-title">
@@ -431,7 +18,7 @@
                 </h1>
             </div>
             <div class="header-actions">
-                @if (User.IsInRole("Judge"))
+                @if (User.IsInRole("judge"))
                 {
                     <a asp-action="Create" asp-route-recipeId="@recipeId" class="btn-primary-kb">
                         <i class="bi bi-plus-lg"></i>Додати оцінку
@@ -531,7 +118,7 @@
                                 }
                             </div>
 
-                            @if (User.IsInRole("Judge"))
+                            @if (User.IsInRole("judge"))
                             {
                                 <div class="score-card-footer">
                                     <a asp-action="Edit" asp-route-id="@score.Id" class="btn-card-edit">
@@ -554,13 +141,13 @@
         }
         else
         {
-            <div class="empty-state">
+            <div class="empty-state-scores">
                 <div class="empty-icon-wrap">
                     <i class="bi bi-star"></i>
                 </div>
                 <h5>Оцінок ще немає</h5>
                 <p>Суддівське журі ще не виставило жодної оцінки для цього рецепту.</p>
-                @if (User.IsInRole("Judge"))
+                @if (User.IsInRole("judge"))
                 {
                     <a asp-action="Create" asp-route-recipeId="@recipeId" class="btn-primary-kb mt-4 d-inline-flex">
                         <i class="bi bi-plus-lg"></i>Бути першим суддею
@@ -568,6 +155,5 @@
                 }
             </div>
         }
-
     </div>
 </div>
