@@ -3,15 +3,13 @@
     ViewData["Title"] = "Мої рецепти";
 }
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Biryani:wght@400;600;700;800&display=swap" rel="stylesheet">
+<div class="container py-5">
+    <div class="page-header-centered">
+        <h1 class="display-5 fw-bold">👨‍🍳 Мої рецепти</h1>
+        <p class="lead">Керуйте своїми кулінарними шедеврами</p>
+    </div>
 
-<div class="container">
-    <div class="page-top">
-        <div>
-            <h1>👨‍🍳 Мої рецепти</h1>
-            <p>Керуйте своїми кулінарними шедеврами</p>
-        </div>
+    <div class="mb-4">
         <a asp-action="Create" class="btn-new">
             <i class="bi bi-plus-circle"></i> Новий рецепт
         </a>

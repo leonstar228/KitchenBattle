@@ -2,17 +2,15 @@
 @{
     ViewData["Title"] = "Рецепти";
 }
-
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Biryani:wght@400;600;700;800&display=swap" rel="stylesheet">
 
-<div class="container">
-    <div class="rp-header">
-        <h1>🍳 Кулінарні рецепти</h1>
-        <p>Найкращі страви від наших шеф-кухарів</p>
+<div class="container py-5">
+    <div class="page-header-centered">
+        <h1 class="display-5 fw-bold">🍳 Кулінарні рецепти</h1>
+        <p class="lead">Найкращі страви від наших шеф-кухарів</p>
     </div>
 
-    <!-- ФІЛЬТРИ -->
     <div class="filter-bar">
         <form method="get" class="row g-3 align-items-end">
             <div class="col-md-4">
@@ -58,7 +56,7 @@
     }
     else
     {
-        <div class="row g-4 mb-5">
+        <div class="row g-5 mb-5">
             @foreach (var recipe in Model)
             {
                 <div class="col-md-6 col-lg-4">
