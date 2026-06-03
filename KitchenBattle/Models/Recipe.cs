@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace KitchenBattle.Models
 {
     public class Recipe
@@ -5,7 +7,9 @@ namespace KitchenBattle.Models
         public int Id { get; set; }
         public string ChefId { get; set; }
         public string ImageUrl { get; set; } = string.Empty;
-        public string Title { get; set; } = string.Empty;
+                
+        [StringLength(50, ErrorMessage = "Назва не може перевищувати 50 символів.")]
+        public string Title { get; set; } = string.Empty;        
         public string Description { get; set; } = string.Empty;
         public string Ingredients { get; set; } = string.Empty;
         public int CookingTime { get; set; }
