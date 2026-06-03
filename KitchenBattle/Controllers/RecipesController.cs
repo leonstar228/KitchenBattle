@@ -84,7 +84,7 @@ namespace KitchenBattle.Controllers
                 Category = recipe.Category,
                 ImageUrl = recipe.ImageUrl,
                 ChefName = recipe.ChefName,
-                ChefId = int.TryParse(recipe.ChefId, out var chefIdInt) ? chefIdInt : 0,
+                ChefId = recipe.ChefId,
                 Status = recipe.Status,
                 AverageScore = recipe.AverageScore,
                 Scores = scores,
@@ -107,23 +107,23 @@ namespace KitchenBattle.Controllers
         {
             if (!ModelState.IsValid) return View(model);
 
-    var userId = User.FindFirstValue("sub") ??
-                 User.FindFirstValue(ClaimTypes.NameIdentifier) ??
-                 User.Identity?.Name ?? "";
+            var userId = User.FindFirstValue("sub") ??
+                         User.FindFirstValue(ClaimTypes.NameIdentifier) ??
+                         User.Identity?.Name ?? "";
 
-    var userName = User.FindFirstValue("preferred_username") ??
-                   User.FindFirstValue("name") ??
-                   User.Identity?.Name ?? "Unknown";
+            var userName = User.FindFirstValue("preferred_username") ??
+                           User.FindFirstValue("name") ??
+                           User.Identity?.Name ?? "Unknown";
 
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized();
 
-    var chef = await _context.Chefs.FindAsync(userId);
-    if (chef == null)
-    {
-        var fullName = User.FindFirstValue("name") ??
-                       User.FindFirstValue("preferred_username") ??
-                       userName;
+            var chef = await _context.Chefs.FindAsync(userId);
+            if (chef == null)
+            {
+                var fullName = User.FindFirstValue("name") ??
+                               User.FindFirstValue("preferred_username") ??
+                               userName;
 
                 chef = new Chef
                 {
