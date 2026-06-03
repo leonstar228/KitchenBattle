@@ -42,6 +42,7 @@ namespace KitchenBattle.Services
         
         public async Task AddScore(ScoreCreateViewModel vm, string judgeId)
         {
+            var recipeId = int.Parse(vm.RecipeId);
             var score = new Score
             {
                 RecipeId = int.Parse(vm.RecipeId),
@@ -54,6 +55,16 @@ namespace KitchenBattle.Services
 
             _db.Scores.Add(score);
             await _db.SaveChangesAsync();
+            
+            var recipe = await _db.Recipes
+                .Include(r => r.Scores)
+                .FirstOrDefaultAsync(r => r.Id == recipeId);
+
+            if (recipe != null)
+            {
+                recipe.AverageScore = recipe.Scores.Average(s => s.TotalScore);
+                await _db.SaveChangesAsync();
+            }
         }
         
         public async Task<Score?> GetByIdAsync(int id)
@@ -72,6 +83,7 @@ namespace KitchenBattle.Services
             score.Comments = vm.Comments;
 
             await _db.SaveChangesAsync();
+            await RecalculateAverageAsync(score.RecipeId);
         }
         
         public async Task DeleteScore(int id)
@@ -79,14 +91,31 @@ namespace KitchenBattle.Services
             var score = await _db.Scores.FindAsync(id);
             if (score == null) return;
 
+            var recipeId = score.RecipeId;
             _db.Scores.Remove(score);
             await _db.SaveChangesAsync();
+            await RecalculateAverageAsync(recipeId);
         }
         
         public async Task<bool> CheckJudgeAlreadyScored(int recipeId, string judgeId)
         {
             return await _db.Scores
                 .AnyAsync(s => s.RecipeId == recipeId && s.JudgeId == judgeId);
+        }
+        
+        private async Task RecalculateAverageAsync(int recipeId)
+        {
+            var recipe = await _db.Recipes
+                .Include(r => r.Scores)
+                .FirstOrDefaultAsync(r => r.Id == recipeId);
+
+            if (recipe == null) return;
+
+            recipe.AverageScore = recipe.Scores.Any()
+                ? recipe.Scores.Average(s => s.TotalScore)
+                : 0;
+
+            await _db.SaveChangesAsync();
         }
         
         public async Task<double> CalculateTotalScore(int recipeId)
