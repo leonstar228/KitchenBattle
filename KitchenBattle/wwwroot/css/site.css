@@ -421,7 +421,386 @@ footer {
 }
 
 /* ============================================
-   ADMIN DASHBOARD
+   ADMIN DASHBOARD (redesign)
+   ============================================ */
+.admin-dashboard {
+    max-width: 1200px;
+}
+
+.admin-dashboard__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.admin-dashboard__title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--kb-dark);
+    margin: 0;
+}
+
+.admin-dashboard__subtitle {
+    color: var(--kb-neutral-600);
+    margin: 0.35rem 0 0;
+    font-size: 1rem;
+}
+
+.admin-dashboard__date {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.55rem 1.1rem;
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 999px;
+    color: var(--kb-dark);
+    font-weight: 500;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    white-space: nowrap;
+}
+
+.admin-stat-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    background: #fff;
+    border-radius: var(--radius-card);
+    padding: 1.25rem 1.35rem;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    border-top: 4px solid transparent;
+    height: 100%;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.admin-stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.admin-stat-card--green { border-top-color: #6B8F5E; }
+.admin-stat-card--orange { border-top-color: #C47B2B; }
+.admin-stat-card--red { border-top-color: #D4483B; }
+.admin-stat-card--grey { border-top-color: #5C5C5A; }
+
+.admin-stat-card__icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+.admin-stat-card--green .admin-stat-card__icon { background: #E8F0E4; color: #4A6741; }
+.admin-stat-card--orange .admin-stat-card__icon { background: #FDF0E4; color: #C47B2B; }
+.admin-stat-card--red .admin-stat-card__icon { background: #FCEAE8; color: #D4483B; }
+.admin-stat-card--grey .admin-stat-card__icon { background: #F0EFED; color: #5C5C5A; }
+
+.admin-stat-card__value {
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--kb-dark);
+}
+
+.admin-stat-card__label {
+    color: var(--kb-neutral-600);
+    font-size: 0.9rem;
+    margin-top: 0.15rem;
+}
+
+.admin-stat-card__footer {
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+    font-size: 0.82rem;
+    color: var(--kb-neutral-600);
+}
+
+.admin-panel-card {
+    background: #fff;
+    border-radius: var(--radius-card);
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    height: 100%;
+}
+
+.admin-panel-card__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.1rem 1.35rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.admin-panel-card__title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--kb-dark);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.admin-panel-card__link {
+    font-size: 0.85rem;
+    color: var(--kb-neutral-600);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.admin-panel-card__link:hover {
+    color: var(--kb-secondary);
+}
+
+.admin-panel-card__body {
+    padding: 0.5rem 0;
+}
+
+.admin-panel-card__empty {
+    padding: 1.5rem 1.35rem;
+    margin: 0;
+    color: var(--kb-neutral-600);
+    font-size: 0.9rem;
+}
+
+.admin-list-item {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.85rem 1.35rem;
+    text-decoration: none;
+    color: inherit;
+    transition: background-color 0.2s ease;
+}
+
+.admin-list-item:hover {
+    background: #FAF8F3;
+}
+
+.admin-list-item + .admin-list-item {
+    border-top: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.admin-list-item__thumb {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    background: #E8F0E4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+    color: #6B8F5E;
+}
+
+.admin-list-item__thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.admin-list-item__dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.admin-list-item__dot--active { background: #6B8F5E; }
+.admin-list-item__dot--judging { background: #C47B2B; }
+.admin-list-item__dot--completed { background: #8B7355; }
+.admin-list-item__dot--pending { background: #D4C4A8; }
+
+.admin-list-item__content {
+    flex: 1;
+    min-width: 0;
+}
+
+.admin-list-item__title {
+    font-weight: 600;
+    color: var(--kb-dark);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.admin-list-item__meta {
+    font-size: 0.82rem;
+    color: var(--kb-neutral-600);
+    margin-top: 0.1rem;
+}
+
+.admin-badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.3rem 0.65rem;
+    border-radius: 999px;
+    white-space: nowrap;
+}
+
+.admin-badge--new {
+    background: #FDF0E4;
+    color: #C47B2B;
+}
+
+.admin-badge--active {
+    background: #E8F0E4;
+    color: #4A6741;
+}
+
+.admin-badge--judging {
+    background: #FDF0E4;
+    color: #C47B2B;
+}
+
+.admin-badge--completed {
+    background: #F0EFED;
+    color: #8B7355;
+}
+
+.admin-badge--pending {
+    background: #F5F1E8;
+    color: var(--kb-neutral-600);
+}
+
+.admin-panel-card--chart .admin-panel-card__header {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.admin-chart {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0 1.35rem 1.5rem;
+    min-height: 180px;
+}
+
+.admin-chart__bar-wrap {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    height: 150px;
+}
+
+.admin-chart__bar {
+    width: 100%;
+    max-width: 48px;
+    background: linear-gradient(180deg, #6B8F5E 0%, #4A6741 100%);
+    border-radius: 8px 8px 4px 4px;
+    min-height: 8px;
+    transition: height 0.4s ease;
+}
+
+.admin-chart__label {
+    margin-top: 0.6rem;
+    font-size: 0.8rem;
+    color: var(--kb-neutral-600);
+    text-transform: capitalize;
+}
+
+.admin-nav-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: #fff;
+    border-radius: var(--radius-card);
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+    padding: 1.35rem;
+    text-decoration: none;
+    color: var(--kb-dark);
+    height: 100%;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.admin-nav-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    color: var(--kb-dark);
+}
+
+.admin-nav-card--center {
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    gap: 0.75rem;
+}
+
+.admin-nav-card__icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.admin-nav-card__icon--moderation {
+    background: #FCEAE8;
+    color: #D4483B;
+}
+
+.admin-nav-card__icon--users {
+    background: #E8F0E4;
+    color: #4A6741;
+}
+
+.admin-nav-card__icon--battles {
+    background: #FDF0E4;
+    color: #C47B2B;
+}
+
+.admin-nav-card__title {
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.admin-nav-card__content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.admin-nav-card__badge {
+    display: inline-block;
+    width: fit-content;
+    background: #D4483B;
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+}
+
+@media (max-width: 767px) {
+    .admin-dashboard__header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .admin-dashboard__date {
+        align-self: flex-start;
+    }
+}
+
+/* ============================================
+   ADMIN DASHBOARD (legacy cards)
    ============================================ */
 .kb-card {
     border: none;
@@ -723,7 +1102,70 @@ footer {
     margin-right: 0.75rem;
     color: var(--kb-primary);
 }
+/* ============================================
+   TOOLTIP ДЛЯ ГРАФІКУ (Поява при наведенні)
+   ============================================ */
 
+/* Робимо обгортку стовпця відносною, щоб підказка не вилітала за межі */
+.admin-chart__bar-wrap {
+    position: relative;
+}
+
+/* Ефект збільшення стовпця при наведенні */
+.admin-chart__bar {
+    position: relative;
+    cursor: pointer;
+    transition: height 0.4s ease, transform 0.2s ease, filter 0.2s ease;
+}
+
+    .admin-chart__bar:hover {
+        transform: scaleX(1.05);
+        filter: brightness(1.1);
+    }
+
+    /* Сама плашка підказки (текст береться з атрибута data-tooltip) */
+    .admin-chart__bar::after {
+        content: attr(data-tooltip);
+        position: absolute;
+        bottom: calc(100% + 8px); /* Стає над стовпчиком */
+        left: 50%;
+        transform: translateX(-50%) translateY(5px);
+        background: var(--kb-dark, #2b2b2b);
+        color: #fff;
+        padding: 4px 8px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        border-radius: 6px;
+        white-space: nowrap;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease, transform 0.2s ease;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        z-index: 10;
+    }
+
+    /* Маленький трикутник (стрілочка) під підказкою */
+    .admin-chart__bar::before {
+        content: '';
+        position: absolute;
+        bottom: calc(100% + 3px);
+        left: 50%;
+        transform: translateX(-50%) translateY(5px);
+        border-width: 5px 5px 0;
+        border-style: solid;
+        border-color: var(--kb-dark, #2b2b2b) transparent transparent;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease, transform 0.2s ease;
+        z-index: 10;
+    }
+
+    /* Показуємо підказку та стрілочку при ховері на стовпчик */
+    .admin-chart__bar:hover::after,
+    .admin-chart__bar:hover::before {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
 /* ============================================
    USERS TABLE
    ============================================ */
@@ -912,7 +1354,6 @@ footer {
 
 .diff-Hard {
     background: linear-gradient(135deg, #D4483B 0%, #e85a4f 100%);
-}
 }
 
 .cat-pill {

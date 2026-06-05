@@ -13,6 +13,8 @@ namespace KitchenBattle.ViewModels
         [StringLength(50, ErrorMessage = "Назва не може перевищувати 50 символів.")]
         public string Description { get; set; } = string.Empty;
         public string Ingredients { get; set; } = string.Empty;
+        
+        [Range(3, 300, ErrorMessage = "Час приготування не може бути меншим за 3 хв та більшим ніж 300 хв.")]
         public int CookingTime { get; set; }
         public DifficultyEnum Difficulty { get; set; }
         public CategoryEnum Category { get; set; }

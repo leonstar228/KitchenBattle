@@ -37,7 +37,7 @@ namespace KitchenBattle.ViewModels
     
     public class UserInBattleViewModel
     {
-        public string Id { get; set; } = string.Empty;  // ← string, бо IdentityUser.Id
+        public string Id { get; set; } = string.Empty;
         public string FullName { get; set; } = string.Empty;
     }
 }

@@ -1,19 +1,22 @@
-﻿using Microsoft.EntityFrameworkCore;
-using KitchenBattle.Data;
+﻿using KitchenBattle.Data;
 using KitchenBattle.Models;
 using KitchenBattle.ViewModels;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace KitchenBattle.Services
 {
     public class ScoreService
     {
         private readonly ApplicationDbContext _db;
+        private readonly IDistributedCache _cache;
 
-        public ScoreService(ApplicationDbContext db)
+        public ScoreService(ApplicationDbContext db, IDistributedCache cache)
         {
             _db = db;
+            _cache = cache;
         }
-        
+
         public async Task<List<ScoreDisplayViewModel>> GetByRecipeIdAsync(int recipeId)
         {
             var scores = await _db.Scores
@@ -25,11 +28,18 @@ namespace KitchenBattle.Services
             foreach (var s in scores)
             {
                 var judge = await _db.Judges.FindAsync(s.JudgeId);
+                string judgeName = judge?.FullName;
+
+                if (string.IsNullOrEmpty(judgeName))
+                {
+                    var appUser = await _db.ApplicationUsers.FindAsync(s.JudgeId);
+                    judgeName = appUser?.UserName ?? "Невідомий суддя";
+                }
 
                 result.Add(new ScoreDisplayViewModel
                 {
                     Id = s.Id,
-                    JudgeName = judge?.FullName ?? "Невідомий суддя",
+                    JudgeName = judgeName,
                     Taste = s.Taste,
                     Presentation = s.Presentation,
                     Creativity = s.Creativity,
@@ -39,7 +49,7 @@ namespace KitchenBattle.Services
 
             return result;
         }
-        
+
         public async Task AddScore(ScoreCreateViewModel vm, string judgeId)
         {
             var recipeId = int.Parse(vm.RecipeId);
@@ -55,7 +65,11 @@ namespace KitchenBattle.Services
 
             _db.Scores.Add(score);
             await _db.SaveChangesAsync();
-            
+
+            var allScores = await _db.Scores
+                .Where(s => s.RecipeId == recipeId)
+                .ToListAsync();
+
             var recipe = await _db.Recipes
                 .Include(r => r.Scores)
                 .FirstOrDefaultAsync(r => r.Id == recipeId);
@@ -65,6 +79,9 @@ namespace KitchenBattle.Services
                 recipe.AverageScore = recipe.Scores.Average(s => s.TotalScore);
                 await _db.SaveChangesAsync();
             }
+
+            await _cache.RemoveAsync($"recipe_details_{recipeId}");
+            await _cache.RemoveAsync("published_recipes");
         }
         
         public async Task<Score?> GetByIdAsync(int id)
@@ -84,6 +101,14 @@ namespace KitchenBattle.Services
 
             await _db.SaveChangesAsync();
             await RecalculateAverageAsync(score.RecipeId);
+
+            var recipeId = int.Parse(vm.RecipeId);
+            var allScores = await _db.Scores
+                .Where(s => s.RecipeId == recipeId)
+                .ToListAsync();
+
+            await _cache.RemoveAsync($"recipe_details_{score.RecipeId}");
+            await _cache.RemoveAsync("published_recipes");
         }
         
         public async Task DeleteScore(int id)
@@ -95,6 +120,13 @@ namespace KitchenBattle.Services
             _db.Scores.Remove(score);
             await _db.SaveChangesAsync();
             await RecalculateAverageAsync(recipeId);
+
+            var allScores = await _db.Scores
+                .Where(s => s.RecipeId == recipeId)
+                .ToListAsync();
+
+            await _cache.RemoveAsync($"recipe_details_{recipeId}");
+            await _cache.RemoveAsync("published_recipes");
         }
         
         public async Task<bool> CheckJudgeAlreadyScored(int recipeId, string judgeId)
