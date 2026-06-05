@@ -24,6 +24,71 @@ namespace KitchenBattle.Services
 
         public async Task<AdminDashboardViewModel> GetDashboardStatsAsync()
         {
+            var now = DateTime.UtcNow;
+            var weekAgo = now.AddDays(-7);
+            var twoWeeksAgo = now.AddDays(-14);
+
+            var publishedRecipes = await _context.Recipes
+                .Where(r => r.Status == StatusRecipeEnum.Published)
+                .Select(r => new { r.AverageScore, r.CreatedAt })
+                .ToListAsync();
+
+            var globalAverage = publishedRecipes.Count > 0
+                ? publishedRecipes.Average(r => r.AverageScore)
+                : 0;
+
+            var recentAvg = publishedRecipes
+                .Where(r => r.CreatedAt >= weekAgo)
+                .Select(r => r.AverageScore)
+                .DefaultIfEmpty(0)
+                .Average();
+
+            var previousAvg = publishedRecipes
+                .Where(r => r.CreatedAt >= twoWeeksAgo && r.CreatedAt < weekAgo)
+                .Select(r => r.AverageScore)
+                .DefaultIfEmpty(recentAvg)
+                .Average();
+
+            var weeklyPublications = new int[7];
+            for (var i = 0; i < 7; i++)
+            {
+                var day = now.Date.AddDays(-(6 - i));
+                var nextDay = day.AddDays(1);
+                weeklyPublications[i] = await _context.Recipes.CountAsync(r =>
+                    r.Status == StatusRecipeEnum.Published &&
+                    r.CreatedAt >= day &&
+                    r.CreatedAt < nextDay);
+            }
+
+            var pendingModeration = await _context.Recipes
+                .Where(r => r.Status == StatusRecipeEnum.Checked)
+                .OrderByDescending(r => r.CreatedAt)
+                .Take(5)
+                .Select(r => new ModerationQueueItem
+                {
+                    Id = r.Id,
+                    Title = r.Title,
+                    ChefName = r.ChefName,
+                    ImageUrl = r.ImageUrl,
+                    CreatedAt = r.CreatedAt
+                })
+                .ToListAsync();
+
+            var recentBattles = await _context.Battles
+                .Include(b => b.BattleChefs)
+                .OrderByDescending(b => b.StartedAt)
+                .Take(5)
+                .Select(b => new ActiveBattleItem
+                {
+                    Id = b.Id,
+                    BattleName = b.BattleName,
+                    ParticipantCount = b.BattleChefs.Count,
+                    Status = b.Status,
+                    StartedAt = b.StartedAt,
+                    EndedAt = b.EndedAt
+                })
+                .ToListAsync();
+
             return new AdminDashboardViewModel
             {
                 TotalUsers = await _context.ApplicationUsers.CountAsync(),
@@ -34,7 +99,16 @@ namespace KitchenBattle.Services
 
                 PublishedRecipes = await _context.Recipes.CountAsync(r => r.Status == StatusRecipeEnum.Published),
                 PendingRecipes = await _context.Recipes.CountAsync(r => r.Status == StatusRecipeEnum.Checked),
-                FinishedBattles = await _context.Battles.CountAsync(b => b.Status == StatusBattleEnum.Completed)
+                RejectedRecipes = await _context.Recipes.CountAsync(r => r.Status == StatusRecipeEnum.Rejected),
+                FinishedBattles = await _context.Battles.CountAsync(b => b.Status == StatusBattleEnum.Completed),
+                ActiveBattles = await _context.Battles.CountAsync(b =>
+                    b.Status == StatusBattleEnum.InProgress || b.Status == StatusBattleEnum.Closed),
+
+                GlobalAverageScore = Math.Round(globalAverage, 1),
+                ScoreWeeklyChange = Math.Round(recentAvg - previousAvg, 1),
+                PendingModeration = pendingModeration,
+                RecentBattles = recentBattles,
+                WeeklyPublications = weeklyPublications
             };
         }
 
