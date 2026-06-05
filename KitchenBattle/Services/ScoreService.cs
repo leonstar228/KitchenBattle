@@ -55,7 +55,11 @@ namespace KitchenBattle.Services
 
             _db.Scores.Add(score);
             await _db.SaveChangesAsync();
-            
+
+            var allScores = await _db.Scores
+                .Where(s => s.RecipeId == recipeId)
+                .ToListAsync();
+
             var recipe = await _db.Recipes
                 .Include(r => r.Scores)
                 .FirstOrDefaultAsync(r => r.Id == recipeId);
@@ -84,6 +88,11 @@ namespace KitchenBattle.Services
 
             await _db.SaveChangesAsync();
             await RecalculateAverageAsync(score.RecipeId);
+
+            var recipeId = int.Parse(vm.RecipeId);
+            var allScores = await _db.Scores
+                .Where(s => s.RecipeId == recipeId)
+                .ToListAsync();
         }
         
         public async Task DeleteScore(int id)
@@ -95,6 +104,10 @@ namespace KitchenBattle.Services
             _db.Scores.Remove(score);
             await _db.SaveChangesAsync();
             await RecalculateAverageAsync(recipeId);
+
+            var allScores = await _db.Scores
+                .Where(s => s.RecipeId == recipeId)
+                .ToListAsync();
         }
         
         public async Task<bool> CheckJudgeAlreadyScored(int recipeId, string judgeId)

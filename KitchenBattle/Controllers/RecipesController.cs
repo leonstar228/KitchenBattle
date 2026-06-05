@@ -61,7 +61,8 @@ namespace KitchenBattle.Controllers
             var scores = new List<ScoreDisplayViewModel>();
             foreach (var score in recipe.Scores)
             {
-                var judge = await _context.Judges.FindAsync(score.JudgeId);
+                var judge = await _context.Judges
+    .FirstOrDefaultAsync(j => j.Id == score.JudgeId);
                 scores.Add(new ScoreDisplayViewModel
                 {
                     Id = score.Id,
