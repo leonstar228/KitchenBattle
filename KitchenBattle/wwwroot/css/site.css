@@ -1075,7 +1075,70 @@ footer {
     margin-right: 0.75rem;
     color: var(--kb-primary);
 }
+/* ============================================
+   TOOLTIP ДЛЯ ГРАФІКУ (Поява при наведенні)
+   ============================================ */
 
+/* Робимо обгортку стовпця відносною, щоб підказка не вилітала за межі */
+.admin-chart__bar-wrap {
+    position: relative;
+}
+
+/* Ефект збільшення стовпця при наведенні */
+.admin-chart__bar {
+    position: relative;
+    cursor: pointer;
+    transition: height 0.4s ease, transform 0.2s ease, filter 0.2s ease;
+}
+
+    .admin-chart__bar:hover {
+        transform: scaleX(1.05);
+        filter: brightness(1.1);
+    }
+
+    /* Сама плашка підказки (текст береться з атрибута data-tooltip) */
+    .admin-chart__bar::after {
+        content: attr(data-tooltip);
+        position: absolute;
+        bottom: calc(100% + 8px); /* Стає над стовпчиком */
+        left: 50%;
+        transform: translateX(-50%) translateY(5px);
+        background: var(--kb-dark, #2b2b2b);
+        color: #fff;
+        padding: 4px 8px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        border-radius: 6px;
+        white-space: nowrap;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease, transform 0.2s ease;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        z-index: 10;
+    }
+
+    /* Маленький трикутник (стрілочка) під підказкою */
+    .admin-chart__bar::before {
+        content: '';
+        position: absolute;
+        bottom: calc(100% + 3px);
+        left: 50%;
+        transform: translateX(-50%) translateY(5px);
+        border-width: 5px 5px 0;
+        border-style: solid;
+        border-color: var(--kb-dark, #2b2b2b) transparent transparent;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease, transform 0.2s ease;
+        z-index: 10;
+    }
+
+    /* Показуємо підказку та стрілочку при ховері на стовпчик */
+    .admin-chart__bar:hover::after,
+    .admin-chart__bar:hover::before {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
 /* ============================================
    USERS TABLE
    ============================================ */
@@ -1264,7 +1327,6 @@ footer {
 
 .diff-Hard {
     background: linear-gradient(135deg, #D4483B 0%, #e85a4f 100%);
-}
 }
 
 .cat-pill {

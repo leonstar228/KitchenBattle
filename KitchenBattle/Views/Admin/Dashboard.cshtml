@@ -30,10 +30,17 @@
         _ => ("Очікує", "pending")
     };
 
-    int GetBattleDays(KitchenBattle.ViewModels.ActiveBattleItem battle)
+    string GetBattleDaysFormatted(KitchenBattle.ViewModels.ActiveBattleItem battle)
     {
         var end = battle.EndedAt ?? DateTime.UtcNow;
-        return Math.Max(1, (int)(end - battle.StartedAt).TotalDays);
+        int days = Math.Max(1, (int)(end - battle.StartedAt).TotalDays);
+    
+        int mod10 = days % 10;
+        int mod100 = days % 100;
+
+        if (mod10 == 1 && mod100 != 11) return $"{days} день";
+        if (mod10 >= 2 && mod10 <= 4 && (mod100 < 10 || mod100 >= 20)) return $"{days} дні";
+        return $"{days} днів";
     }
 }
 
@@ -150,7 +157,7 @@
                                 <span class="admin-list-item__dot admin-list-item__dot--@status.CssClass"></span>
                                 <div class="admin-list-item__content">
                                     <div class="admin-list-item__title">@battle.BattleName</div>
-                                    <div class="admin-list-item__meta">@battle.ParticipantCount учасників · @GetBattleDays(battle) дні</div>
+                                    <div class="admin-list-item__meta">@battle.ParticipantCount учасників · @GetBattleDaysFormatted(battle)</div>
                                 </div>
                                 <span class="admin-badge admin-badge--@status.CssClass">@status.Label</span>
                             </a>
@@ -174,7 +181,9 @@
                 var height = (int)Math.Round((double)Model.WeeklyPublications[i] / maxPublications * 100);
                 var intensity = Math.Max(20, height);
                 <div class="admin-chart__bar-wrap">
-                    <div class="admin-chart__bar" style="height: @(Math.Max(height, 8))%; opacity: @(0.35 + intensity / 140.0);"></div>
+                    <div class="admin-chart__bar"
+                         style="height: @(Math.Max(height, 8))%; opacity: @(0.35 + intensity / 140.0);"
+                         data-tooltip="@Model.WeeklyPublications[i]"></div>
                     <span class="admin-chart__label">@dayLabels[i]</span>
                 </div>
             }
