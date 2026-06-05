@@ -12,7 +12,7 @@ namespace KitchenBattle.Models
 
         [EmailAddress]
         [StringLength(256)]
-        public string Email { get; set; } = string.Empty;
+        public string? Email { get; set; }
 
         [Required]
         [StringLength(100)]
