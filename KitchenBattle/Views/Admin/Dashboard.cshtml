@@ -1,88 +1,215 @@
-﻿﻿
-@model KitchenBattle.ViewModels.AdminDashboardViewModel
+﻿@model KitchenBattle.ViewModels.AdminDashboardViewModel
+@using KitchenBattle.Models
 
 @{
     ViewData["Title"] = "Адмін-панель";
+    var ukMonths = new[] { "Січень", "Лютий", "Березень", "Квітень", "Травень", "Червень", "Липень", "Серпень", "Вересень", "Жовтень", "Листопад", "Грудень" };
+    var currentMonth = $"{ukMonths[DateTime.Now.Month - 1]} {DateTime.Now.Year}";
+    var dayLabels = Enumerable.Range(0, 7)
+        .Select(i => DateTime.Now.Date.AddDays(-(6 - i)))
+        .Select(d => d.ToString("ddd", new System.Globalization.CultureInfo("uk-UA")).Substring(0, 2))
+        .ToArray();
+    var maxPublications = Model.WeeklyPublications.Length > 0 ? Math.Max(Model.WeeklyPublications.Max(), 1) : 1;
+    var scoreChangePrefix = Model.ScoreWeeklyChange >= 0 ? "+" : "";
 }
 
-<div class="container mt-5">
-    <div class="mb-5 header-section">
-        <h2 class="fw-bold m-0 d-flex align-items-center" style="color: var(--kb-dark); font-size: 2rem;">
-            <i class="bi bi-speedometer2" style="margin-right: 0.5rem; color: var(--kb-primary);"></i>
-            Адмін-панель
-        </h2>
-        <p class="text-muted m-0 mt-2" style="color: var(--kb-neutral-600); font-size: 1rem;">Загальний огляд та керування показниками системи</p>
-    </div>
+@functions {
+    string FormatTimeAgo(DateTime createdAt)
+    {
+        var diff = DateTime.UtcNow - createdAt;
+        if (diff.TotalMinutes < 60) return "щойно";
+        if (diff.TotalHours < 24) return $"{(int)diff.TotalHours} год. тому";
+        return $"{(int)diff.TotalDays} дн. тому";
+    }
 
-    <div class="row stats-row">
-        <div class="col-md-3 mb-4">
-            <div class="card kb-card kb-card-primary h-100 shadow-sm p-4">
-                <div class="card-body text-center d-flex flex-column justify-content-center">
-                    <div class="card-icon"><i class="bi bi-people-fill"></i></div>
-                    <h6 class="text-uppercase text-tracking small opacity-75 fw-semibold">Всього користувачів</h6>
-                    <h2 class="display-4 fw-bold my-2">@Model.TotalUsers</h2>
-                    <div class="small opacity-90 border-top pt-2 mt-2">
-                        <span style="margin-right: 1rem;"><i class="bi bi-person-check"></i> Шефи: @Model.TotalChefs</span>
-                        <span><i class="bi bi-person-badge"></i> Судді: @Model.TotalJudges</span>
-                    </div>
-                </div>
-            </div>
+    (string Label, string CssClass) GetBattleStatus(StatusBattleEnum status) => status switch
+    {
+        StatusBattleEnum.InProgress => ("Активний", "active"),
+        StatusBattleEnum.Closed => ("Судді", "judging"),
+        StatusBattleEnum.Completed => ("Завершено", "completed"),
+        _ => ("Очікує", "pending")
+    };
+
+    int GetBattleDays(KitchenBattle.ViewModels.ActiveBattleItem battle)
+    {
+        var end = battle.EndedAt ?? DateTime.UtcNow;
+        return Math.Max(1, (int)(end - battle.StartedAt).TotalDays);
+    }
+}
+
+<div class="admin-dashboard container py-4">
+    <div class="admin-dashboard__header">
+        <div>
+            <h1 class="admin-dashboard__title">Адмін-панель</h1>
+            <p class="admin-dashboard__subtitle">Загальний огляд та керування системою</p>
         </div>
-
-        <div class="col-md-3 mb-4">
-            <div class="card kb-card kb-card-success h-100 shadow-sm p-4">
-                <div class="card-body text-center d-flex flex-column justify-content-center">
-                    <div class="card-icon"><i class="bi bi-book-half"></i></div>
-                    <h6 class="text-uppercase text-tracking small opacity-75 fw-semibold">Опубліковано рецептів</h6>
-                    <h2 class="display-4 fw-bold my-2">@Model.PublishedRecipes</h2>
-                    <div class="small opacity-90 border-top pt-2 mt-2">
-                        <i class="bi bi-clock-history"></i> Очікують модерації: @Model.PendingRecipes
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-3 mb-4">
-            <div class="card kb-card kb-card-warning h-100 shadow-sm p-4">
-                <div class="card-body text-center d-flex flex-column justify-content-center">
-                    <div class="card-icon"><i class="bi bi-lightning-fill"></i></div>
-                    <h6 class="text-uppercase text-tracking small opacity-75 fw-bold">Всього батлів</h6>
-                    <h2 class="display-4 fw-bold my-2">@Model.TotalBattles</h2>
-                    <div class="small opacity-90 border-top pt-2 mt-2" style="border-top-color: rgba(0,0,0,0.1) !important;">
-                        <i class="bi bi-check-circle"></i> Завершено: @Model.FinishedBattles
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-3 mb-4">
-            <div class="card kb-card kb-card-dark h-100 shadow-sm p-4">
-                <div class="card-body text-center d-flex flex-column justify-content-center">
-                    <div class="card-icon"><i class="bi bi-graph-up"></i></div>
-                    <h6 class="text-uppercase text-tracking small opacity-75 fw-semibold mb-3">Аналітика оцінок</h6>
-                    <a asp-controller="Admin" asp-action="Statistics" class="btn btn-sm kb-btn-action w-100 py-2">
-                        <i class="bi bi-arrow-right"></i> Переглянути
-                    </a>
-                </div>
-            </div>
+        <div class="admin-dashboard__date">
+            <i class="bi bi-calendar3"></i>
+            <span>@currentMonth</span>
         </div>
     </div>
 
-    <div class="mt-5">
-        <h5 class="fw-bold mb-4 d-flex align-items-center" style="color: var(--kb-neutral-600); font-size: 1.25rem;">
-            <i class="bi bi-gear" style="margin-right: 0.5rem; color: var(--kb-primary);"></i>
-            Розділи керування
-        </h5>
-        <div class="list-group shadow-sm">
-            <a asp-controller="Admin" asp-action="RecipesForReview" class="list-group-item list-group-item-action kb-list-item d-flex justify-content-between align-items-center p-4 fw-semibold">
-                <span><i class="bi bi-bookmark-check" style="margin-right: 0.75rem; font-size: 1.1rem;"></i>Модерація рецептів</span>
-                <span class="badge rounded-pill px-3 py-2" style="background: linear-gradient(135deg, #D4483B 0%, #b8392e 100%); color: #ffffff; font-weight: 500; box-shadow: 0 2px 8px rgba(212, 72, 59, 0.3);">@Model.PendingRecipes</span>
+    <div class="row g-4 admin-dashboard__stats">
+        <div class="col-md-6 col-xl-3">
+            <div class="admin-stat-card admin-stat-card--green">
+                <div class="admin-stat-card__icon"><i class="bi bi-people-fill"></i></div>
+                <div class="admin-stat-card__body">
+                    <div class="admin-stat-card__value">@Model.TotalUsers</div>
+                    <div class="admin-stat-card__label">Користувачів</div>
+                    <div class="admin-stat-card__footer">@Model.TotalChefs шефів · @Model.TotalJudges суддів</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-xl-3">
+            <div class="admin-stat-card admin-stat-card--orange">
+                <div class="admin-stat-card__icon"><i class="bi bi-journal-richtext"></i></div>
+                <div class="admin-stat-card__body">
+                    <div class="admin-stat-card__value">@Model.PublishedRecipes</div>
+                    <div class="admin-stat-card__label">Опублікованих рецептів</div>
+                    <div class="admin-stat-card__footer">@Model.PendingRecipes очікують модерації</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-xl-3">
+            <div class="admin-stat-card admin-stat-card--red">
+                <div class="admin-stat-card__icon"><i class="bi bi-trophy-fill"></i></div>
+                <div class="admin-stat-card__body">
+                    <div class="admin-stat-card__value">@Model.TotalBattles</div>
+                    <div class="admin-stat-card__label">Батли</div>
+                    <div class="admin-stat-card__footer">@Model.FinishedBattles завершено</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-xl-3">
+            <div class="admin-stat-card admin-stat-card--grey">
+                <div class="admin-stat-card__icon"><i class="bi bi-star-fill"></i></div>
+                <div class="admin-stat-card__body">
+                    <div class="admin-stat-card__value">@Model.GlobalAverageScore.ToString("0.0")</div>
+                    <div class="admin-stat-card__label">Середній бал</div>
+                    <div class="admin-stat-card__footer">@scoreChangePrefix@Model.ScoreWeeklyChange.ToString("0.0") за тиждень</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mt-1">
+        <div class="col-lg-6">
+            <div class="admin-panel-card">
+                <div class="admin-panel-card__header">
+                    <h2 class="admin-panel-card__title">На модерацію</h2>
+                    <a asp-action="RecipesForReview" class="admin-panel-card__link">Усі</a>
+                </div>
+                <div class="admin-panel-card__body">
+                    @if (Model.PendingModeration.Count == 0)
+                    {
+                        <p class="admin-panel-card__empty">Немає рецептів на модерації</p>
+                    }
+                    else
+                    {
+                        @foreach (var item in Model.PendingModeration)
+                        {
+                            <a asp-action="RecipesForReview" class="admin-list-item">
+                                <div class="admin-list-item__thumb">
+                                    @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                    {
+                                        <img src="@item.ImageUrl" alt="@item.Title" />
+                                    }
+                                    else
+                                    {
+                                        <i class="bi bi-image"></i>
+                                    }
+                                </div>
+                                <div class="admin-list-item__content">
+                                    <div class="admin-list-item__title">@item.Title</div>
+                                    <div class="admin-list-item__meta">@item.ChefName · @FormatTimeAgo(item.CreatedAt)</div>
+                                </div>
+                                <span class="admin-badge admin-badge--new">Нове</span>
+                            </a>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="admin-panel-card">
+                <div class="admin-panel-card__header">
+                    <h2 class="admin-panel-card__title">Активні батли</h2>
+                    <a asp-controller="Battles" asp-action="Index" class="admin-panel-card__link">Усі</a>
+                </div>
+                <div class="admin-panel-card__body">
+                    @if (Model.RecentBattles.Count == 0)
+                    {
+                        <p class="admin-panel-card__empty">Немає батлів</p>
+                    }
+                    else
+                    {
+                        @foreach (var battle in Model.RecentBattles)
+                        {
+                            var status = GetBattleStatus(battle.Status);
+                            <a asp-controller="Battles" asp-action="Details" asp-route-id="@battle.Id" class="admin-list-item">
+                                <span class="admin-list-item__dot admin-list-item__dot--@status.CssClass"></span>
+                                <div class="admin-list-item__content">
+                                    <div class="admin-list-item__title">@battle.BattleName</div>
+                                    <div class="admin-list-item__meta">@battle.ParticipantCount учасників · @GetBattleDays(battle) дні</div>
+                                </div>
+                                <span class="admin-badge admin-badge--@status.CssClass">@status.Label</span>
+                            </a>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="admin-panel-card admin-panel-card--chart mt-4">
+        <div class="admin-panel-card__header">
+            <h2 class="admin-panel-card__title">
+                <i class="bi bi-bar-chart-line"></i>
+                Активність публікацій (7 днів)
+            </h2>
+        </div>
+        <div class="admin-chart">
+            @for (var i = 0; i < 7; i++)
+            {
+                var height = (int)Math.Round((double)Model.WeeklyPublications[i] / maxPublications * 100);
+                var intensity = Math.Max(20, height);
+                <div class="admin-chart__bar-wrap">
+                    <div class="admin-chart__bar" style="height: @(Math.Max(height, 8))%; opacity: @(0.35 + intensity / 140.0);"></div>
+                    <span class="admin-chart__label">@dayLabels[i]</span>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="row g-4 mt-1 admin-dashboard__nav">
+        <div class="col-md-4">
+            <a asp-action="RecipesForReview" class="admin-nav-card">
+                <div class="admin-nav-card__icon admin-nav-card__icon--moderation">
+                    <i class="bi bi-bookmark-check"></i>
+                </div>
+                <div class="admin-nav-card__content">
+                    <span class="admin-nav-card__title">Модерація рецептів</span>
+                    @if (Model.PendingRecipes > 0)
+                    {
+                        <span class="admin-nav-card__badge">@Model.PendingRecipes нових</span>
+                    }
+                </div>
             </a>
-            <a asp-controller="Admin" asp-action="Users" class="list-group-item list-group-item-action kb-list-item p-4 fw-semibold">
-                <i class="bi bi-person-gear" style="margin-right: 0.75rem; font-size: 1.1rem;"></i>Керування користувачами
+        </div>
+        <div class="col-md-4">
+            <a asp-action="Users" class="admin-nav-card admin-nav-card--center">
+                <div class="admin-nav-card__icon admin-nav-card__icon--users">
+                    <i class="bi bi-person-gear"></i>
+                </div>
+                <span class="admin-nav-card__title">Користувачі</span>
             </a>
-            <a asp-controller="Battles" asp-action="Index" class="list-group-item list-group-item-action kb-list-item p-4 fw-semibold">
-                <i class="bi bi-sword" style="margin-right: 0.75rem; font-size: 1.1rem;"></i>Керування батлами
+        </div>
+        <div class="col-md-4">
+            <a asp-controller="Battles" asp-action="Index" class="admin-nav-card admin-nav-card--center">
+                <div class="admin-nav-card__icon admin-nav-card__icon--battles">
+                    <i class="bi bi-trophy"></i>
+                </div>
+                <span class="admin-nav-card__title">Батли</span>
             </a>
         </div>
     </div>

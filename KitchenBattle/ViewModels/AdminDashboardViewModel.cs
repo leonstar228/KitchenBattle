@@ -16,6 +16,11 @@
         public int FinishedBattles { get; set; }
 
         public double GlobalAverageScore { get; set; }
-        public string MostPopularCategory { get; set; }
+        public double ScoreWeeklyChange { get; set; }
+        public string MostPopularCategory { get; set; } = string.Empty;
+
+        public List<ModerationQueueItem> PendingModeration { get; set; } = new();
+        public List<ActiveBattleItem> RecentBattles { get; set; } = new();
+        public int[] WeeklyPublications { get; set; } = new int[7];
     }
 }
