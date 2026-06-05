@@ -1,6 +1,8 @@
 ﻿@model IEnumerable<KitchenBattle.Models.Recipe>
 @{
     ViewData["Title"] = "Рецепти";
+    int currentPage = ViewBag.CurrentPage ?? 1;
+    int totalPages = ViewBag.TotalPages ?? 1;
 }
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Biryani:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -33,7 +35,14 @@
                     <option value="">Всі категорії</option>
                     @foreach (var cat in Enum.GetValues<CategoryEnum>())
                     {
-                        <option value="@cat" selected="@(ViewBag.CurrentCategory?.ToString() == cat.ToString())">@cat</option>
+                        if (ViewBag.CurrentCategory?.ToString() == cat.ToString())
+                        {
+                            <option value="@cat" selected="selected">@cat</option>
+                        }
+                        else
+                        {
+                            <option value="@cat">@cat</option>
+                        }
                     }
                 </select>
             </div>
@@ -73,9 +82,9 @@
                             {
                                 <img src="@recipe.ImageUrl" class="card-img-top-kb" alt="@recipe.Title">
                             }
-                            <span class="diff-badge diff-@recipe.Difficulty.ToString()">
-                                @(recipe.Difficulty == DifficultyEnum.Easy ? "Легкий"
-                                        : recipe.Difficulty == DifficultyEnum.Medium ? "Середній" : "Складний")
+                        <span class="diff-badge diff-@recipe.Difficulty.ToString()">
+                            @(recipe.Difficulty == DifficultyEnum.Easy ? "Легкий"
+                                                    : recipe.Difficulty == DifficultyEnum.Medium ? "Середній" : "Складний")
                             </span>
                         </div>
                         <div class="card-body-kb">
@@ -84,8 +93,8 @@
                             <div class="card-chef"><i class="bi bi-person-fill"></i> @recipe.ChefName</div>
                             <div class="card-desc">
                                 @(recipe.Description.Length > 90
-                                        ? recipe.Description.Substring(0, 90) + "…"
-                                        : recipe.Description)
+                                                        ? recipe.Description.Substring(0, 90) + "…"
+                                                        : recipe.Description)
                             </div>
                             <div class="card-meta">
                                 <span>
@@ -115,5 +124,39 @@
                 </div>
             }
         </div>
+
+        @if (totalPages > 1)
+        {
+            <nav class="mt-5">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                        <a class="page-link" style="border-radius: 25px; color: var(--secondary);"
+                           asp-route-page="@(currentPage - 1)"
+                           asp-route-search="@ViewBag.CurrentSearch"
+                           asp-route-difficulty="@ViewBag.CurrentDifficulty"
+                           asp-route-category="@ViewBag.CurrentCategory">‹</a>
+                    </li>
+
+                    @for (int i = 1; i <= totalPages; i++)
+                    {
+                        <li class="page-item @(currentPage == i ? "active" : "")">
+                            <a class="page-link" style="border-radius: 25px; background: @(currentPage == i ? "var(--secondary)" : "transparent"); color: @(currentPage == i ? "white" : "var(--secondary)"); border-color: var(--gold-200);"
+                               asp-route-page="@i"
+                               asp-route-search="@ViewBag.CurrentSearch"
+                               asp-route-difficulty="@ViewBag.CurrentDifficulty"
+                               asp-route-category="@ViewBag.CurrentCategory">@i</a>
+                        </li>
+                    }
+
+                    <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                        <a class="page-link" style="border-radius: 25px; color: var(--secondary);"
+                           asp-route-page="@(currentPage + 1)"
+                           asp-route-search="@ViewBag.CurrentSearch"
+                           asp-route-difficulty="@ViewBag.CurrentDifficulty"
+                           asp-route-category="@ViewBag.CurrentCategory">›</a>
+                    </li>
+                </ul>
+            </nav>
+        }
     }
 </div>

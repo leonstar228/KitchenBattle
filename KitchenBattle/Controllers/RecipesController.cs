@@ -22,24 +22,53 @@ namespace KitchenBattle.Controllers
         }
 
         [AllowAnonymous]
-        public async Task<IActionResult> Index(string? search, DifficultyEnum? difficulty, CategoryEnum? category)
+        public async Task<IActionResult> Index(string? search, DifficultyEnum? difficulty, CategoryEnum? category, int page = 1)
         {
+            
             var recipes = await _recipeService.GetPublishedRecipesAsync();
 
+            
             if (!string.IsNullOrEmpty(search))
-                recipes = recipes.Where(r => r.Title.Contains(search) || r.Description.Contains(search)).ToList();
+            {
+                recipes = recipes.Where(r => r.Title.Contains(search, StringComparison.OrdinalIgnoreCase)
+                                          || r.Description.Contains(search, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
 
+            
             if (difficulty.HasValue)
+            {
                 recipes = recipes.Where(r => r.Difficulty == difficulty.Value).ToList();
+            }
 
+            
             if (category.HasValue)
+            {
                 recipes = recipes.Where(r => r.Category == category.Value).ToList();
+            }
 
+            
+            int pageSize = 6;
+            int totalItems = recipes.Count;
+            int totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+
+            
+            if (page < 1) page = 1;
+            if (totalPages > 0 && page > totalPages) page = totalPages;
+
+            
+            var pagedRecipes = recipes
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
             ViewBag.CurrentSearch = search;
             ViewBag.CurrentDifficulty = difficulty;
             ViewBag.CurrentCategory = category;
 
-            return View(recipes);
+            return View(pagedRecipes);
         }
 
         [AllowAnonymous]
