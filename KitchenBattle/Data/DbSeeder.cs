@@ -54,9 +54,9 @@ public static class DbSeeder
         };
 
         var applicationUsers = new List<ApplicationUser>();
-        applicationUsers.AddRange(admins.Select(a => CreateApplicationUser(a.Id, a.UserName ?? a.Email ?? a.FullName, a.CreatedAt)));
-        applicationUsers.AddRange(chefs.Select(c => CreateApplicationUser(c.Id, c.UserName ?? c.Email ?? c.FullName, c.CreatedAt)));
-        applicationUsers.AddRange(judges.Select(j => CreateApplicationUser(j.Id, j.UserName ?? j.Email ?? j.FullName, j.CreatedAt)));
+        applicationUsers.AddRange(admins.Select(a => CreateApplicationUser(a.Id, a.UserName, a.CreatedAt)));
+        applicationUsers.AddRange(chefs.Select(c => CreateApplicationUser(c.Id, c.UserName, c.CreatedAt)));
+        applicationUsers.AddRange(judges.Select(j => CreateApplicationUser(j.Id, j.UserName, j.CreatedAt)));
         applicationUsers.AddRange(new[]
         {
             CreateApplicationUser("viewer-001", "viewer.anna", now.AddDays(-30)),
@@ -282,10 +282,7 @@ public static class DbSeeder
         {
             Id = id,
             UserName = userName,
-            NormalizedUserName = userName.ToUpperInvariant(),
             Email = email,
-            NormalizedEmail = email.ToUpperInvariant(),
-            EmailConfirmed = true,
             FullName = fullName,
             CreatedAt = createdAt
         };
@@ -297,10 +294,7 @@ public static class DbSeeder
         {
             Id = id,
             UserName = userName,
-            NormalizedUserName = userName.ToUpperInvariant(),
             Email = email,
-            NormalizedEmail = email.ToUpperInvariant(),
-            EmailConfirmed = true,
             FullName = fullName,
             CreatedAt = createdAt
         };
@@ -312,10 +306,7 @@ public static class DbSeeder
         {
             Id = id,
             UserName = userName,
-            NormalizedUserName = userName.ToUpperInvariant(),
             Email = email,
-            NormalizedEmail = email.ToUpperInvariant(),
-            EmailConfirmed = true,
             FullName = fullName,
             CreatedAt = createdAt
         };
