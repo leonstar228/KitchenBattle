@@ -20,24 +20,24 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav me-auto">
                         <li class="nav-item">
-                            <a class="nav-link" asp-controller="Home" asp-action="Index">Головна</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Battles" asp-action="Index">Батли</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Recipes" asp-action="Index">Рецепти</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Leaderboard" asp-action="Index">Лідерборд</a>
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Battles" ? "active" : "")"
+                               asp-controller="Battles" asp-action="Index">Батли</a>
                         </li>
 
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Recipes" ? "active" : "")"
+                               asp-controller="Recipes" asp-action="Index">Рецепти</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "LeaderBoard" ? "active" : "")"
+                               asp-controller="LeaderBoard" asp-action="Index">Лідерборд</a>
+                        </li>
                         @if (User.Identity.IsAuthenticated && User.IsInRole("admin"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="Admin" asp-action="Dashboard">
-                                    Адмінка
-                                </a>
+                                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Admin" ? "active" : "")"
+                                   asp-controller="Admin" asp-action="Dashboard">Адмінка</a>
                             </li>
                         }
                     </ul>
