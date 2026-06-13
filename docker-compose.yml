@@ -17,12 +17,12 @@
 services:
   redis:
     image: redis:7-alpine
-    container_name: redis_kitchen_battle
+    container_name: redis_kitchen_battle_project
     ports:
       - "6379:6379"
   keycloak:
     image: quay.io/keycloak/keycloak:26.1
-    container_name: keycloak_kitchen_battle
+    container_name: keycloak_kitchen_battle_project
     environment:
       - KC_BOOTSTRAP_ADMIN_USERNAME=admin
       - KC_BOOTSTRAP_ADMIN_PASSWORD=admin
